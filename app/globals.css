@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
   --navy-rgb: 6 27 58;
   --blue-rgb: 22 119 255;
 }
@@ -14,7 +14,7 @@
 
 html {
   min-width: 320px;
-  background: #f8fbff;
+  background: #05070d;
 }
 
 body {
@@ -85,6 +85,40 @@ textarea {
 
 .minimal-input {
   @apply min-h-12 rounded-[8px] border border-white/15 bg-white/10 px-4 text-sm font-semibold text-white outline-none placeholder:text-white/55 focus:border-white/60;
+}
+
+.hero-gradient {
+  background:
+    radial-gradient(circle at 50% -8%, rgba(18, 56, 255, 0.34), transparent 34%),
+    radial-gradient(circle at 50% 26%, rgba(76, 107, 255, 0.12), transparent 28%),
+    linear-gradient(180deg, rgba(9, 13, 26, 0.98) 0%, rgba(5, 7, 13, 0) 76%);
+}
+
+.hero-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(circle at 50% 18%, black 0%, transparent 68%);
+}
+
+.hero-beam {
+  background:
+    linear-gradient(90deg, transparent 0%, rgba(18, 56, 255, 0.35) 45%, rgba(86, 116, 255, 0.55) 50%, rgba(18, 56, 255, 0.35) 55%, transparent 100%);
+  filter: blur(32px);
+}
+
+.panel-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 34px 34px;
+}
+
+.soft-vignette {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -80px 120px rgba(0, 0, 0, 0.28);
 }
 
 .qr-grid {
