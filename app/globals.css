@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --navy-rgb: 6 27 58;
+  --blue-rgb: 22 119 255;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  background: #f8fbff;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family:
+    Inter, "SF Pro Display", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
+    sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(22, 119, 255, 0.18);
+}
+
+.focus-ring {
+  @apply outline-none ring-offset-2 ring-offset-white focus-visible:ring-2 focus-visible:ring-primary;
+}
+
+.section-shell {
+  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+
+.surface {
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(221, 233, 247, 0.9);
+  box-shadow: 0 18px 58px rgba(6, 27, 58, 0.08);
+  backdrop-filter: blur(18px);
+}
+
+.blue-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.13) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.13) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+}
+
+.mockup-label {
+  @apply text-[11px] font-semibold uppercase text-muted;
+}
+
+.mockup-card {
+  @apply rounded-[8px] border border-sky/80 bg-white shadow-panel;
+}
+
+.section-kicker {
+  @apply text-xs font-black uppercase text-[#5d7cff];
+}
+
+.field-input {
+  @apply min-h-11 w-full rounded-[8px] border border-white/[0.1] bg-white/[0.06] px-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-[#6d8cff] focus:ring-2 focus:ring-[#1677ff]/[0.35];
+}
+
+.primary-button {
+  @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-[8px] bg-[#1238ff] px-5 text-sm font-black text-white transition hover:bg-[#244bff] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5d7cff];
+}
+
+.secondary-button {
+  @apply inline-flex min-h-11 items-center justify-center rounded-[8px] border border-white/10 bg-white/[0.03] px-5 text-sm font-black text-white transition hover:bg-white/[0.06] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5d7cff];
+}
+
+.minimal-input {
+  @apply min-h-12 rounded-[8px] border border-white/15 bg-white/10 px-4 text-sm font-semibold text-white outline-none placeholder:text-white/55 focus:border-white/60;
+}
+
+.qr-grid {
+  background:
+    linear-gradient(90deg, #07111f 14px, transparent 14px) 0 0 / 28px 28px,
+    linear-gradient(#07111f 14px, transparent 14px) 0 0 / 28px 28px,
+    linear-gradient(90deg, transparent 7px, rgba(7, 17, 31, 0.9) 7px 14px, transparent 14px) 10px 10px / 34px 34px,
+    #ffffff;
+}
+
+.hide-scrollbar {
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
