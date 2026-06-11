@@ -9,14 +9,14 @@ import {
   ChevronsLeftRight,
   Menu,
   ScanLine,
-  X
+  X,
 } from "lucide-react";
 import {
   motion,
   useReducedMotion,
   useScroll,
   useTransform,
-  type Variants
+  type Variants,
 } from "framer-motion";
 import QRCodeGenerator from "qrcode";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
@@ -25,7 +25,7 @@ const navItems = [
   ["Služby", "#sluzby"],
   ["Projekt", "#projekt"],
   ["Proces", "#proces"],
-  ["Kontakt", "#kontakt"]
+  ["Kontakt", "#kontakt"],
 ];
 
 const services = [
@@ -33,40 +33,71 @@ const services = [
     number: "01",
     title: "Tvorba webov",
     text: "Nový web od čistého papiera — premyslená štruktúra, vizuál na mieru a kód, ktorý sa rýchlo načíta na každom zariadení.",
-    tags: ["UX & dizajn", "Texty a štruktúra", "Next.js vývoj", "Nasadenie"]
+    tags: ["UX & dizajn", "Texty a štruktúra", "Next.js vývoj", "Nasadenie"],
   },
   {
     number: "02",
     title: "Redizajn stránok",
     text: "Zo zastaraného webu spravíme vizitku, za ktorú sa nebudete hanbiť. Zachováme, čo funguje, a prekopeme zvyšok.",
-    tags: ["Audit súčasného webu", "Nový vizuál", "Migrácia obsahu", "Optimalizácia rýchlosti"]
+    tags: [
+      "Audit súčasného webu",
+      "Nový vizuál",
+      "Migrácia obsahu",
+      "Optimalizácia rýchlosti",
+    ],
   },
   {
     number: "03",
     title: "Vývoj na mieru",
     text: "Webové aplikácie, rezervačné systémy, interné nástroje a integrácie presne podľa toho, ako funguje vaša firma.",
-    tags: ["Webové aplikácie", "Integrácie & API", "Automatizácia", "Dlhodobý rozvoj"]
+    tags: [
+      "Webové aplikácie",
+      "Integrácie & API",
+      "Automatizácia",
+      "Dlhodobý rozvoj",
+    ],
   },
   {
     number: "04",
     title: "E-shopy",
     text: "Obchod, ktorý predáva — od katalógu a platieb až po správu objednávok a automatizácie okolo nich.",
-    tags: ["Katalóg produktov", "Platobné brány", "Doprava a sklady", "Správa objednávok"]
-  }
+    tags: [
+      "Katalóg produktov",
+      "Platobné brány",
+      "Doprava a sklady",
+      "Správa objednávok",
+    ],
+  },
 ];
 
 const processSteps = [
-  ["01", "Konzultácia", "Nezáväzný rozhovor o cieľoch, rozsahu a rozpočte. Do 48 hodín viete, čo vám vieme postaviť."],
-  ["02", "Návrh", "Wireframy a vizuálny koncept. Iterujeme spolu, kým dizajn nesedí na milimeter."],
-  ["03", "Vývoj", "Čistý a rýchly kód s priebežnými ukážkami — vidíte progres, nie čiernu skrinku."],
-  ["04", "Spustenie & podpora", "Nasadenie, meranie a ďalší rozvoj. Web odovzdaním nekončí, ale začína."]
+  [
+    "01",
+    "Konzultácia",
+    "Nezáväzný rozhovor o cieľoch, rozsahu a rozpočte. Do 48 hodín viete, čo vám vieme postaviť.",
+  ],
+  [
+    "02",
+    "Návrh",
+    "Wireframy a vizuálny koncept. Iterujeme spolu, kým dizajn nesedí na milimeter.",
+  ],
+  [
+    "03",
+    "Vývoj",
+    "Čistý a rýchly kód s priebežnými ukážkami — vidíte progres, nie čiernu skrinku.",
+  ],
+  [
+    "04",
+    "Spustenie & podpora",
+    "Nasadenie, meranie a ďalší rozvoj. Web odovzdaním nekončí, ale začína.",
+  ],
 ];
 
 const caseHighlights = [
   "Dynamický QR vstup s obnovou každých 15 sekúnd",
   "Členstvá, rezervácie a platby cez Stripe",
   "Real-time obsadenosť a scan logy",
-  "5 rolí od recepcie po majiteľa"
+  "5 rolí od recepcie po majiteľa",
 ];
 
 const caseStack = ["Next.js", "React", "Supabase", "Stripe", "Realtime"];
@@ -76,17 +107,21 @@ const easterEggMessages = [
   "Tento QR kód nie je vstupenka, ale má dobrý vibe.",
   "Ak toto čítaš po scane, systém práve žmurkol.",
   "Tap-it tip: Menej kartičiek, viac tréningu.",
-  "Hidden mode: fitko bez tabuliek odomknuté."
+  "Hidden mode: fitko bez tabuliek odomknuté.",
 ];
 
 const revealContainer: Variants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.12 } }
+  visible: { transition: { staggerChildren: 0.12 } },
 };
 
 const revealItem: Variants = {
   hidden: { opacity: 0, y: 28 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" } }
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.55, ease: "easeOut" },
+  },
 };
 
 export default function Home() {
@@ -113,7 +148,7 @@ export default function Home() {
 
 function Navigation({
   menuOpen,
-  setMenuOpen
+  setMenuOpen,
 }: {
   menuOpen: boolean;
   setMenuOpen: (open: boolean) => void;
@@ -132,7 +167,10 @@ function Navigation({
 
       for (const [, href] of navItems) {
         const section = document.querySelector<HTMLElement>(href);
-        if (section && section.getBoundingClientRect().top + window.scrollY <= scrollPosition) {
+        if (
+          section &&
+          section.getBoundingClientRect().top + window.scrollY <= scrollPosition
+        ) {
           current = href;
         }
       }
@@ -183,7 +221,9 @@ function Navigation({
           <span className="grid h-9 w-9 place-items-center rounded-full bg-accent">
             <Asterisk aria-hidden="true" className="h-5 w-5" />
           </span>
-          <span className="font-display text-lg font-semibold tracking-tight text-ivory">Tap-it</span>
+          <span className="font-display text-lg font-semibold tracking-tight text-ivory">
+            Tap-it
+          </span>
         </a>
 
         <div className="hidden items-center gap-1 lg:flex">
@@ -193,7 +233,9 @@ function Navigation({
               href={href}
               onClick={() => handleNavClick(href)}
               className={`relative rounded-full px-4 py-2.5 text-sm font-medium transition ${
-                activeSection === href ? "text-white" : "text-slate-400 hover:text-white"
+                activeSection === href
+                  ? "text-white"
+                  : "text-slate-400 hover:text-white"
               }`}
             >
               {activeSection === href ? (
@@ -224,7 +266,11 @@ function Navigation({
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen(!menuOpen)}
           >
-            {menuOpen ? <X aria-hidden="true" className="h-4 w-4" /> : <Menu aria-hidden="true" className="h-4 w-4" />}
+            {menuOpen ? (
+              <X aria-hidden="true" className="h-4 w-4" />
+            ) : (
+              <Menu aria-hidden="true" className="h-4 w-4" />
+            )}
           </button>
         </div>
       </nav>
@@ -266,8 +312,16 @@ function Navigation({
 function Hero() {
   const reduceMotion = useReducedMotion();
   const { scrollY } = useScroll();
-  const titleY = useTransform(scrollY, [0, 700], reduceMotion ? [0, 0] : [0, -180]);
-  const introY = useTransform(scrollY, [0, 500], reduceMotion ? [0, 0] : [0, -70]);
+  const titleY = useTransform(
+    scrollY,
+    [0, 700],
+    reduceMotion ? [0, 0] : [0, -180],
+  );
+  const introY = useTransform(
+    scrollY,
+    [0, 500],
+    reduceMotion ? [0, 0] : [0, -70],
+  );
   const introOpacity = useTransform(scrollY, [0, 420], [1, 0.1]);
 
   return (
@@ -301,7 +355,7 @@ function Hero() {
               variants={revealItem}
               className="mt-6 max-w-md font-display text-lg font-medium italic leading-relaxed text-slate-400 sm:text-2xl"
             >
-              tvorba webov, redizajn a vývoj na mieru — dizajn aj kód pod jednou
+              tvorba webov, redizajn a vývoj na mieru dizajn aj kód pod jednou
               strechou
             </motion.p>
             <motion.span
@@ -343,7 +397,6 @@ function IntroSection() {
             variants={revealItem}
             className="mx-auto inline-flex items-center gap-2 rounded-full border border-white/10 bg-surface/80 px-4 py-2 text-xs font-semibold text-accent-soft backdrop-blur lg:mx-0"
           >
-            <Asterisk aria-hidden="true" className="h-4 w-4" />
             Webové štúdio · dizajn & vývoj
           </motion.p>
 
@@ -360,7 +413,8 @@ function IntroSection() {
             className="mx-auto mt-6 max-w-md text-sm leading-7 text-slate-400 sm:text-base lg:mx-0"
           >
             Tap-it je webové štúdio — tvorba webov, redizajn, e-shopy a vývoj na
-            mieru. Od prvej skice po nasadenie, dizajn aj kód pod jednou strechou.
+            mieru. Od prvej skice po nasadenie, dizajn aj kód pod jednou
+            strechou.
           </motion.p>
 
           <motion.div
@@ -383,11 +437,18 @@ function IntroSection() {
             {[
               ["48 h", "prvá odpoveď"],
               ["0", "šablón v kóde"],
-              ["100 %", "na mieru"]
+              ["100 %", "na mieru"],
             ].map(([value, label]) => (
-              <div key={label} className="px-3 py-4 text-center lg:px-5 lg:text-left">
-                <p className="font-display text-xl font-semibold text-ivory sm:text-2xl">{value}</p>
-                <p className="mt-1 text-[11px] font-medium text-slate-500 sm:text-xs">{label}</p>
+              <div
+                key={label}
+                className="px-3 py-4 text-center lg:px-5 lg:text-left"
+              >
+                <p className="font-display text-xl font-semibold text-ivory sm:text-2xl">
+                  {value}
+                </p>
+                <p className="mt-1 text-[11px] font-medium text-slate-500 sm:text-xs">
+                  {label}
+                </p>
               </div>
             ))}
           </motion.div>
@@ -416,7 +477,10 @@ function RedesignSlider() {
       <div className="relative overflow-hidden rounded-2xl border border-white/5">
         <div className="relative aspect-[4/3.4] select-none sm:aspect-[4/3]">
           <AfterPreview />
-          <div className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}>
+          <div
+            className="absolute inset-0"
+            style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}
+          >
             <BeforePreview />
           </div>
 
@@ -425,7 +489,10 @@ function RedesignSlider() {
             style={{ left: `${position}%` }}
           >
             <span className="absolute left-1/2 top-1/2 grid h-9 w-9 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-white/20 bg-base/90 shadow-card backdrop-blur">
-              <ChevronsLeftRight aria-hidden="true" className="h-4 w-4 text-white" />
+              <ChevronsLeftRight
+                aria-hidden="true"
+                className="h-4 w-4 text-white"
+              />
             </span>
           </div>
 
@@ -513,7 +580,10 @@ function AfterPreview() {
 
       <div className="mt-4 grid grid-cols-3 gap-3">
         {[0, 1, 2].map((item) => (
-          <div key={item} className="h-12 rounded-lg border border-white/5 bg-raised sm:h-14" />
+          <div
+            key={item}
+            className="h-12 rounded-lg border border-white/5 bg-raised sm:h-14"
+          />
         ))}
       </div>
     </div>
@@ -521,12 +591,42 @@ function AfterPreview() {
 }
 
 const floatingTags = [
-  { label: "Tvorba webov", position: "left-[4%] top-[16%]", depth: 130, hideOnMobile: false },
-  { label: "Redizajn stránok", position: "right-[5%] top-[22%]", depth: 80, hideOnMobile: false },
-  { label: "E-shopy", position: "left-[10%] bottom-[18%]", depth: 60, hideOnMobile: false },
-  { label: "Webové aplikácie", position: "right-[8%] bottom-[14%]", depth: 150, hideOnMobile: true },
-  { label: "Next.js & React", position: "left-[34%] top-[8%]", depth: 100, hideOnMobile: true },
-  { label: "SEO základy", position: "right-[30%] bottom-[6%]", depth: 90, hideOnMobile: true }
+  {
+    label: "Tvorba webov",
+    position: "left-[4%] top-[16%]",
+    depth: 130,
+    hideOnMobile: false,
+  },
+  {
+    label: "Redizajn stránok",
+    position: "right-[5%] top-[22%]",
+    depth: 80,
+    hideOnMobile: false,
+  },
+  {
+    label: "E-shopy",
+    position: "left-[10%] bottom-[18%]",
+    depth: 60,
+    hideOnMobile: false,
+  },
+  {
+    label: "Webové aplikácie",
+    position: "right-[8%] bottom-[14%]",
+    depth: 150,
+    hideOnMobile: true,
+  },
+  {
+    label: "Next.js & React",
+    position: "left-[34%] top-[8%]",
+    depth: 100,
+    hideOnMobile: true,
+  },
+  {
+    label: "SEO základy",
+    position: "right-[30%] bottom-[6%]",
+    depth: 90,
+    hideOnMobile: true,
+  },
 ];
 
 function ManifestoParallax() {
@@ -534,11 +634,23 @@ function ManifestoParallax() {
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start end", "end start"]
+    offset: ["start end", "end start"],
   });
-  const yStatement = useTransform(scrollYProgress, [0, 1], reduceMotion ? [0, 0] : [50, -50]);
-  const yBackdrop = useTransform(scrollYProgress, [0, 1], reduceMotion ? [0, 0] : [-90, 90]);
-  const rotateMark = useTransform(scrollYProgress, [0, 1], reduceMotion ? [0, 0] : [0, 150]);
+  const yStatement = useTransform(
+    scrollYProgress,
+    [0, 1],
+    reduceMotion ? [0, 0] : [50, -50],
+  );
+  const yBackdrop = useTransform(
+    scrollYProgress,
+    [0, 1],
+    reduceMotion ? [0, 0] : [-90, 90],
+  );
+  const rotateMark = useTransform(
+    scrollYProgress,
+    [0, 1],
+    reduceMotion ? [0, 0] : [0, 150],
+  );
 
   return (
     <section
@@ -563,11 +675,19 @@ function ManifestoParallax() {
 
       <div aria-hidden="true">
         {floatingTags.map((tag) => (
-          <FloatingTag key={tag.label} tag={tag} progress={scrollYProgress} reduceMotion={!!reduceMotion} />
+          <FloatingTag
+            key={tag.label}
+            tag={tag}
+            progress={scrollYProgress}
+            reduceMotion={!!reduceMotion}
+          />
         ))}
       </div>
 
-      <motion.div style={{ y: yStatement }} className="relative mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <motion.div
+        style={{ y: yStatement }}
+        className="relative mx-auto max-w-4xl px-4 text-center sm:px-6"
+      >
         <p className="section-kicker">Tap-it</p>
         <p className="mt-5 font-display text-3xl font-semibold leading-[1.15] tracking-tight text-ivory sm:text-5xl lg:text-6xl">
           Dizajn, ktorý <em className="italic text-accent-soft">predáva</em>.
@@ -582,13 +702,17 @@ function ManifestoParallax() {
 function FloatingTag({
   tag,
   progress,
-  reduceMotion
+  reduceMotion,
 }: {
   tag: (typeof floatingTags)[number];
   progress: ReturnType<typeof useScroll>["scrollYProgress"];
   reduceMotion: boolean;
 }) {
-  const y = useTransform(progress, [0, 1], reduceMotion ? [0, 0] : [tag.depth, -tag.depth]);
+  const y = useTransform(
+    progress,
+    [0, 1],
+    reduceMotion ? [0, 0] : [tag.depth, -tag.depth],
+  );
 
   return (
     <motion.span
@@ -622,7 +746,10 @@ function ServicesSection() {
           >
             Čo pre vás vieme postaviť.
           </motion.h2>
-          <motion.p variants={revealItem} className="mt-4 max-w-lg text-sm leading-7 text-slate-400">
+          <motion.p
+            variants={revealItem}
+            className="mt-4 max-w-lg text-sm leading-7 text-slate-400"
+          >
             Štyri služby, jeden prístup: žiadne šablóny a žiadny medzičlánok
             navyše — návrh aj kód robíme my.
           </motion.p>
@@ -650,7 +777,9 @@ function ServicesSection() {
                 <h3 className="font-display text-2xl font-semibold tracking-tight text-ivory transition group-hover:text-accent-soft sm:text-3xl lg:text-4xl">
                   {service.title}
                 </h3>
-                <p className="mt-3 max-w-xl text-sm leading-7 text-slate-400">{service.text}</p>
+                <p className="mt-3 max-w-xl text-sm leading-7 text-slate-400">
+                  {service.text}
+                </p>
                 <div className="mt-5 flex flex-wrap gap-2">
                   {service.tags.map((tag) => (
                     <span
@@ -664,7 +793,10 @@ function ServicesSection() {
               </div>
 
               <span className="hidden h-12 w-12 place-items-center rounded-full border border-white/10 text-slate-400 transition group-hover:border-accent group-hover:bg-accent group-hover:text-white lg:grid">
-                <ArrowUpRight aria-hidden="true" className="h-5 w-5 transition group-hover:rotate-45" />
+                <ArrowUpRight
+                  aria-hidden="true"
+                  className="h-5 w-5 transition group-hover:rotate-45"
+                />
               </span>
             </motion.a>
           ))}
@@ -676,7 +808,10 @@ function ServicesSection() {
 
 function CaseStudySection() {
   return (
-    <section id="projekt" className="border-y border-white/5 bg-surface px-4 py-20 sm:px-6 lg:py-28">
+    <section
+      id="projekt"
+      className="border-y border-white/5 bg-surface px-4 py-20 sm:px-6 lg:py-28"
+    >
       <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
         <motion.div
           variants={revealContainer}
@@ -685,32 +820,44 @@ function CaseStudySection() {
           viewport={{ once: true, margin: "-80px" }}
         >
           <motion.p variants={revealItem} className="section-kicker">
-            Case study · vlastný produkt
+            Vlastný produkt
           </motion.p>
           <motion.h2
             variants={revealItem}
             className="mt-4 font-display text-3xl font-semibold tracking-tight text-ivory sm:text-4xl"
           >
-            Tap-it Fitness OS — systém, ktorý sme si{" "}
+            Tap-it Fitness — systém, ktorý sme si{" "}
             <em className="italic text-accent-soft">postavili sami</em>.
           </motion.h2>
-          <motion.p variants={revealItem} className="mt-5 max-w-md text-sm leading-7 text-slate-400">
+          <motion.p
+            variants={revealItem}
+            className="mt-5 max-w-md text-sm leading-7 text-slate-400"
+          >
             Operačný systém pre fitness prevádzky — digitálne členstvá, QR
             vstup, rezervácie, platby a real-time prehľad — sme navrhli aj
             naprogramovali od nuly. Presne takto pristupujeme aj k vášmu
             projektu.
           </motion.p>
 
-          <motion.div variants={revealItem} className="mt-7 grid gap-3 text-sm text-slate-300">
+          <motion.div
+            variants={revealItem}
+            className="mt-7 grid gap-3 text-sm text-slate-300"
+          >
             {caseHighlights.map((item) => (
               <div key={item} className="flex items-center gap-3">
-                <Check aria-hidden="true" className="h-4 w-4 shrink-0 text-accent-bright" />
+                <Check
+                  aria-hidden="true"
+                  className="h-4 w-4 shrink-0 text-accent-bright"
+                />
                 {item}
               </div>
             ))}
           </motion.div>
 
-          <motion.div variants={revealItem} className="mt-7 flex flex-wrap gap-2">
+          <motion.div
+            variants={revealItem}
+            className="mt-7 flex flex-wrap gap-2"
+          >
             {caseStack.map((tech) => (
               <span
                 key={tech}
@@ -737,7 +884,7 @@ function CaseStudySection() {
                   <span className="grid h-7 w-7 place-items-center rounded-lg bg-accent">
                     <ScanLine aria-hidden="true" className="h-4 w-4" />
                   </span>
-                  Tap-it Fitness OS
+                  Tap-it
                 </span>
                 <span className="rounded-full bg-success/10 px-2.5 py-1 text-[10px] font-semibold text-emerald-300">
                   Live demo
@@ -750,8 +897,12 @@ function CaseStudySection() {
           </div>
 
           <div className="absolute -left-3 -top-4 hidden rounded-xl border border-white/10 bg-raised px-4 py-3 shadow-card sm:block">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">QR refresh</p>
-            <p className="mt-1 font-display text-xl font-semibold text-ivory">15 s</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+              QR refresh
+            </p>
+            <p className="mt-1 font-display text-xl font-semibold text-ivory">
+              15 s
+            </p>
           </div>
         </motion.div>
       </div>
@@ -773,8 +924,8 @@ function LiveQrCard() {
       margin: 1,
       color: {
         dark: "#09090D",
-        light: "#ffffff"
-      }
+        light: "#ffffff",
+      },
     }).then((url) => {
       if (active) setQrUrl(url);
     });
@@ -815,11 +966,17 @@ function LiveQrCard() {
       </div>
 
       <div>
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Scan easter egg</p>
-        <p className="mt-2 min-h-12 text-sm font-medium leading-6 text-slate-200">{activeMessage}</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+          Scan easter egg
+        </p>
+        <p className="mt-2 min-h-12 text-sm font-medium leading-6 text-slate-200">
+          {activeMessage}
+        </p>
         <div className="mt-5 flex items-center justify-between">
           <span className="text-sm font-medium text-slate-500">Obnova QR</span>
-          <span className="font-display text-3xl font-semibold text-ivory">{secondsLeft} s</span>
+          <span className="font-display text-3xl font-semibold text-ivory">
+            {secondsLeft} s
+          </span>
         </div>
         <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/5">
           <motion.div
@@ -872,9 +1029,17 @@ function ProcessSection() {
           className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8"
         >
           {processSteps.map(([number, title, text]) => (
-            <motion.div key={number} variants={revealItem} className="border-t border-white/10 pt-6">
-              <p className="font-display text-3xl font-semibold italic text-accent-soft">{number}</p>
-              <h3 className="mt-4 font-display text-xl font-semibold tracking-tight text-ivory">{title}</h3>
+            <motion.div
+              key={number}
+              variants={revealItem}
+              className="border-t border-white/10 pt-6"
+            >
+              <p className="font-display text-3xl font-semibold italic text-accent-soft">
+                {number}
+              </p>
+              <h3 className="mt-4 font-display text-xl font-semibold tracking-tight text-ivory">
+                {title}
+              </h3>
               <p className="mt-3 text-sm leading-7 text-slate-400">{text}</p>
             </motion.div>
           ))}
@@ -915,7 +1080,8 @@ function ContactSection() {
           <div>
             <p className="section-kicker">Kontakt</p>
             <h2 className="mt-4 max-w-md font-display text-3xl font-semibold tracking-tight text-ivory sm:text-4xl">
-              Povedzte nám, čo <em className="italic text-accent-soft">staviate</em>.
+              Povedzte nám, čo{" "}
+              <em className="italic text-accent-soft">staviate</em>.
             </h2>
             <p className="mt-5 max-w-md text-sm leading-7 text-slate-400">
               Napíšte pár viet o projekte — nový web, redizajn, e-shop alebo
@@ -926,9 +1092,12 @@ function ContactSection() {
               {[
                 "Nezáväzná konzultácia zdarma",
                 "Odpoveď do 48 hodín",
-                "Cenový odhad bez prekvapení"
+                "Cenový odhad bez prekvapení",
               ].map((item) => (
-                <div key={item} className="flex items-center gap-3 text-sm font-medium text-slate-300">
+                <div
+                  key={item}
+                  className="flex items-center gap-3 text-sm font-medium text-slate-300"
+                >
                   <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent-faint text-accent-soft">
                     <Asterisk aria-hidden="true" className="h-4 w-4" />
                   </span>
@@ -944,7 +1113,8 @@ function ContactSection() {
                 <Check aria-hidden="true" className="h-6 w-6" />
               </span>
               <p className="mt-6 font-display text-2xl font-semibold tracking-tight text-ivory">
-                Ďakujeme, dopyt je <em className="italic text-accent-soft">na ceste</em>.
+                Ďakujeme, dopyt je{" "}
+                <em className="italic text-accent-soft">na ceste</em>.
               </p>
               <p className="mt-3 max-w-sm text-sm leading-7 text-slate-400">
                 Ozveme sa vám do 48 hodín s návrhom ďalších krokov.
@@ -955,7 +1125,12 @@ function ContactSection() {
               <div className="grid gap-7 sm:grid-cols-2">
                 <label className="block">
                   <span className="field-label">Meno</span>
-                  <input className="editorial-input" name="name" placeholder="Jana Nováková" required />
+                  <input
+                    className="editorial-input"
+                    name="name"
+                    placeholder="Jana Nováková"
+                    required
+                  />
                 </label>
                 <label className="block">
                   <span className="field-label">E-mail</span>
@@ -1001,7 +1176,10 @@ function ContactSection() {
               </label>
 
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <button className="primary-button w-full sm:w-auto" type="submit">
+                <button
+                  className="primary-button w-full sm:w-auto"
+                  type="submit"
+                >
                   Odoslať dopyt
                   <ArrowRight aria-hidden="true" className="h-4 w-4" />
                 </button>
@@ -1026,19 +1204,29 @@ function Footer({ year }: { year: number }) {
             <span className="grid h-8 w-8 place-items-center rounded-full bg-accent">
               <Asterisk aria-hidden="true" className="h-4 w-4" />
             </span>
-            <span className="font-display text-sm font-semibold tracking-tight text-ivory">Tap-it</span>
+            <span className="font-display text-sm font-semibold tracking-tight text-ivory">
+              Tap-it
+            </span>
           </div>
           <p className="mt-4 max-w-xs text-sm leading-7 text-slate-500">
             Webové štúdio — tvorba webov, redizajn, e-shopy a vývoj na mieru.
           </p>
         </div>
         {[
-          ["Služby", "Tvorba webov", "Redizajn stránok", "Vývoj na mieru", "E-shopy"],
+          [
+            "Služby",
+            "Tvorba webov",
+            "Redizajn stránok",
+            "Vývoj na mieru",
+            "E-shopy",
+          ],
           ["Štúdio", "Projekt", "Proces", "Kontakt"],
-          ["Produkt", "Tap-it Fitness OS", "QR vstup", "Rezervácie"]
+          ["Produkt", "Tap-it", "QR vstup", "Rezervácie"],
         ].map(([heading, ...links]) => (
           <div key={heading}>
-            <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-slate-400">{heading}</p>
+            <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-slate-400">
+              {heading}
+            </p>
             <div className="grid gap-2 text-sm text-slate-500">
               {links.map((link) => (
                 <span key={link}>{link}</span>
