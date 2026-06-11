@@ -1,11 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Manrope, Sora } from "next/font/google";
+import { Fraunces, Manrope } from "next/font/google";
 import "./globals.css";
 
-const sora = Sora({
+const fraunces = Fraunces({
   subsets: ["latin", "latin-ext"],
   variable: "--font-display",
-  weight: ["500", "600", "700"]
+  style: ["normal", "italic"],
+  axes: ["opsz"]
 });
 
 const manrope = Manrope({
@@ -15,13 +16,13 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "Tap-it - systém pre fitness prevádzky",
+  title: "Tap-it — webové štúdio | tvorba webov, redizajn a vývoj na mieru",
   description:
-    "Digitálne členstvá, QR vstup, rezervácie, platby a real-time prehľad pre moderné fitká.",
+    "Navrhujeme a programujeme weby, e-shopy a aplikácie na mieru. Od prvej skice po nasadenie — dizajn aj kód pod jednou strechou.",
   openGraph: {
-    title: "Tap-it - systém pre fitness prevádzky",
+    title: "Tap-it — webové štúdio",
     description:
-      "Digitálne členstvá, QR vstup, rezervácie, platby a real-time prehľad pre moderné fitká.",
+      "Navrhujeme a programujeme weby, e-shopy a aplikácie na mieru. Od prvej skice po nasadenie — dizajn aj kód pod jednou strechou.",
     type: "website"
   }
 };
@@ -37,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sk" className={`${sora.variable} ${manrope.variable} scroll-smooth`}>
+    <html lang="sk" className={`${fraunces.variable} ${manrope.variable} scroll-smooth`}>
       <body className="bg-base font-sans text-slate-100 antialiased">{children}</body>
     </html>
   );

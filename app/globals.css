@@ -12,7 +12,7 @@
 
 html {
   min-width: 320px;
-  background: #0a0e16;
+  background: #09090d;
 }
 
 body {
@@ -28,63 +28,62 @@ textarea {
 }
 
 ::selection {
-  background: rgba(76, 111, 190, 0.3);
+  background: rgba(94, 124, 255, 0.3);
 }
 
 .section-kicker {
-  @apply text-xs font-semibold uppercase tracking-[0.18em] text-accent-soft;
+  @apply text-xs font-semibold uppercase tracking-[0.22em] text-accent-soft;
 }
 
 .primary-button {
-  @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-accent px-6 text-sm font-semibold text-white transition hover:bg-accent-bright focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft;
+  @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-accent px-7 text-sm font-semibold text-white transition hover:bg-accent-bright focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft;
 }
 
 .secondary-button {
-  @apply inline-flex min-h-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] px-6 text-sm font-semibold text-slate-200 transition hover:border-white/20 hover:bg-white/[0.06] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft;
+  @apply inline-flex min-h-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] px-7 text-sm font-semibold text-slate-200 transition hover:border-white/25 hover:bg-white/[0.06] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft;
 }
 
-.minimal-input {
-  @apply min-h-12 rounded-xl border border-white/15 bg-white/10 px-4 text-sm font-medium text-white outline-none transition placeholder:text-white/50 focus:border-white/45;
+.editorial-input {
+  @apply block w-full border-b border-white/15 bg-transparent px-0 py-3 text-sm font-medium text-white outline-none transition placeholder:text-slate-600 focus:border-accent-bright;
+}
+
+.field-label {
+  @apply text-[11px] font-semibold uppercase tracking-wider text-slate-500;
 }
 
 .hero-glow {
   background:
-    radial-gradient(ellipse 70% 45% at 50% -5%, rgba(58, 91, 168, 0.32), transparent 70%),
-    linear-gradient(180deg, rgba(15, 20, 30, 0.9) 0%, rgba(10, 14, 22, 0) 70%);
+    radial-gradient(ellipse 70% 45% at 50% -5%, rgba(62, 99, 221, 0.3), transparent 70%),
+    linear-gradient(180deg, rgba(14, 15, 21, 0.9) 0%, rgba(9, 9, 13, 0) 70%);
 }
 
 .hero-grid {
   background-image:
-    linear-gradient(rgba(157, 179, 224, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(157, 179, 224, 0.05) 1px, transparent 1px);
+    linear-gradient(rgba(173, 194, 247, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(173, 194, 247, 0.05) 1px, transparent 1px);
   background-size: 64px 64px;
   mask-image: radial-gradient(ellipse at 50% 12%, black 0%, transparent 70%);
 }
 
 .panel-grid {
   background-image:
-    linear-gradient(rgba(157, 179, 224, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(157, 179, 224, 0.04) 1px, transparent 1px);
+    linear-gradient(rgba(173, 194, 247, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(173, 194, 247, 0.04) 1px, transparent 1px);
   background-size: 32px 32px;
 }
 
-.marquee-track {
-  display: flex;
-  width: max-content;
-  animation: marquee 28s linear infinite;
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-.marquee-mask {
-  mask-image: linear-gradient(90deg, transparent 0%, black 12%, black 88%, transparent 100%);
-}
-
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(173, 194, 247, 0.28);
 }
 
 .hide-scrollbar {
