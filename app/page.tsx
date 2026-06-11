@@ -271,7 +271,7 @@ function Hero() {
   const introOpacity = useTransform(scrollY, [0, 420], [1, 0.1]);
 
   return (
-    <section className="sticky top-0 z-0 h-screen">
+    <section className="sticky top-0 z-0 h-svh sm:h-screen">
       <div className="flex h-full flex-col overflow-hidden">
         <div className="hero-glow pointer-events-none absolute inset-x-0 top-0 -z-20 h-full" />
         <div className="hero-grid pointer-events-none absolute inset-x-0 top-0 -z-10 h-[80%]" />
@@ -289,7 +289,7 @@ function Hero() {
             variants={revealContainer}
             initial="hidden"
             animate="visible"
-            className="flex flex-1 flex-col items-center justify-center text-center"
+            className="flex flex-1 flex-col items-center justify-center pb-10 text-center sm:pb-0"
           >
             <motion.span
               variants={revealItem}
@@ -319,7 +319,7 @@ function Hero() {
           initial={{ opacity: 0, y: 60 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease: "easeOut", delay: 0.2 }}
-          className="relative w-full whitespace-nowrap pb-[3vw] text-center font-display text-[16vw] font-semibold leading-[0.9] tracking-tight text-ivory"
+          className="relative mb-20 w-full whitespace-nowrap pb-6 text-center font-display text-[16vw] font-semibold leading-[0.9] tracking-tight text-ivory sm:mb-0 sm:pb-[3vw]"
         >
           Weby & <em className="italic text-accent-soft">kód</em>
         </motion.h1>
