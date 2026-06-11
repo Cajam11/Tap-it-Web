@@ -6,40 +6,45 @@ const fraunces = Fraunces({
   subsets: ["latin", "latin-ext"],
   variable: "--font-display",
   style: ["normal", "italic"],
-  axes: ["opsz"]
+  axes: ["opsz"],
 });
 
 const manrope = Manrope({
   subsets: ["latin", "latin-ext"],
   variable: "--font-body",
-  weight: ["400", "500", "600", "700"]
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "Tap-it — webové štúdio | tvorba webov, redizajn a vývoj na mieru",
+  title: "Tap-it | SaaS systém pre fitness centrá",
   description:
-    "Navrhujeme a programujeme weby, e-shopy a aplikácie na mieru. Od prvej skice po nasadenie — dizajn aj kód pod jednou strechou.",
+    "Tap-it spája QR vstupy, členstvá, rezervácie, smeny a admin panel do jedného operačného systému pre fitness centrá.",
   openGraph: {
-    title: "Tap-it — webové štúdio",
+    title: "Tap-it | Fitness OS",
     description:
-      "Navrhujeme a programujeme weby, e-shopy a aplikácie na mieru. Od prvej skice po nasadenie — dizajn aj kód pod jednou strechou.",
-    type: "website"
-  }
+      "QR vstupy, členstvá, rezervácie a prevádzka fitka v jednom SaaS systéme.",
+    type: "website",
+  },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
-  initialScale: 1
+  initialScale: 1,
 };
 
 export default function RootLayout({
-  children
+  children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sk" className={`${fraunces.variable} ${manrope.variable} scroll-smooth`}>
-      <body className="bg-base font-sans text-slate-100 antialiased">{children}</body>
+    <html
+      lang="sk"
+      className={`${fraunces.variable} ${manrope.variable} scroll-smooth`}
+    >
+      <body className="bg-base font-sans text-slate-100 antialiased">
+        {children}
+      </body>
     </html>
   );
 }

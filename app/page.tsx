@@ -1,118 +1,73 @@
 "use client";
 
+import Image, { type StaticImageData } from "next/image";
 import {
-  ArrowDown,
+  Activity,
   ArrowRight,
-  ArrowUpRight,
-  Asterisk,
+  BadgeCheck,
+  Bell,
+  CalendarDays,
   Check,
-  ChevronsLeftRight,
+  Clock,
+  CreditCard,
+  DoorOpen,
+  Dumbbell,
+  Facebook,
+  Instagram,
+  Linkedin,
+  Mail,
+  MapPin,
   Menu,
+  Moon,
+  Phone,
   ScanLine,
+  Smartphone,
+  Sun,
+  Twitter,
+  Users,
   X,
+  type LucideIcon,
 } from "lucide-react";
 import {
   motion,
+  useMotionValueEvent,
   useReducedMotion,
   useScroll,
   useTransform,
+  type MotionValue,
   type Variants,
 } from "framer-motion";
-import QRCodeGenerator from "qrcode";
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import {
+  FormEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+  type ReactNode,
+} from "react";
+
+import analyticsScreen from "../screenshots/Analytics.png";
+import bookingsScreen from "../screenshots/Bookings.png";
+import dashboardScreen from "../screenshots/Dashboard.png";
+import membershipsScreen from "../screenshots/Memberships.png";
+import newsScreen from "../screenshots/News.png";
+import priestoryScreen from "../screenshots/Priestory.png";
+import scanLogsScreen from "../screenshots/Scan_Logs.png";
+import smenyScreen from "../screenshots/Smeny.png";
+import usersScreen from "../screenshots/User_Management.png";
+import verificationScreen from "../screenshots/Verification.png";
 
 const navItems = [
-  ["Služby", "#sluzby"],
-  ["Projekt", "#projekt"],
-  ["Proces", "#proces"],
+  ["Platforma", "#platforma"],
+  ["Produkt", "#produkt"],
+  ["Prevádzka", "#prevadzka"],
   ["Kontakt", "#kontakt"],
-];
-
-const services = [
-  {
-    number: "01",
-    title: "Tvorba webov",
-    text: "Nový web od čistého papiera — premyslená štruktúra, vizuál na mieru a kód, ktorý sa rýchlo načíta na každom zariadení.",
-    tags: ["UX & dizajn", "Texty a štruktúra", "Next.js vývoj", "Nasadenie"],
-  },
-  {
-    number: "02",
-    title: "Redizajn stránok",
-    text: "Zo zastaraného webu spravíme vizitku, za ktorú sa nebudete hanbiť. Zachováme, čo funguje, a prekopeme zvyšok.",
-    tags: [
-      "Audit súčasného webu",
-      "Nový vizuál",
-      "Migrácia obsahu",
-      "Optimalizácia rýchlosti",
-    ],
-  },
-  {
-    number: "03",
-    title: "Vývoj na mieru",
-    text: "Webové aplikácie, rezervačné systémy, interné nástroje a integrácie presne podľa toho, ako funguje vaša firma.",
-    tags: [
-      "Webové aplikácie",
-      "Integrácie & API",
-      "Automatizácia",
-      "Dlhodobý rozvoj",
-    ],
-  },
-  {
-    number: "04",
-    title: "E-shopy",
-    text: "Obchod, ktorý predáva — od katalógu a platieb až po správu objednávok a automatizácie okolo nich.",
-    tags: [
-      "Katalóg produktov",
-      "Platobné brány",
-      "Doprava a sklady",
-      "Správa objednávok",
-    ],
-  },
-];
-
-const processSteps = [
-  [
-    "01",
-    "Konzultácia",
-    "Nezáväzný rozhovor o cieľoch, rozsahu a rozpočte. Do 48 hodín viete, čo vám vieme postaviť.",
-  ],
-  [
-    "02",
-    "Návrh",
-    "Wireframy a vizuálny koncept. Iterujeme spolu, kým dizajn nesedí na milimeter.",
-  ],
-  [
-    "03",
-    "Vývoj",
-    "Čistý a rýchly kód s priebežnými ukážkami — vidíte progres, nie čiernu skrinku.",
-  ],
-  [
-    "04",
-    "Spustenie & podpora",
-    "Nasadenie, meranie a ďalší rozvoj. Web odovzdaním nekončí, ale začína.",
-  ],
-];
-
-const caseHighlights = [
-  "Dynamický QR vstup s obnovou každých 15 sekúnd",
-  "Členstvá, rezervácie a platby cez Stripe",
-  "Real-time obsadenosť a scan logy",
-  "5 rolí od recepcie po majiteľa",
-];
-
-const caseStack = ["Next.js", "React", "Supabase", "Stripe", "Realtime"];
-
-const easterEggMessages = [
-  "Našiel si Tap-it easter egg. Recepcia má dnes pokoj.",
-  "Tento QR kód nie je vstupenka, ale má dobrý vibe.",
-  "Ak toto čítaš po scane, systém práve žmurkol.",
-  "Tap-it tip: Menej kartičiek, viac tréningu.",
-  "Hidden mode: fitko bez tabuliek odomknuté.",
 ];
 
 const revealContainer: Variants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.12 } },
+  visible: { transition: { staggerChildren: 0.1 } },
 };
 
 const revealItem: Variants = {
@@ -124,24 +79,184 @@ const revealItem: Variants = {
   },
 };
 
+type TourScreen = {
+  title: string;
+  eyebrow: string;
+  body: string;
+  metric: string;
+  metricLabel: string;
+  image: StaticImageData;
+  icon: LucideIcon;
+  alt: string;
+};
+
+const tourScreens: TourScreen[] = [
+  {
+    title: "Dashboard pre majiteľa",
+    eyebrow: "Live prehľad",
+    body: "Majiteľ vidí návštevy, predané členstvá, obnovy a posledné scan logy na jednom mieste bez exportovania tabuliek.",
+    metric: "1 pohľad",
+    metricLabel: "na celý gym",
+    image: dashboardScreen,
+    icon: Activity,
+    alt: "Dashboard Tap-it admin panelu so štatistikami návštev a živými scan logmi",
+  },
+  {
+    title: "User management",
+    eyebrow: "Používatelia",
+    body: "Recepcia, tréneri, manažéri aj členovia sú v jednom zozname s rolami, overením a onboarding stavom.",
+    metric: "10",
+    metricLabel: "profilov v databáze",
+    image: usersScreen,
+    icon: Users,
+    alt: "Správa používateľov a rolí v Tap-it admin paneli",
+  },
+  {
+    title: "Verifikácia nových účtov",
+    eyebrow: "Bezpečný onboarding",
+    body: "Nový člen alebo pracovník sa do systému nedostane len tak. Admin potvrdí verifikáciu a až potom sa účet objaví v ostrej prevádzke.",
+    metric: "4",
+    metricLabel: "čakajúci používatelia",
+    image: verificationScreen,
+    icon: BadgeCheck,
+    alt: "Zoznam používateľov čakajúcich na verifikáciu v Tap-it admin paneli",
+  },
+  {
+    title: "Členstvá bez chaosu",
+    eyebrow: "Predplatné",
+    body: "Mesačné, ročné aj jednorazové vstupy sú prepojené na profil člena. Expirácie a zmeny plánu sú riešené priamo v administrácii.",
+    metric: "5+",
+    metricLabel: "aktívnych členstiev",
+    image: membershipsScreen,
+    icon: CreditCard,
+    alt: "Prehľad členstiev v Tap-it admin paneli",
+  },
+  {
+    title: "Analytics",
+    eyebrow: "Prehľady",
+    body: "Analytická vrstva je pripravené miesto pre detailnejšie prehľady návštev, členstiev a trendov prevádzky.",
+    metric: "soon",
+    metricLabel: "detailné štatistiky",
+    image: analyticsScreen,
+    icon: Activity,
+    alt: "Analytics obrazovka v Tap-it admin paneli",
+  },
+  {
+    title: "QR vstupy a scan logy",
+    eyebrow: "Kontrola vstupu",
+    body: "Každý príchod a odchod zostane zapísaný. Recepcia okamžite vidí, kto vstúpil, kedy a či má platné členstvo.",
+    metric: "114",
+    metricLabel: "udalostí v logu",
+    image: scanLogsScreen,
+    icon: ScanLine,
+    alt: "Scan logy v Tap-it admin paneli so záznamami vstupov a odchodov",
+  },
+  {
+    title: "Rezervácie a kalendár",
+    eyebrow: "Triedy a termíny",
+    body: "Skupinové tréningy, opakované hodiny a rezervácie priestoru sú v jednom kalendári, aby tím nemusel koordinovať termíny bokom.",
+    metric: "30 dní",
+    metricLabel: "plánovania dopredu",
+    image: bookingsScreen,
+    icon: CalendarDays,
+    alt: "Kalendár rezervácií v Tap-it admin paneli",
+  },
+  {
+    title: "Smeny a pokrytie",
+    eyebrow: "Denná prevádzka",
+    body: "Tím vidí pokrytie recepcie, diery v službách a čakajúce smeny, ktoré treba vyriešiť pred začiatkom dňa.",
+    metric: "06:00",
+    metricLabel: "štart pokrytia",
+    image: smenyScreen,
+    icon: Clock,
+    alt: "Kalendár smien v Tap-it admin paneli",
+  },
+  {
+    title: "Priestory, ceny a kapacity",
+    eyebrow: "Rezervovateľné zóny",
+    body: "Basketbal, bedminton, solárium alebo vlastná miestnosť. Každý priestor má cenu, pravidlá a obrázok, ktorý sa použije v rezervačnom toku.",
+    metric: "5",
+    metricLabel: "typov priestoru",
+    image: priestoryScreen,
+    icon: MapPin,
+    alt: "Správa rezervovateľných priestorov v Tap-it admin paneli",
+  },
+  {
+    title: "Novinky pre členov",
+    eyebrow: "Komunikácia",
+    body: "Sviatky, opravy alebo nové služby viete poslať členom ako oznam, ktorý má jasné obdobie platnosti a správny vizuál.",
+    metric: "2",
+    metricLabel: "aktívne oznamy",
+    image: newsScreen,
+    icon: Bell,
+    alt: "Novinky a oznamy v Tap-it admin paneli",
+  },
+];
+
+const valueCards = [
+  {
+    title: "Vstup bez plastových kartičiek",
+    text: "Člen sa identifikuje QR kódom. Systém overí profil, členstvo a zapíše scan.",
+    icon: DoorOpen,
+  },
+  {
+    title: "Prevádzka pre celý tím",
+    text: "Recepcia rieši vstupy, tréner rezervácie a majiteľ kontroluje čísla bez ručného preposielania.",
+    icon: Dumbbell,
+  },
+  {
+    title: "Členstvá a platby pokope",
+    text: "Jednorazové vstupy, mesačné plány aj ročné členstvá sú napojené na profily a expirácie.",
+    icon: CreditCard,
+  },
+  {
+    title: "Menej práce v chatoch",
+    text: "Oznamy, služby, priestory a schvaľovanie účtov sú v systéme, nie v poznámkach na recepcii.",
+    icon: Bell,
+  },
+];
+
+const operations = [
+  "Admin panel pre majiteľa, manažéra, recepciu a trénerov",
+  "QR vstup s históriou príchodov a odchodov",
+  "Členstvá, rezervácie, priestory, smeny a novinky v jednej aplikácii",
+  "Pripravené na napojenie mobilnej aplikácie pre členov",
+];
+
+const projectTypes = [
+  "Chcem demo",
+  "Mám fitness centrum",
+  "Chcem pilot",
+  "Chcem sa opýtať",
+];
+
+type ThemeMode = "light" | "dark";
+
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [theme, setTheme] = useState<ThemeMode>("light");
   const year = useMemo(() => new Date().getFullYear(), []);
+  const toggleTheme = () => {
+    setTheme((current) => (current === "light" ? "dark" : "light"));
+  };
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-base text-slate-100">
+    <main
+      className={`min-h-screen overflow-x-clip bg-base text-slate-100 theme-${theme}`}
+    >
       <div aria-hidden="true" className="grain-overlay" />
-      <Navigation menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
-      <Hero />
-      <div className="relative z-10 rounded-t-[2.5rem] border-t border-white/10 bg-base shadow-[0_-24px_80px_rgba(3,4,10,0.55)]">
-        <IntroSection />
-        <ManifestoParallax />
-        <ServicesSection />
-        <CaseStudySection />
-        <ProcessSection />
-        <ContactSection />
-        <Footer year={year} />
-      </div>
+      <Navigation
+        menuOpen={menuOpen}
+        setMenuOpen={setMenuOpen}
+        theme={theme}
+        onThemeToggle={toggleTheme}
+      />
+      <HeroProductShowcase />
+      <ValueSection />
+      <OperationsSection />
+      <MobilePreviewSection />
+      <ContactSection />
+      <FullFooter year={year} />
     </main>
   );
 }
@@ -149,670 +264,633 @@ export default function Home() {
 function Navigation({
   menuOpen,
   setMenuOpen,
+  theme,
+  onThemeToggle,
 }: {
   menuOpen: boolean;
   setMenuOpen: (open: boolean) => void;
+  theme: ThemeMode;
+  onThemeToggle: () => void;
 }) {
-  const [activeSection, setActiveSection] = useState(navItems[0][1]);
-  const suppressSpy = useRef(false);
-  const settleTimer = useRef(0);
-
-  useEffect(() => {
-    let frame = 0;
-
-    const update = () => {
-      const offset = 150;
-      const scrollPosition = window.scrollY + offset;
-      let current = navItems[0][1];
-
-      for (const [, href] of navItems) {
-        const section = document.querySelector<HTMLElement>(href);
-        if (
-          section &&
-          section.getBoundingClientRect().top + window.scrollY <= scrollPosition
-        ) {
-          current = href;
-        }
-      }
-
-      setActiveSection(current);
-    };
-
-    const onScroll = () => {
-      // While a click-initiated smooth scroll runs, hold the spy so the nav
-      // pill doesn't hop through every section the scroll passes over.
-      if (suppressSpy.current) {
-        window.clearTimeout(settleTimer.current);
-        settleTimer.current = window.setTimeout(() => {
-          suppressSpy.current = false;
-          update();
-        }, 160);
-        return;
-      }
-      window.cancelAnimationFrame(frame);
-      frame = window.requestAnimationFrame(update);
-    };
-
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-
-    return () => {
-      window.cancelAnimationFrame(frame);
-      window.clearTimeout(settleTimer.current);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-    };
-  }, []);
-
-  function handleNavClick(href: string) {
-    setActiveSection(href);
-    suppressSpy.current = true;
-    window.clearTimeout(settleTimer.current);
-    settleTimer.current = window.setTimeout(() => {
-      suppressSpy.current = false;
-    }, 600);
-  }
+  const isDark = theme === "dark";
+  const navSurface = isDark
+    ? "border-white/10 bg-base/[0.72] shadow-[0_18px_70px_rgba(0,0,0,0.34)]"
+    : "border-white/65 bg-white/[0.72] shadow-[0_18px_70px_rgba(15,23,42,0.14)]";
+  const brandText = isDark ? "text-white" : "text-slate-950";
+  const linkTone = isDark
+    ? "text-slate-300 hover:bg-white/[0.08] hover:text-white"
+    : "text-slate-600 hover:bg-slate-950/[0.06] hover:text-slate-950";
+  const iconButtonTone = isDark
+    ? "border-white/10 bg-white/[0.06] text-white hover:bg-white/[0.1]"
+    : "border-slate-950/10 bg-white/70 text-slate-950 hover:bg-white";
+  const mobileSurface = isDark
+    ? "border-white/10 bg-base/[0.9] shadow-[0_18px_70px_rgba(0,0,0,0.34)]"
+    : "border-white/65 bg-white/[0.86] shadow-[0_18px_70px_rgba(15,23,42,0.14)]";
 
   return (
-    <header className="fixed inset-x-0 top-3 z-50 px-4 sm:top-4 sm:px-6">
-      <nav className="mx-auto flex h-16 w-full max-w-[22rem] items-center justify-between gap-2 rounded-2xl border border-white/10 bg-base/75 pl-6 pr-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_16px_50px_rgba(3,4,10,0.6)] backdrop-blur-2xl backdrop-saturate-150 lg:max-w-6xl lg:gap-8">
-        <a href="#" className="flex items-center gap-2.5">
-          <span className="grid h-9 w-9 place-items-center rounded-full bg-accent">
-            <Asterisk aria-hidden="true" className="h-5 w-5" />
+    <header className="fixed inset-x-0 top-3 z-50 px-3 sm:top-4 sm:px-6">
+      <nav
+        className={`mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 rounded-2xl border px-3 backdrop-blur-2xl backdrop-saturate-150 transition-colors duration-300 sm:px-4 ${navSurface}`}
+      >
+        <a href="#platforma" className="flex min-w-0 items-center gap-3">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent text-sm font-black text-white shadow-brand">
+            T
           </span>
-          <span className="font-display text-lg font-semibold tracking-tight text-ivory">
+          <span
+            className={`truncate text-sm font-bold tracking-tight transition-colors sm:text-base ${brandText}`}
+          >
             Tap-it
           </span>
         </a>
 
-        <div className="hidden items-center gap-1 lg:flex">
+        <div className="hidden items-center gap-1 md:flex">
           {navItems.map(([label, href]) => (
             <a
               key={href}
               href={href}
-              onClick={() => handleNavClick(href)}
-              className={`relative rounded-full px-4 py-2.5 text-sm font-medium transition ${
-                activeSection === href
-                  ? "text-white"
-                  : "text-slate-400 hover:text-white"
-              }`}
+              className={`rounded-full px-4 py-2 text-sm font-semibold transition ${linkTone}`}
             >
-              {activeSection === href ? (
-                <motion.span
-                  layoutId="active-nav-pill"
-                  className="absolute inset-0 rounded-full bg-white/10"
-                  transition={{ type: "spring", stiffness: 520, damping: 38 }}
-                />
-              ) : null}
-              <span className="relative">{label}</span>
+              {label}
             </a>
           ))}
         </div>
 
         <div className="flex items-center gap-2">
-          <a
-            href="#kontakt"
-            className="hidden h-10 items-center gap-2 rounded-xl bg-accent px-5 text-sm font-semibold text-white transition hover:bg-accent-bright lg:inline-flex"
-          >
-            Začať projekt
-            <ArrowRight aria-hidden="true" className="h-3.5 w-3.5" />
+          <a href="#kontakt" className="primary-button hidden sm:inline-flex">
+            Získať demo
+            <ArrowRight aria-hidden="true" className="h-4 w-4" />
           </a>
-
           <button
-            className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/[0.05] lg:hidden"
             type="button"
+            className={`grid h-10 w-10 place-items-center rounded-xl border transition ${iconButtonTone}`}
+            aria-label={
+              isDark ? "Prepnúť na svetlý režim" : "Prepnúť na tmavý režim"
+            }
+            onClick={onThemeToggle}
+          >
+            {isDark ? (
+              <Sun aria-hidden="true" className="h-[18px] w-[18px]" />
+            ) : (
+              <Moon aria-hidden="true" className="h-[18px] w-[18px]" />
+            )}
+          </button>
+          <button
+            type="button"
+            className={`grid h-10 w-10 place-items-center rounded-xl border transition md:hidden ${iconButtonTone}`}
             aria-label={menuOpen ? "Zatvoriť menu" : "Otvoriť menu"}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen(!menuOpen)}
           >
             {menuOpen ? (
-              <X aria-hidden="true" className="h-4 w-4" />
+              <X aria-hidden="true" className="h-5 w-5" />
             ) : (
-              <Menu aria-hidden="true" className="h-4 w-4" />
+              <Menu aria-hidden="true" className="h-5 w-5" />
             )}
           </button>
         </div>
       </nav>
 
       {menuOpen ? (
-        <div className="mx-auto mt-2 w-full max-w-[22rem] rounded-2xl border border-white/10 bg-base/85 p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_24px_80px_rgba(3,4,10,0.55)] backdrop-blur-2xl backdrop-saturate-150 lg:hidden">
-          <div className="grid gap-1">
-            {navItems.map(([label, href]) => (
-              <a
-                key={href}
-                href={href}
-                onClick={() => {
-                  handleNavClick(href);
-                  setMenuOpen(false);
-                }}
-                className={`rounded-xl px-4 py-3 text-sm font-medium transition ${
-                  activeSection === href
-                    ? "bg-white/10 text-white"
-                    : "text-slate-300 hover:bg-white/[0.06]"
-                }`}
-              >
-                {label}
-              </a>
-            ))}
+        <div
+          className={`mx-auto mt-2 grid w-full max-w-7xl gap-1 rounded-2xl border p-2 backdrop-blur-2xl transition-colors md:hidden ${mobileSurface}`}
+        >
+          {navItems.map(([label, href]) => (
             <a
-              href="#kontakt"
+              key={href}
+              href={href}
               onClick={() => setMenuOpen(false)}
-              className="mt-1 rounded-xl bg-accent px-4 py-3 text-center text-sm font-semibold transition hover:bg-accent-bright"
+              className={`rounded-xl px-4 py-3 text-sm font-semibold transition ${linkTone}`}
             >
-              Začať projekt
+              {label}
             </a>
-          </div>
+          ))}
+          <a
+            href="#kontakt"
+            onClick={() => setMenuOpen(false)}
+            className="mt-1 rounded-xl bg-accent px-4 py-3 text-center text-sm font-bold text-white transition hover:bg-accent-bright"
+          >
+            Získať demo
+          </a>
         </div>
       ) : null}
     </header>
   );
 }
 
-function Hero() {
-  const reduceMotion = useReducedMotion();
-  const { scrollY } = useScroll();
-  const titleY = useTransform(
-    scrollY,
-    [0, 700],
-    reduceMotion ? [0, 0] : [0, -180],
-  );
-  const introY = useTransform(
-    scrollY,
-    [0, 500],
-    reduceMotion ? [0, 0] : [0, -70],
-  );
-  const introOpacity = useTransform(scrollY, [0, 420], [1, 0.1]);
-
-  return (
-    <section className="sticky top-0 z-0 h-svh sm:h-screen">
-      <div className="flex h-full flex-col overflow-hidden">
-        <div className="hero-glow pointer-events-none absolute inset-x-0 top-0 -z-20 h-full" />
-        <div className="hero-grid pointer-events-none absolute inset-x-0 top-0 -z-10 h-[80%]" />
-
-        <motion.div
-          style={{ y: introY, opacity: introOpacity }}
-          className="relative flex flex-1 flex-col px-4 pt-24 sm:px-6"
-        >
-          <div className="mx-auto flex w-full max-w-6xl justify-between text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-500">
-            <span>Webové štúdio</span>
-            <span>Dizajn & vývoj · Slovensko</span>
-          </div>
-
-          <motion.div
-            variants={revealContainer}
-            initial="hidden"
-            animate="visible"
-            className="flex flex-1 flex-col items-center justify-center pb-10 text-center sm:pb-0"
-          >
-            <motion.span
-              variants={revealItem}
-              className="grid h-10 w-10 place-items-center rounded-full bg-accent"
-            >
-              <Asterisk aria-hidden="true" className="h-5 w-5" />
-            </motion.span>
-            <motion.p
-              variants={revealItem}
-              className="mt-6 max-w-md font-display text-lg font-medium italic leading-relaxed text-slate-400 sm:text-2xl"
-            >
-              tvorba webov, redizajn a vývoj na mieru dizajn aj kód pod jednou
-              strechou
-            </motion.p>
-            <motion.span
-              variants={revealItem}
-              className="mt-10 grid h-9 w-9 place-items-center rounded-full border border-white/10 text-slate-500 motion-safe:animate-bounce"
-              aria-hidden="true"
-            >
-              <ArrowDown className="h-4 w-4" />
-            </motion.span>
-          </motion.div>
-        </motion.div>
-
-        <motion.h1
-          style={{ y: titleY }}
-          initial={{ opacity: 0, y: 60 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, ease: "easeOut", delay: 0.2 }}
-          className="relative mb-20 w-full whitespace-nowrap pb-6 text-center font-display text-[16vw] font-semibold leading-[0.9] tracking-tight text-ivory sm:mb-0 sm:pb-[3vw]"
-        >
-          Weby & <em className="italic text-accent-soft">kód</em>
-        </motion.h1>
-      </div>
-    </section>
-  );
-}
-
-function IntroSection() {
-  return (
-    <section className="relative px-4 py-20 sm:px-6 lg:py-28">
-      <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12">
-        <motion.div
-          variants={revealContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-          className="text-center lg:text-left"
-        >
-          <motion.p
-            variants={revealItem}
-            className="mx-auto inline-flex items-center gap-2 rounded-full border border-white/10 bg-surface/80 px-4 py-2 text-xs font-semibold text-accent-soft backdrop-blur lg:mx-0"
-          >
-            Webové štúdio · dizajn & vývoj
-          </motion.p>
-
-          <motion.h2
-            variants={revealItem}
-            className="mt-6 font-display text-3xl font-semibold leading-[1.08] tracking-tight text-ivory sm:text-4xl xl:text-5xl"
-          >
-            Staviame weby, ktoré si ľudia{" "}
-            <em className="italic text-accent-soft">zapamätajú</em>.
-          </motion.h2>
-
-          <motion.p
-            variants={revealItem}
-            className="mx-auto mt-6 max-w-md text-sm leading-7 text-slate-400 sm:text-base lg:mx-0"
-          >
-            Tap-it je webové štúdio — tvorba webov, redizajn, e-shopy a vývoj na
-            mieru. Od prvej skice po nasadenie, dizajn aj kód pod jednou
-            strechou.
-          </motion.p>
-
-          <motion.div
-            variants={revealItem}
-            className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start"
-          >
-            <a href="#kontakt" className="primary-button w-full sm:w-auto">
-              Nezáväzná konzultácia
-              <ArrowRight aria-hidden="true" className="h-4 w-4" />
-            </a>
-            <a href="#sluzby" className="secondary-button w-full sm:w-auto">
-              Pozrieť služby
-            </a>
-          </motion.div>
-
-          <motion.div
-            variants={revealItem}
-            className="mt-10 grid grid-cols-3 divide-x divide-white/5 rounded-2xl border border-white/5 bg-surface/60"
-          >
-            {[
-              ["48 h", "prvá odpoveď"],
-              ["0", "šablón v kóde"],
-              ["100 %", "na mieru"],
-            ].map(([value, label]) => (
-              <div
-                key={label}
-                className="px-3 py-4 text-center lg:px-5 lg:text-left"
-              >
-                <p className="font-display text-xl font-semibold text-ivory sm:text-2xl">
-                  {value}
-                </p>
-                <p className="mt-1 text-[11px] font-medium text-slate-500 sm:text-xs">
-                  {label}
-                </p>
-              </div>
-            ))}
-          </motion.div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-        >
-          <RedesignSlider />
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-function RedesignSlider() {
-  const [position, setPosition] = useState(56);
-
-  return (
-    <div className="relative rounded-3xl border border-white/10 bg-raised p-2 shadow-float">
-      <div className="pointer-events-none absolute -inset-x-10 -top-10 h-28 rounded-full bg-accent/20 blur-3xl" />
-
-      <div className="relative overflow-hidden rounded-2xl border border-white/5">
-        <div className="relative aspect-[4/3.4] select-none sm:aspect-[4/3]">
-          <AfterPreview />
-          <div
-            className="absolute inset-0"
-            style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}
-          >
-            <BeforePreview />
-          </div>
-
-          <div
-            className="pointer-events-none absolute inset-y-0 z-10 w-0.5 -translate-x-1/2 bg-white/70"
-            style={{ left: `${position}%` }}
-          >
-            <span className="absolute left-1/2 top-1/2 grid h-9 w-9 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-white/20 bg-base/90 shadow-card backdrop-blur">
-              <ChevronsLeftRight
-                aria-hidden="true"
-                className="h-4 w-4 text-white"
-              />
-            </span>
-          </div>
-
-          <span className="pointer-events-none absolute left-3 top-3 z-10 rounded-full bg-black/45 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white/80 backdrop-blur">
-            Pred
-          </span>
-          <span className="pointer-events-none absolute right-3 top-3 z-10 rounded-full bg-accent px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
-            Po
-          </span>
-
-          <input
-            type="range"
-            min={8}
-            max={92}
-            value={position}
-            onChange={(event) => setPosition(Number(event.target.value))}
-            aria-label="Porovnanie webu pred a po redizajne"
-            className="absolute inset-0 z-20 h-full w-full cursor-ew-resize appearance-none bg-transparent opacity-0"
-          />
-        </div>
-      </div>
-
-      <p className="px-3 py-3 text-center text-xs font-medium text-slate-500">
-        Potiahnite a porovnajte web pred a po redizajne
-      </p>
-    </div>
-  );
-}
-
-function BeforePreview() {
-  return (
-    <div className="flex h-full flex-col bg-[#E3E1D8] p-4 sm:p-5">
-      <div className="flex items-center justify-between border-b border-black/10 pb-3">
-        <span className="h-3 w-16 rounded-sm bg-black/30" />
-        <div className="flex gap-2">
-          {[0, 1, 2].map((item) => (
-            <span key={item} className="h-2 w-8 rounded-sm bg-black/20" />
-          ))}
-        </div>
-      </div>
-
-      <div className="mt-4 flex flex-1 flex-col items-center justify-center gap-2.5 rounded-sm bg-black/[0.06] p-4">
-        <span className="h-4 w-3/4 max-w-44 rounded-sm bg-black/25" />
-        <span className="h-2.5 w-2/3 max-w-36 rounded-sm bg-black/15" />
-        <span className="mt-2 h-6 w-20 rounded-sm bg-[#7A89B0]" />
-      </div>
-
-      <div className="mt-4 grid grid-cols-3 gap-3">
-        {[0, 1, 2].map((item) => (
-          <div key={item} className="h-12 rounded-sm bg-black/10 sm:h-14" />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function AfterPreview() {
-  return (
-    <div className="flex h-full flex-col bg-base p-4 sm:p-5">
-      <div className="flex items-center justify-between border-b border-white/10 pb-3">
-        <span className="flex items-center gap-1.5">
-          <span className="grid h-4 w-4 place-items-center rounded-full bg-accent">
-            <Asterisk aria-hidden="true" className="h-3 w-3" />
-          </span>
-          <span className="h-2.5 w-12 rounded-full bg-white/25" />
-        </span>
-        <div className="flex gap-2">
-          {[0, 1, 2].map((item) => (
-            <span key={item} className="h-2 w-8 rounded-full bg-white/15" />
-          ))}
-        </div>
-      </div>
-
-      <div className="relative mt-4 flex flex-1 flex-col items-start justify-center gap-2.5 overflow-hidden rounded-xl border border-white/5 bg-surface p-4">
-        <div className="panel-grid pointer-events-none absolute inset-0 opacity-60" />
-        <div className="pointer-events-none absolute -top-10 left-1/4 h-20 w-2/3 rounded-full bg-accent/25 blur-2xl" />
-        <p className="relative font-display text-base font-semibold italic tracking-tight text-ivory sm:text-lg">
-          Váš nový web
-        </p>
-        <span className="relative block h-2 w-2/3 rounded-full bg-white/10" />
-        <span className="relative mt-1 inline-flex h-6 items-center rounded-full bg-accent px-3 text-[9px] font-semibold text-white">
-          Začnime
-        </span>
-      </div>
-
-      <div className="mt-4 grid grid-cols-3 gap-3">
-        {[0, 1, 2].map((item) => (
-          <div
-            key={item}
-            className="h-12 rounded-lg border border-white/5 bg-raised sm:h-14"
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-const floatingTags = [
-  {
-    label: "Tvorba webov",
-    position: "left-[4%] top-[16%]",
-    depth: 130,
-    hideOnMobile: false,
-  },
-  {
-    label: "Redizajn stránok",
-    position: "right-[5%] top-[22%]",
-    depth: 80,
-    hideOnMobile: false,
-  },
-  {
-    label: "E-shopy",
-    position: "left-[10%] bottom-[18%]",
-    depth: 60,
-    hideOnMobile: false,
-  },
-  {
-    label: "Webové aplikácie",
-    position: "right-[8%] bottom-[14%]",
-    depth: 150,
-    hideOnMobile: true,
-  },
-  {
-    label: "Next.js & React",
-    position: "left-[34%] top-[8%]",
-    depth: 100,
-    hideOnMobile: true,
-  },
-  {
-    label: "SEO základy",
-    position: "right-[30%] bottom-[6%]",
-    depth: 90,
-    hideOnMobile: true,
-  },
-];
-
-function ManifestoParallax() {
+function HeroProductShowcase() {
   const reduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start end", "end start"],
+    offset: ["start start", "end end"],
   });
-  const yStatement = useTransform(
+  const activeScreen = tourScreens[activeIndex];
+  const settlePoint = 0.24;
+  const contentY = useTransform(
     scrollYProgress,
-    [0, 1],
-    reduceMotion ? [0, 0] : [50, -50],
+    [0, 0.18, settlePoint],
+    reduceMotion ? [0, 0, 0] : [0, -62, -90],
   );
-  const yBackdrop = useTransform(
+  const contentOpacity = useTransform(
     scrollYProgress,
-    [0, 1],
-    reduceMotion ? [0, 0] : [-90, 90],
+    [0, 0.14, settlePoint],
+    [1, 0.5, 0],
   );
-  const rotateMark = useTransform(
+  const frameY = useTransform(
+    scrollYProgress,
+    [0, settlePoint],
+    reduceMotion ? [0, 0] : [420, 0],
+  );
+  const frameScale = useTransform(
+    scrollYProgress,
+    [0, settlePoint],
+    reduceMotion ? [1, 1] : [0.78, 1],
+  );
+  const frameWidth = useTransform(
+    scrollYProgress,
+    [0, settlePoint],
+    ["min(82vw, 1320px)", "min(86vw, 1420px)"],
+  );
+  const frameOpacity = useTransform(scrollYProgress, [0, 0.08], [0.94, 1]);
+  const screenFadeOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.14, settlePoint],
+    [1, 0.45, 0],
+  );
+  const sectionGlowX = useTransform(
     scrollYProgress,
     [0, 1],
-    reduceMotion ? [0, 0] : [0, 150],
+    reduceMotion ? ["45%", "45%"] : ["18%", "82%"],
+  );
+  const sectionGlowOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.5, 1],
+    [0.5, 1, 0.62],
   );
 
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    if (latest < settlePoint) {
+      setActiveIndex((current) => (current === 0 ? current : 0));
+      return;
+    }
+
+    const normalized = (latest - settlePoint) / (1 - settlePoint);
+    const clamped = Math.min(0.999, Math.max(0, normalized));
+    const nextIndex = Math.min(
+      tourScreens.length - 1,
+      Math.floor(clamped * tourScreens.length),
+    );
+
+    setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
+  });
+
+  return (
+    <>
+      <section
+        id="platforma"
+        className="relative pb-12 pt-20 sm:pb-16 sm:pt-24 lg:hidden"
+      >
+        <div className="tap-hero-shell relative min-h-[100dvh] overflow-hidden">
+          <div aria-hidden="true" className="tap-hero-sky" />
+          <HeroCloud src="/hero-clouds/cloud-left.png" className="hero-cloud-left" />
+          <HeroCloud src="/hero-clouds/cloud-right.png" className="hero-cloud-right" />
+          <HeroCloud src="/hero-clouds/cloud-low.png" className="hero-cloud-bottom" />
+          <HeroCloud src="/hero-clouds/cloud-right.png" className="hero-cloud-low-right" />
+          <div aria-hidden="true" className="hero-grid opacity-60" />
+          <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center px-4 pb-8 pt-12 text-center sm:px-8">
+            <div className="hero-chip inline-flex items-center gap-2 rounded-full border border-accent/20 bg-white/70 px-3 py-1.5 text-xs font-bold text-accent-deep shadow-[0_10px_30px_rgba(15,23,42,0.08)]">
+              <span className="h-1.5 w-1.5 rounded-full bg-accent-bright" />
+              Tap-it Fitness OS
+            </div>
+            <h1 className="hero-title mt-6 max-w-6xl text-balance text-[2.9rem] font-black leading-[0.95] tracking-tight text-slate-950 sm:text-6xl">
+              <span className="block sm:whitespace-nowrap">
+                Fitness systém, ktorý pustí
+              </span>
+              <span className="block sm:whitespace-nowrap">
+                dnu správnych ľudí.
+              </span>
+            </h1>
+            <p className="hero-copy mt-6 max-w-2xl text-pretty text-base font-semibold leading-7 text-slate-600 sm:text-lg">
+              QR vstupy, členstvá, rezervácie a admin panel, ktorý drží celú
+              prevádzku fitka pokope.
+            </p>
+            <div className="mt-7 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row">
+              <a href="#kontakt" className="primary-button w-full sm:w-auto">
+                Dohodnúť demo
+                <ArrowRight aria-hidden="true" className="h-4 w-4" />
+              </a>
+              <a
+                href="#produkt"
+                className="hero-secondary secondary-button w-full border-slate-950/10 bg-white/70 text-slate-950 hover:bg-white sm:w-auto"
+              >
+                Pozrieť produkt
+              </a>
+            </div>
+          </div>
+          <div className="relative z-10 mx-auto -mb-8 max-w-5xl px-4">
+            <BrowserFrame
+              image={dashboardScreen}
+              alt="Tap-it dashboard v admin paneli"
+              label="Admin dashboard"
+              priority
+              className="shadow-[0_34px_120px_rgba(0,0,0,0.62)]"
+            />
+          </div>
+        </div>
+      </section>
+      <DesktopHeroProductShowcase
+        sectionRef={sectionRef}
+        activeScreen={activeScreen}
+        activeIndex={activeIndex}
+        contentY={contentY}
+        contentOpacity={contentOpacity}
+        frameY={frameY}
+        frameScale={frameScale}
+        frameWidth={frameWidth}
+        frameOpacity={frameOpacity}
+        screenFadeOpacity={screenFadeOpacity}
+        sectionGlowX={sectionGlowX}
+        sectionGlowOpacity={sectionGlowOpacity}
+      />
+      <StaticProductTour />
+    </>
+  );
+}
+
+function DesktopHeroProductShowcase({
+  sectionRef,
+  activeScreen,
+  activeIndex,
+  contentY,
+  contentOpacity,
+  frameY,
+  frameScale,
+  frameWidth,
+  frameOpacity,
+  screenFadeOpacity,
+  sectionGlowX,
+  sectionGlowOpacity,
+}: {
+  sectionRef: RefObject<HTMLElement | null>;
+  activeScreen: TourScreen;
+  activeIndex: number;
+  contentY: MotionValue<number>;
+  contentOpacity: MotionValue<number>;
+  frameY: MotionValue<number>;
+  frameScale: MotionValue<number>;
+  frameWidth: MotionValue<string>;
+  frameOpacity: MotionValue<number>;
+  screenFadeOpacity: MotionValue<number>;
+  sectionGlowX: MotionValue<string>;
+  sectionGlowOpacity: MotionValue<number>;
+}) {
   return (
     <section
       ref={sectionRef}
-      className="relative isolate overflow-hidden border-y border-white/5 bg-surface py-28 sm:py-36 lg:py-44"
+      id="platforma"
+      className="relative hidden bg-base lg:block"
+      style={{ height: `${(tourScreens.length + 1) * 112}vh` }}
     >
-      <motion.p
-        style={{ y: yBackdrop }}
+      <span
+        id="produkt"
         aria-hidden="true"
-        className="text-outline pointer-events-none absolute inset-x-0 top-1/2 -z-10 -translate-y-1/2 text-center font-display text-[30vw] font-semibold italic leading-none opacity-50 lg:text-[18rem]"
-      >
-        štúdio
-      </motion.p>
-
-      <motion.div
-        style={{ rotate: rotateMark }}
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-14 -top-14 -z-10"
-      >
-        <Asterisk className="h-48 w-48 text-accent/10 sm:h-64 sm:w-64" />
-      </motion.div>
-
-      <div aria-hidden="true">
-        {floatingTags.map((tag) => (
-          <FloatingTag
-            key={tag.label}
-            tag={tag}
-            progress={scrollYProgress}
-            reduceMotion={!!reduceMotion}
-          />
-        ))}
-      </div>
-
-      <motion.div
-        style={{ y: yStatement }}
-        className="relative mx-auto max-w-4xl px-4 text-center sm:px-6"
-      >
-        <p className="section-kicker">Tap-it</p>
-        <p className="mt-5 font-display text-3xl font-semibold leading-[1.15] tracking-tight text-ivory sm:text-5xl lg:text-6xl">
-          Dizajn, ktorý <em className="italic text-accent-soft">predáva</em>.
-          <br />
-          Kód, ktorý <em className="italic text-accent-soft">vydrží</em>.
-        </p>
-      </motion.div>
-    </section>
-  );
-}
-
-function FloatingTag({
-  tag,
-  progress,
-  reduceMotion,
-}: {
-  tag: (typeof floatingTags)[number];
-  progress: ReturnType<typeof useScroll>["scrollYProgress"];
-  reduceMotion: boolean;
-}) {
-  const y = useTransform(
-    progress,
-    [0, 1],
-    reduceMotion ? [0, 0] : [tag.depth, -tag.depth],
-  );
-
-  return (
-    <motion.span
-      style={{ y }}
-      className={`absolute whitespace-nowrap rounded-full border border-white/10 bg-raised/80 px-4 py-2 text-xs font-semibold text-slate-400 shadow-card backdrop-blur ${tag.position} ${
-        tag.hideOnMobile ? "hidden md:inline-flex" : "inline-flex"
-      }`}
-    >
-      {tag.label}
-    </motion.span>
-  );
-}
-
-function ServicesSection() {
-  return (
-    <section id="sluzby" className="px-4 py-20 sm:px-6 lg:py-28">
-      <div className="mx-auto max-w-6xl">
+        className="absolute top-[112vh] h-px w-px"
+      />
+      <div className="sticky top-0 min-h-[100dvh] overflow-hidden">
+        <div className="tap-hero-shell relative flex min-h-[100dvh] w-full items-center justify-center overflow-hidden">
+        <div aria-hidden="true" className="tap-hero-sky" />
+        <HeroCloud src="/hero-clouds/cloud-left.png" className="hero-cloud-left" />
+        <HeroCloud src="/hero-clouds/cloud-right.png" className="hero-cloud-right" />
+        <HeroCloud src="/hero-clouds/cloud-low.png" className="hero-cloud-bottom" />
+        <HeroCloud src="/hero-clouds/cloud-right.png" className="hero-cloud-low-right" />
+        <div aria-hidden="true" className="hero-grid opacity-60" />
+        <div aria-hidden="true" className="product-field" />
         <motion.div
+          aria-hidden="true"
+          className="product-orbit"
+          style={{ left: sectionGlowX, opacity: sectionGlowOpacity }}
+        />
+        <motion.div
+          style={{ y: contentY, opacity: contentOpacity }}
           variants={revealContainer}
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-          className="max-w-2xl"
+          animate="visible"
+          className="pointer-events-none absolute inset-x-0 top-[7rem] z-20 mx-auto flex max-w-5xl flex-col items-center px-8 text-center"
         >
-          <motion.p variants={revealItem} className="section-kicker">
-            Služby
-          </motion.p>
-          <motion.h2
+          <motion.div
             variants={revealItem}
-            className="mt-4 font-display text-3xl font-semibold tracking-tight text-ivory sm:text-4xl lg:text-5xl"
+            className="hero-chip inline-flex items-center gap-2 rounded-full border border-accent/20 bg-white/75 px-3 py-1.5 text-xs font-bold text-accent-deep shadow-[0_10px_30px_rgba(15,23,42,0.08)] backdrop-blur"
           >
-            Čo pre vás vieme postaviť.
-          </motion.h2>
+            <span className="h-1.5 w-1.5 rounded-full bg-accent-bright" />
+            Tap-it Fitness OS
+          </motion.div>
+
+          <motion.h1
+            variants={revealItem}
+            className="hero-title mt-6 max-w-6xl text-balance text-[2.9rem] font-black leading-[0.95] tracking-tight text-slate-950 sm:text-6xl lg:text-7xl xl:text-8xl"
+          >
+            <span className="block sm:whitespace-nowrap">
+              Fitness systém, ktorý pustí
+            </span>
+            <span className="block sm:whitespace-nowrap">
+              dnu správnych ľudí.
+            </span>
+          </motion.h1>
+
           <motion.p
             variants={revealItem}
-            className="mt-4 max-w-lg text-sm leading-7 text-slate-400"
+            className="hero-copy mt-6 max-w-2xl text-pretty text-base font-semibold leading-7 text-slate-600 sm:text-lg"
           >
-            Štyri služby, jeden prístup: žiadne šablóny a žiadny medzičlánok
-            navyše — návrh aj kód robíme my.
+            Promo web pre Tap-it: QR vstupy, členstvá, rezervácie a admin
+            panel, ktorý drží celú prevádzku fitka pokope.
           </motion.p>
-        </motion.div>
 
-        <motion.div
-          variants={revealContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-          className="mt-14"
-        >
-          {services.map((service) => (
-            <motion.a
-              key={service.number}
-              href="#kontakt"
-              variants={revealItem}
-              className="group grid gap-5 border-t border-white/5 py-9 transition last:border-b sm:py-10 lg:grid-cols-[88px_1fr_auto] lg:items-start"
+          <motion.div
+            variants={revealItem}
+            className="pointer-events-auto mt-8 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row"
+          >
+            <a href="#kontakt" className="primary-button w-full sm:w-auto">
+              Dohodnúť demo
+              <ArrowRight aria-hidden="true" className="h-4 w-4" />
+            </a>
+            <a
+              href="#produkt"
+              className="hero-secondary secondary-button w-full border-slate-950/10 bg-white/70 text-slate-950 hover:bg-white sm:w-auto"
             >
-              <span className="font-display text-lg font-semibold italic text-slate-600 transition group-hover:text-accent-soft">
-                {service.number}
-              </span>
+              Pozrieť produkt
+            </a>
+          </motion.div>
 
-              <div>
-                <h3 className="font-display text-2xl font-semibold tracking-tight text-ivory transition group-hover:text-accent-soft sm:text-3xl lg:text-4xl">
-                  {service.title}
-                </h3>
-                <p className="mt-3 max-w-xl text-sm leading-7 text-slate-400">
-                  {service.text}
-                </p>
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {service.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full border border-white/10 bg-white/[0.02] px-3 py-1 text-xs font-medium text-slate-400"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
+        </motion.div>
 
-              <span className="hidden h-12 w-12 place-items-center rounded-full border border-white/10 text-slate-400 transition group-hover:border-accent group-hover:bg-accent group-hover:text-white lg:grid">
-                <ArrowUpRight
-                  aria-hidden="true"
-                  className="h-5 w-5 transition group-hover:rotate-45"
+        <motion.div
+          style={{ y: frameY, scale: frameScale, width: frameWidth, opacity: frameOpacity }}
+          className="screen-stage relative z-10 mx-auto aspect-[16/9]"
+        >
+          <motion.div
+            aria-hidden="true"
+            className="hero-screen-fade"
+            style={{ opacity: screenFadeOpacity }}
+          />
+          <motion.div
+            aria-hidden="true"
+            className="hero-proof-strip"
+            style={{ opacity: screenFadeOpacity }}
+          >
+            {["QR vstupy", "Členstvá", "Rezervácie", "Smeny"].map((item) => (
+              <span key={item}>{item}</span>
+            ))}
+          </motion.div>
+          <StackedTourBrowserFrame activeIndex={activeIndex} />
+        </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function HeroCloud({ src, className }: { src: string; className: string }) {
+  return (
+    <div aria-hidden="true" className={`hero-cloud ${className}`}>
+      <Image
+        src={src}
+        alt=""
+        fill
+        sizes="(min-width: 1024px) 36vw, 70vw"
+        className="object-contain"
+      />
+    </div>
+  );
+}
+
+function StaticProductTour() {
+  return (
+    <section id="produkt" className="px-4 py-20 sm:px-6 lg:hidden">
+      <div className="mx-auto max-w-4xl">
+        <p className="section-kicker">Produkt</p>
+        <h2 className="mt-4 text-4xl font-black leading-none tracking-tight text-white sm:text-5xl">
+          Reálne obrazovky Tap-it.
+        </h2>
+        <div className="mt-10 grid gap-8">
+          {tourScreens.map((screen) => {
+            const Icon = screen.icon;
+
+            return (
+              <article
+                key={screen.title}
+                className="rounded-3xl border border-white/10 bg-surface p-3 shadow-card"
+              >
+                <BrowserFrame
+                  image={screen.image}
+                  alt={screen.alt}
+                  label={screen.eyebrow}
+                  sizes="(min-width: 768px) 720px, 100vw"
                 />
-              </span>
-            </motion.a>
-          ))}
+                <div className="px-2 py-5">
+                  <div className="flex items-center gap-3">
+                    <span className="grid h-10 w-10 place-items-center rounded-xl bg-accent-faint text-accent-soft">
+                      <Icon aria-hidden="true" className="h-5 w-5" />
+                    </span>
+                    <div>
+                      <p className="text-xs font-bold text-accent-soft">
+                        {screen.eyebrow}
+                      </p>
+                      <h3 className="text-xl font-black text-white">
+                        {screen.title}
+                      </h3>
+                    </div>
+                  </div>
+                  <p className="mt-4 text-sm leading-7 text-slate-400">
+                    {screen.body}
+                  </p>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function StackedTourBrowserFrame({ activeIndex }: { activeIndex: number }) {
+  const firstImage = tourScreens[0].image;
+  const [previousIndex, setPreviousIndex] = useState<number | null>(null);
+  const lastActiveIndex = useRef(activeIndex);
+
+  useEffect(() => {
+    if (activeIndex === lastActiveIndex.current) {
+      return;
+    }
+
+    setPreviousIndex(lastActiveIndex.current);
+    lastActiveIndex.current = activeIndex;
+
+    const timeout = window.setTimeout(() => {
+      setPreviousIndex(null);
+    }, 360);
+
+    return () => window.clearTimeout(timeout);
+  }, [activeIndex]);
+
+  return (
+    <figure
+      className="app-window absolute inset-0 overflow-hidden rounded-3xl border border-white/10 bg-raised p-2 shadow-[0_44px_150px_rgba(0,0,0,0.72)]"
+    >
+      <div className="flex h-10 items-center justify-between rounded-2xl border border-white/5 bg-base/[0.8] px-3">
+        <div className="flex items-center gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-accent" />
+          <span className="h-2.5 w-2.5 rounded-full bg-warning" />
+          <span className="h-2.5 w-2.5 rounded-full bg-success" />
+        </div>
+        <span className="truncate px-4 text-xs font-bold text-slate-500">
+          Tap-it admin
+        </span>
+        <span className="hidden rounded-full bg-accent-faint px-2.5 py-1 text-[10px] font-bold text-accent-soft sm:inline-flex">
+          tap-it.sk
+        </span>
+      </div>
+      <div
+        className="relative mt-2 overflow-hidden rounded-2xl border border-white/5 bg-base"
+        style={{ aspectRatio: `${firstImage.width} / ${firstImage.height}` }}
+      >
+        {tourScreens.map((screen, index) => {
+          const isActive = index === activeIndex;
+          const isPrevious = index === previousIndex;
+
+          return (
+            <Image
+              key={screen.title}
+              src={screen.image}
+              alt={screen.alt}
+              fill
+              priority={index === 0}
+              sizes="(min-width: 1280px) 1100px, 90vw"
+              className={`select-none object-cover transition-opacity duration-300 ease-out ${
+                isActive || isPrevious ? "opacity-100" : "opacity-0"
+              }`}
+              style={{ zIndex: isActive ? 20 : isPrevious ? 10 : 0 }}
+            />
+          );
+        })}
+      </div>
+    </figure>
+  );
+}
+
+function BrowserFrame({
+  image,
+  alt,
+  label,
+  className = "",
+  priority = false,
+  sizes = "(min-width: 1280px) 1040px, 92vw",
+}: {
+  image: StaticImageData;
+  alt: string;
+  label: string;
+  className?: string;
+  priority?: boolean;
+  sizes?: string;
+}) {
+  return (
+    <figure
+      className={`app-window relative overflow-hidden rounded-3xl border border-white/10 bg-raised p-2 ${className}`}
+    >
+      <div className="flex h-10 items-center justify-between rounded-2xl border border-white/5 bg-base/[0.8] px-3">
+        <div className="flex items-center gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-accent" />
+          <span className="h-2.5 w-2.5 rounded-full bg-warning" />
+          <span className="h-2.5 w-2.5 rounded-full bg-success" />
+        </div>
+        <span className="truncate px-4 text-xs font-bold text-slate-500">
+          {label}
+        </span>
+        <span className="hidden rounded-full bg-accent-faint px-2.5 py-1 text-[10px] font-bold text-accent-soft sm:inline-flex">
+          tap-it.sk
+        </span>
+      </div>
+      <div className="relative mt-2 overflow-hidden rounded-2xl border border-white/5 bg-base">
+        <Image
+          src={image}
+          alt={alt}
+          sizes={sizes}
+          priority={priority}
+          className="h-auto w-full select-none"
+        />
+      </div>
+    </figure>
+  );
+}
+
+function ValueSection() {
+  return (
+    <section className="px-4 py-20 sm:px-6 lg:py-28">
+      <div className="mx-auto max-w-7xl">
+        <motion.div
+          variants={revealContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          className="max-w-3xl"
+        >
+          <motion.p variants={revealItem} className="section-kicker">
+            Základ
+          </motion.p>
+          <motion.h2
+            variants={revealItem}
+            className="mt-4 text-4xl font-black leading-none tracking-tight text-white sm:text-5xl lg:text-6xl"
+          >
+            Menej manuálnej práce, viac kontroly nad prevádzkou.
+          </motion.h2>
+          <motion.p
+            variants={revealItem}
+            className="mt-5 max-w-2xl text-base leading-7 text-slate-400"
+          >
+            Tap-it je operačný systém pre fitness centrum. Nerobí len pekný
+            check-in, ale spája členov, tím, rezervácie a každodennú operatívu.
+          </motion.p>
+        </motion.div>
+
+        <motion.div
+          variants={revealContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          className="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-4"
+        >
+          {valueCards.map((card) => {
+            const Icon = card.icon;
+
+            return (
+              <motion.article
+                key={card.title}
+                variants={revealItem}
+                className="group rounded-3xl border border-white/10 bg-surface p-6 transition hover:border-accent/40 hover:bg-raised"
+              >
+                <span className="grid h-12 w-12 place-items-center rounded-2xl bg-accent-faint text-accent-soft transition group-hover:bg-accent group-hover:text-white">
+                  <Icon aria-hidden="true" className="h-6 w-6" />
+                </span>
+                <h3 className="mt-8 text-xl font-black tracking-tight text-white">
+                  {card.title}
+                </h3>
+                <p className="mt-3 text-sm leading-7 text-slate-400">
+                  {card.text}
+                </p>
+              </motion.article>
+            );
+          })}
         </motion.div>
       </div>
     </section>
   );
 }
 
-function CaseStudySection() {
+function OperationsSection() {
   return (
-    <section
-      id="projekt"
-      className="border-y border-white/5 bg-surface px-4 py-20 sm:px-6 lg:py-28"
-    >
-      <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
+    <section id="prevadzka" className="px-4 py-20 sm:px-6 lg:py-28">
+      <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         <motion.div
           variants={revealContainer}
           initial="hidden"
@@ -820,236 +898,164 @@ function CaseStudySection() {
           viewport={{ once: true, margin: "-80px" }}
         >
           <motion.p variants={revealItem} className="section-kicker">
-            Vlastný produkt
+            Prevádzka
           </motion.p>
           <motion.h2
             variants={revealItem}
-            className="mt-4 font-display text-3xl font-semibold tracking-tight text-ivory sm:text-4xl"
+            className="mt-4 max-w-2xl text-4xl font-black leading-none tracking-tight text-white sm:text-5xl"
           >
-            Tap-it Fitness — systém, ktorý sme si{" "}
-            <em className="italic text-accent-soft">postavili sami</em>.
+            Jeden systém pre vstup, členstvo aj denný tím.
           </motion.h2>
           <motion.p
             variants={revealItem}
-            className="mt-5 max-w-md text-sm leading-7 text-slate-400"
+            className="mt-5 max-w-xl text-base leading-7 text-slate-400"
           >
-            Operačný systém pre fitness prevádzky — digitálne členstvá, QR
-            vstup, rezervácie, platby a real-time prehľad — sme navrhli aj
-            naprogramovali od nuly. Presne takto pristupujeme aj k vášmu
-            projektu.
+            Tap-it je navrhnutý pre malé a stredné fitness prevádzky, ktoré už
+            nechcú skladať prácu z Google tabuliek, papierových zoznamov a
+            ručných kontrol na recepcii.
           </motion.p>
-
-          <motion.div
-            variants={revealItem}
-            className="mt-7 grid gap-3 text-sm text-slate-300"
-          >
-            {caseHighlights.map((item) => (
-              <div key={item} className="flex items-center gap-3">
-                <Check
-                  aria-hidden="true"
-                  className="h-4 w-4 shrink-0 text-accent-bright"
-                />
-                {item}
-              </div>
-            ))}
-          </motion.div>
-
-          <motion.div
-            variants={revealItem}
-            className="mt-7 flex flex-wrap gap-2"
-          >
-            {caseStack.map((tech) => (
-              <span
-                key={tech}
-                className="rounded-full bg-accent-faint px-3 py-1 text-xs font-semibold text-accent-soft"
-              >
-                {tech}
-              </span>
-            ))}
-          </motion.div>
         </motion.div>
 
+        <motion.div
+          variants={revealContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          className="rounded-3xl border border-white/10 bg-surface p-3 shadow-card"
+        >
+          <div className="grid gap-3">
+            {operations.map((item, index) => (
+              <motion.div
+                key={item}
+                variants={revealItem}
+                className="grid gap-4 rounded-2xl border border-white/5 bg-base/[0.65] p-5 sm:grid-cols-[3rem_1fr] sm:items-center"
+              >
+                <span className="grid h-12 w-12 place-items-center rounded-2xl bg-accent-faint text-sm font-black text-accent-soft">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <p className="text-base font-bold leading-7 text-white">
+                  {item}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function MobilePreviewSection() {
+  return (
+    <section className="border-y border-white/5 bg-surface px-4 py-20 sm:px-6 lg:py-28">
+      <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         <motion.div
           initial={{ opacity: 0, y: 32 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="relative"
+          className="order-2 lg:order-1"
         >
-          <div className="rounded-3xl border border-white/10 bg-raised p-2 shadow-float">
-            <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-base p-5 sm:p-6">
-              <div className="panel-grid pointer-events-none absolute inset-0 opacity-50" />
-              <div className="relative mb-5 flex items-center justify-between gap-3">
-                <span className="flex items-center gap-2 text-sm font-semibold text-ivory">
-                  <span className="grid h-7 w-7 place-items-center rounded-lg bg-accent">
-                    <ScanLine aria-hidden="true" className="h-4 w-4" />
-                  </span>
-                  Tap-it
+          <div className="phone-stage mx-auto">
+            <div className="phone-frame">
+              <div className="phone-dynamic-island" />
+              <div className="mt-12 flex items-center justify-between">
+                <span className="grid h-10 w-10 place-items-center rounded-2xl bg-accent text-sm font-black text-white">
+                  T
                 </span>
-                <span className="rounded-full bg-success/10 px-2.5 py-1 text-[10px] font-semibold text-emerald-300">
-                  Live demo
+                <span className="rounded-full bg-accent-faint px-3 py-1 text-xs font-bold text-accent-soft">
+                  člen
                 </span>
               </div>
-              <div className="relative">
-                <LiveQrCard />
+              <div className="mt-10">
+                <p className="text-sm font-semibold text-slate-500">
+                  Váš vstup
+                </p>
+                <p className="mt-2 text-4xl font-black leading-none text-white">
+                  QR karta
+                </p>
+              </div>
+              <div className="mt-8 grid aspect-square place-items-center rounded-[2rem] border border-white/10 bg-white p-4">
+                <div className="grid h-full w-full grid-cols-5 gap-2">
+                  {Array.from({ length: 25 }).map((_, index) => (
+                    <span
+                      key={index}
+                      className={
+                        index % 3 === 0 || index % 7 === 0
+                          ? "rounded-md bg-base"
+                          : "rounded-md bg-slate-200"
+                      }
+                    />
+                  ))}
+                </div>
+              </div>
+              <div className="mt-8 grid grid-cols-2 gap-3">
+                <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+                  <p className="text-xs font-semibold text-slate-500">
+                    Členstvo
+                  </p>
+                  <p className="mt-2 text-lg font-black text-white">Aktívne</p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+                  <p className="text-xs font-semibold text-slate-500">
+                    Rezervácie
+                  </p>
+                  <p className="mt-2 text-lg font-black text-white">3</p>
+                </div>
               </div>
             </div>
           </div>
-
-          <div className="absolute -left-3 -top-4 hidden rounded-xl border border-white/10 bg-raised px-4 py-3 shadow-card sm:block">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-              QR refresh
-            </p>
-            <p className="mt-1 font-display text-xl font-semibold text-ivory">
-              15 s
-            </p>
-          </div>
         </motion.div>
-      </div>
-    </section>
-  );
-}
 
-function LiveQrCard() {
-  const [messageIndex, setMessageIndex] = useState(0);
-  const [secondsLeft, setSecondsLeft] = useState(15);
-  const [qrUrl, setQrUrl] = useState("");
-  const activeMessage = easterEggMessages[messageIndex];
-
-  useEffect(() => {
-    let active = true;
-
-    QRCodeGenerator.toDataURL(`Tap-it easter egg: ${activeMessage}`, {
-      width: 512,
-      margin: 1,
-      color: {
-        dark: "#09090D",
-        light: "#ffffff",
-      },
-    }).then((url) => {
-      if (active) setQrUrl(url);
-    });
-
-    return () => {
-      active = false;
-    };
-  }, [activeMessage]);
-
-  useEffect(() => {
-    const interval = window.setInterval(() => {
-      setSecondsLeft((current) => {
-        if (current <= 1) {
-          setMessageIndex((index) => (index + 1) % easterEggMessages.length);
-          return 15;
-        }
-
-        return current - 1;
-      });
-    }, 1000);
-
-    return () => window.clearInterval(interval);
-  }, []);
-
-  return (
-    <div className="grid gap-5 sm:grid-cols-[170px_1fr] sm:items-center">
-      <div className="mx-auto w-full max-w-[210px] rounded-xl bg-accent p-3.5 sm:mx-0 sm:max-w-none">
-        <div className="grid aspect-square place-items-center overflow-hidden rounded-lg bg-white p-1.5">
-          {qrUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={qrUrl}
-              alt="QR kód s Tap-it easter egg správou"
-              className="h-full w-full"
-            />
-          ) : null}
-        </div>
-      </div>
-
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-          Scan easter egg
-        </p>
-        <p className="mt-2 min-h-12 text-sm font-medium leading-6 text-slate-200">
-          {activeMessage}
-        </p>
-        <div className="mt-5 flex items-center justify-between">
-          <span className="text-sm font-medium text-slate-500">Obnova QR</span>
-          <span className="font-display text-3xl font-semibold text-ivory">
-            {secondsLeft} s
-          </span>
-        </div>
-        <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/5">
-          <motion.div
-            key={messageIndex}
-            className="h-full rounded-full bg-accent-bright"
-            initial={{ width: "100%" }}
-            animate={{ width: "0%" }}
-            transition={{ duration: 15, ease: "linear" }}
-          />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ProcessSection() {
-  return (
-    <section id="proces" className="px-4 py-20 sm:px-6 lg:py-28">
-      <div className="mx-auto max-w-6xl">
         <motion.div
           variants={revealContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-80px" }}
-          className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end"
+          className="order-1 lg:order-2"
         >
-          <div>
-            <motion.p variants={revealItem} className="section-kicker">
-              Ako pracujeme
-            </motion.p>
-            <motion.h2
-              variants={revealItem}
-              className="mt-4 max-w-xl font-display text-3xl font-semibold tracking-tight text-ivory sm:text-4xl"
-            >
-              Od prvej správy po spustený web.
-            </motion.h2>
-          </div>
-          <motion.div variants={revealItem}>
-            <a href="#kontakt" className="secondary-button">
-              Začať konzultáciou
-            </a>
+          <motion.div
+            variants={revealItem}
+            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-base/[0.7] px-3 py-1.5 text-xs font-bold text-slate-300"
+          >
+            <Smartphone aria-hidden="true" className="h-4 w-4 text-accent-soft" />
+            Mobilná vrstva
+          </motion.div>
+          <motion.h2
+            variants={revealItem}
+            className="mt-5 max-w-2xl text-4xl font-black leading-none tracking-tight text-white sm:text-5xl lg:text-6xl"
+          >
+            Ďalší reveal bude natívna appka pre členov.
+          </motion.h2>
+          <motion.p
+            variants={revealItem}
+            className="mt-5 max-w-xl text-base leading-7 text-slate-400"
+          >
+            Túto časť nechávam pripravenú ako produktový blok. Keď budú hotové
+            reálne mobile screenshoty, dá sa z nej spraviť druhý parallax
+            príbeh s iPhone mockupom.
+          </motion.p>
+          <motion.div variants={revealItem} className="mt-8 grid gap-3">
+            {[
+              "QR karta člena a stav členstva",
+              "Rezervácie tréningov a priestorov",
+              "Novinky, upozornenia a história vstupov",
+            ].map((item) => (
+              <div key={item} className="flex items-center gap-3">
+                <span className="grid h-8 w-8 place-items-center rounded-full bg-accent-faint text-accent-soft">
+                  <Check aria-hidden="true" className="h-4 w-4" />
+                </span>
+                <span className="text-sm font-semibold text-slate-300">
+                  {item}
+                </span>
+              </div>
+            ))}
           </motion.div>
         </motion.div>
-
-        <motion.div
-          variants={revealContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-          className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8"
-        >
-          {processSteps.map(([number, title, text]) => (
-            <motion.div
-              key={number}
-              variants={revealItem}
-              className="border-t border-white/10 pt-6"
-            >
-              <p className="font-display text-3xl font-semibold italic text-accent-soft">
-                {number}
-              </p>
-              <h3 className="mt-4 font-display text-xl font-semibold tracking-tight text-ivory">
-                {title}
-              </h3>
-              <p className="mt-3 text-sm leading-7 text-slate-400">{text}</p>
-            </motion.div>
-          ))}
-        </motion.div>
       </div>
     </section>
   );
 }
-
-const projectTypes = ["Nový web", "Redizajn", "E-shop", "Niečo iné"];
 
 function ContactSection() {
   const [projectType, setProjectType] = useState(projectTypes[0]);
@@ -1067,57 +1073,49 @@ function ContactSection() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="relative mx-auto max-w-6xl overflow-hidden rounded-3xl border border-white/10 bg-surface shadow-float"
+        className="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] border border-white/10 bg-surface shadow-float"
       >
-        <div className="hero-grid pointer-events-none absolute inset-0 opacity-30" />
-        <div className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-accent/20 blur-3xl" />
-        <Asterisk
-          aria-hidden="true"
-          className="pointer-events-none absolute -bottom-12 -left-12 h-56 w-56 text-white/[0.03]"
-        />
-
-        <div className="relative grid gap-12 px-6 py-12 sm:px-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16 lg:px-14 lg:py-16">
+        <div aria-hidden="true" className="contact-field" />
+        <div className="relative grid gap-12 px-5 py-10 sm:px-8 sm:py-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16 lg:px-12 lg:py-14">
           <div>
-            <p className="section-kicker">Kontakt</p>
-            <h2 className="mt-4 max-w-md font-display text-3xl font-semibold tracking-tight text-ivory sm:text-4xl">
-              Povedzte nám, čo{" "}
-              <em className="italic text-accent-soft">staviate</em>.
+            <p className="section-kicker">Demo</p>
+            <h2 className="mt-4 max-w-xl text-4xl font-black leading-none tracking-tight text-white sm:text-5xl">
+              Ukážme si, ako by Tap-it sedel na tvoje fitko.
             </h2>
-            <p className="mt-5 max-w-md text-sm leading-7 text-slate-400">
-              Napíšte pár viet o projekte — nový web, redizajn, e-shop alebo
-              čokoľvek na mieru. Ozveme sa s návrhom ďalších krokov.
+            <p className="mt-5 max-w-lg text-base leading-7 text-slate-400">
+              Napíš pár viet o prevádzke. Formulár je zatiaľ bez backendu, ale
+              texty a flow sú pripravené na napojenie.
             </p>
 
-            <div className="mt-8 grid gap-4">
+            <div className="mt-8 grid gap-3">
               {[
-                "Nezáväzná konzultácia zdarma",
-                "Odpoveď do 48 hodín",
-                "Cenový odhad bez prekvapení",
+                "Krátke produktové demo",
+                "Pilotná prevádzka pre jeden gym",
+                "Návrh modulov podľa reality recepcie",
               ].map((item) => (
-                <div
-                  key={item}
-                  className="flex items-center gap-3 text-sm font-medium text-slate-300"
-                >
+                <div key={item} className="flex items-center gap-3">
                   <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent-faint text-accent-soft">
-                    <Asterisk aria-hidden="true" className="h-4 w-4" />
+                    <BadgeCheck aria-hidden="true" className="h-4 w-4" />
                   </span>
-                  {item}
+                  <span className="text-sm font-semibold text-slate-300">
+                    {item}
+                  </span>
                 </div>
               ))}
             </div>
           </div>
 
           {submitted ? (
-            <div className="flex flex-col items-start justify-center rounded-2xl border border-white/5 bg-white/[0.02] p-8 sm:p-10">
-              <span className="grid h-12 w-12 place-items-center rounded-full bg-accent">
-                <Check aria-hidden="true" className="h-6 w-6" />
+            <div className="flex min-h-[360px] flex-col items-start justify-center rounded-3xl border border-white/10 bg-base/[0.7] p-8">
+              <span className="grid h-14 w-14 place-items-center rounded-2xl bg-accent text-white shadow-brand">
+                <Check aria-hidden="true" className="h-7 w-7" />
               </span>
-              <p className="mt-6 font-display text-2xl font-semibold tracking-tight text-ivory">
-                Ďakujeme, dopyt je{" "}
-                <em className="italic text-accent-soft">na ceste</em>.
+              <p className="mt-6 text-3xl font-black leading-tight text-white">
+                Super, dopyt je pripravený.
               </p>
-              <p className="mt-3 max-w-sm text-sm leading-7 text-slate-400">
-                Ozveme sa vám do 48 hodín s návrhom ďalších krokov.
+              <p className="mt-3 max-w-md text-sm leading-7 text-slate-400">
+                Backend ešte nie je napojený, takže toto je lokálny stav
+                formulára. Vizuálne aj obsahovo je flow pripravený.
               </p>
             </div>
           ) : (
@@ -1128,7 +1126,7 @@ function ContactSection() {
                   <input
                     className="editorial-input"
                     name="name"
-                    placeholder="Jana Nováková"
+                    placeholder="Filip Paučo"
                     required
                   />
                 </label>
@@ -1138,14 +1136,14 @@ function ContactSection() {
                     className="editorial-input"
                     name="email"
                     type="email"
-                    placeholder="jana@firma.sk"
+                    placeholder="filip@fitko.sk"
                     required
                   />
                 </label>
               </div>
 
               <fieldset>
-                <legend className="field-label">Typ projektu</legend>
+                <legend className="field-label">Typ záujmu</legend>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {projectTypes.map((type) => (
                     <label key={type} className="cursor-pointer">
@@ -1157,7 +1155,7 @@ function ContactSection() {
                         onChange={() => setProjectType(type)}
                         className="peer sr-only"
                       />
-                      <span className="inline-flex rounded-full border border-white/10 bg-white/[0.02] px-4 py-2 text-xs font-semibold text-slate-400 transition hover:border-white/25 peer-checked:border-accent peer-checked:bg-accent peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-accent-soft">
+                      <span className="inline-flex rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-xs font-bold text-slate-400 transition hover:border-white/25 peer-checked:border-accent peer-checked:bg-accent peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-accent-soft">
                         {type}
                       </span>
                     </label>
@@ -1168,23 +1166,20 @@ function ContactSection() {
               <label className="block">
                 <span className="field-label">Správa</span>
                 <textarea
-                  className="editorial-input resize-none"
+                  className="editorial-input min-h-32 resize-none"
                   name="message"
-                  placeholder="Pár viet o projekte — čo má web robiť a dokedy ho potrebujete…"
-                  rows={4}
+                  placeholder="Koľko máte členov, ako dnes riešite vstupy a čo by mal Tap-it vyriešiť ako prvé?"
+                  rows={5}
                 />
               </label>
 
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <button
-                  className="primary-button w-full sm:w-auto"
-                  type="submit"
-                >
-                  Odoslať dopyt
+                <button className="primary-button w-full sm:w-auto" type="submit">
+                  Odoslať záujem
                   <ArrowRight aria-hidden="true" className="h-4 w-4" />
                 </button>
-                <p className="text-center text-xs font-medium text-slate-500 sm:text-right">
-                  Žiadny spam — len odpoveď na váš dopyt.
+                <p className="text-center text-xs font-semibold text-slate-500 sm:text-right">
+                  Bez newslettera. Len odpoveď k Tap-it.
                 </p>
               </div>
             </form>
@@ -1197,48 +1192,165 @@ function ContactSection() {
 
 function Footer({ year }: { year: number }) {
   return (
-    <footer className="border-t border-white/5 px-4 py-14 sm:px-6">
-      <div className="mx-auto grid max-w-6xl gap-10 sm:grid-cols-2 md:grid-cols-[1.2fr_repeat(3,1fr)]">
+    <footer className="border-t border-white/5 px-4 py-12 sm:px-6">
+      <div className="mx-auto flex max-w-7xl flex-col gap-8 md:flex-row md:items-end md:justify-between">
         <div>
-          <div className="flex items-center gap-2.5">
-            <span className="grid h-8 w-8 place-items-center rounded-full bg-accent">
-              <Asterisk aria-hidden="true" className="h-4 w-4" />
+          <div className="flex items-center gap-3">
+            <span className="grid h-10 w-10 place-items-center rounded-xl bg-accent text-sm font-black text-white">
+              T
             </span>
-            <span className="font-display text-sm font-semibold tracking-tight text-ivory">
-              Tap-it
-            </span>
+            <span className="text-base font-black text-white">Tap-it</span>
           </div>
-          <p className="mt-4 max-w-xs text-sm leading-7 text-slate-500">
-            Webové štúdio — tvorba webov, redizajn, e-shopy a vývoj na mieru.
+          <p className="mt-4 max-w-md text-sm leading-7 text-slate-500">
+            SaaS systém pre fitness centrá: QR vstupy, členstvá, rezervácie,
+            smeny a admin panel pre každodennú prevádzku.
           </p>
         </div>
-        {[
-          [
-            "Služby",
-            "Tvorba webov",
-            "Redizajn stránok",
-            "Vývoj na mieru",
-            "E-shopy",
-          ],
-          ["Štúdio", "Projekt", "Proces", "Kontakt"],
-          ["Produkt", "Tap-it", "QR vstup", "Rezervácie"],
-        ].map(([heading, ...links]) => (
-          <div key={heading}>
-            <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-slate-400">
-              {heading}
+        <div className="flex flex-col gap-2 text-sm font-semibold text-slate-500 sm:flex-row sm:gap-5">
+          <span>© {year} Tap-it</span>
+          <span>tap-it.sk</span>
+          <span>Fitness OS</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+function FullFooter({ year }: { year: number }) {
+  const footerNavigation = [
+    ["Platforma", "#platforma"],
+    ["Produkt", "#produkt"],
+    ["Prevádzka", "#prevadzka"],
+    ["Demo", "#kontakt"],
+  ];
+  const productLinks = [
+    "QR vstupy",
+    "Členstvá",
+    "Rezervácie",
+    "Smeny",
+    "Priestory",
+    "Novinky",
+  ];
+  const infoLinks = [
+    "Všeobecné obchodné podmienky",
+    "Ochrana osobných údajov",
+    "Prevádzkový poriadok",
+    "Cookies",
+  ];
+  const socialLinks = [
+    { label: "Facebook", icon: Facebook },
+    { label: "Instagram", icon: Instagram },
+    { label: "X", icon: Twitter },
+    { label: "LinkedIn", icon: Linkedin },
+  ];
+
+  return (
+    <footer className="border-t border-white/5 bg-[#050506] px-4 py-16 sm:px-6 lg:py-20">
+      <div className="mx-auto max-w-7xl">
+        <div className="grid gap-12 lg:grid-cols-[1.25fr_0.9fr_0.9fr_1fr_1fr]">
+          <div>
+            <div className="flex items-center gap-3">
+              <span className="grid h-11 w-11 place-items-center rounded-xl bg-accent text-sm font-black text-white shadow-brand">
+                T
+              </span>
+              <span className="text-xl font-black tracking-tight text-white">
+                Tap<span className="text-accent">-it</span>
+              </span>
+            </div>
+            <p className="mt-5 max-w-xs text-sm font-semibold leading-7 text-slate-500">
+              SaaS systém pre fitness centrá: QR vstupy, členstvá,
+              rezervácie, smeny a admin panel pre každodennú prevádzku.
             </p>
-            <div className="grid gap-2 text-sm text-slate-500">
-              {links.map((link) => (
-                <span key={link}>{link}</span>
+            <div className="mt-7 flex gap-3">
+              {socialLinks.map(({ label, icon: Icon }) => (
+                <a
+                  key={label}
+                  href="#kontakt"
+                  aria-label={label}
+                  className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-slate-400 transition hover:border-accent/45 hover:bg-accent/10 hover:text-white"
+                >
+                  <Icon aria-hidden="true" className="h-4 w-4" />
+                </a>
               ))}
             </div>
           </div>
-        ))}
-      </div>
-      <div className="mx-auto mt-12 flex max-w-6xl flex-col gap-2 border-t border-white/5 pt-6 text-xs text-slate-600 sm:flex-row sm:items-center sm:justify-between">
-        <span>© {year} Tap-it. Všetky práva vyhradené.</span>
-        <span>Dizajn a kód pod jednou strechou.</span>
+
+          <FooterColumn title="Navigácia">
+            {footerNavigation.map(([label, href]) => (
+              <a key={href} href={href} className="footer-link">
+                {label}
+              </a>
+            ))}
+          </FooterColumn>
+
+          <FooterColumn title="Produkt">
+            {productLinks.map((item) => (
+              <a key={item} href="#produkt" className="footer-link">
+                {item}
+              </a>
+            ))}
+          </FooterColumn>
+
+          <FooterColumn title="Kontakt">
+            <a href="#kontakt" className="footer-contact-row">
+              <MapPin aria-hidden="true" className="h-4 w-4" />
+              <span>
+                Tap-it demo
+                <br />
+                Slovensko / online
+              </span>
+            </a>
+            <a href="tel:+421000000000" className="footer-contact-row">
+              <Phone aria-hidden="true" className="h-4 w-4" />
+              <span>+421 demo call</span>
+            </a>
+            <a href="mailto:info@tap-it.sk" className="footer-contact-row">
+              <Mail aria-hidden="true" className="h-4 w-4" />
+              <span>info@tap-it.sk</span>
+            </a>
+          </FooterColumn>
+
+          <FooterColumn title="Informácie">
+            {infoLinks.map((item) => (
+              <a key={item} href="#kontakt" className="footer-link">
+                {item}
+              </a>
+            ))}
+          </FooterColumn>
+        </div>
+
+        <div className="mt-16 flex flex-col gap-4 border-t border-white/10 pt-7 text-xs font-semibold text-slate-600 md:flex-row md:items-center md:justify-between">
+          <p>© {year} Tap-it. Všetky práva vyhradené.</p>
+          <p>
+            Powered by{" "}
+            <a
+              href="#platforma"
+              className="text-accent-soft transition hover:text-white"
+            >
+              Tap-it Fitness OS
+            </a>
+          </p>
+        </div>
       </div>
     </footer>
+  );
+}
+
+function FooterColumn({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <div>
+      <h2 className="text-xs font-black uppercase tracking-[0.16em] text-slate-300">
+        {title}
+      </h2>
+      <div className="mt-5 grid gap-3 text-sm font-semibold text-slate-500">
+        {children}
+      </div>
+    </div>
   );
 }
