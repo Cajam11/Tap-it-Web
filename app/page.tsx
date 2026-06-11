@@ -14,9 +14,15 @@ import {
   X,
   Zap
 } from "lucide-react";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+  type Variants
+} from "framer-motion";
 import QRCodeGenerator from "qrcode";
-import { FormEvent, ReactNode, useEffect, useMemo, useState } from "react";
+import { FormEvent, ReactNode, useEffect, useMemo, useRef, useState } from "react";
 
 const navItems = [
   ["Funkcie", "#funkcie"],
@@ -25,7 +31,7 @@ const navItems = [
   ["Bezpečnosť", "#bezpecnost"]
 ];
 
-const modules = ["QR vstup", "Členstvá", "Platby", "Rezervácie", "Obsadenosť", "Roly"];
+const modules = ["QR vstup", "Členstvá", "Platby", "Rezervácie", "Obsadenosť", "Roly", "Scan logy", "Reporty"];
 
 const easterEggMessages = [
   "Našiel si Tap-it easter egg. Recepcia má dnes pokoj.",
@@ -43,27 +49,6 @@ const calendarSlots = [
   { day: 23, title: "Open gym limit", meta: "19:00 · 84% obsadenosť", status: "busy" }
 ];
 
-const features = [
-  {
-    icon: <QrCode aria-hidden="true" />,
-    title: "QR vstup bez plastových kartičiek",
-    text: "Dynamická QR permanentka sa obnovuje každých 15 sekúnd. Recepcia alebo scanner okamžite vidí, či je vstup platný.",
-    visual: <MiniBrowser variant="qr" />
-  },
-  {
-    icon: <Zap aria-hidden="true" />,
-    title: "Live prevádzka bez ručného prepisovania",
-    text: "Check-in, check-out a scan logy držia obsadenosť aktuálnu. Majiteľ vidí návštevy, predaje a renewal rate v jednom pohľade.",
-    visual: <MiniBrowser variant="sync" />
-  },
-  {
-    icon: <CalendarCheck2 aria-hidden="true" />,
-    title: "Rezervácie trénerov a priestorov",
-    text: "Tréneri, miestnosti a skupinové lekcie s dostupnosťou, pending holdmi, platenými rezerváciami a prevenciou konfliktov.",
-    visual: <MiniBrowser variant="calendar" />
-  }
-];
-
 const security = [
   "Krátko platné podpísané QR tokeny",
   "Server-side Stripe webhooky",
@@ -72,190 +57,30 @@ const security = [
   "Privacy-aware live presence"
 ];
 
+const revealContainer: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.12 } }
+};
+
+const revealItem: Variants = {
+  hidden: { opacity: 0, y: 28 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" } }
+};
+
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const reduceMotion = useReducedMotion();
-  const { scrollYProgress } = useScroll();
-  const heroPanelY = useTransform(scrollYProgress, [0, 0.35], reduceMotion ? [0, 0] : [0, -36]);
-  const heroGridY = useTransform(scrollYProgress, [0, 0.35], reduceMotion ? [0, 0] : [0, 64]);
   const year = useMemo(() => new Date().getFullYear(), []);
 
-  function submitDemo(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setSubmitted(true);
-  }
-
   return (
-    <main className="min-h-screen overflow-x-hidden bg-[#05070d] text-white">
+    <main className="min-h-screen overflow-x-hidden bg-base text-slate-100">
       <Navigation menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
-
-      <section className="relative isolate px-4 pb-24 pt-28 sm:px-6 lg:pb-32 lg:pt-32">
-        <div className="hero-gradient pointer-events-none absolute inset-x-0 top-0 -z-20 h-[760px]" />
-        <motion.div style={{ y: heroGridY }} className="hero-grid pointer-events-none absolute inset-x-0 top-0 -z-10 h-[620px]" />
-        <div className="hero-beam pointer-events-none absolute left-1/2 top-28 -z-10 h-24 w-[min(820px,90vw)] -translate-x-1/2 opacity-60" />
-
-        <div className="relative mx-auto max-w-5xl text-center">
-          <p className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#0a0f1c]/80 px-4 py-2 text-xs font-bold text-[#8fa2ff] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur">
-            <ScanLine aria-hidden="true" className="h-4 w-4" />
-            B2B SaaS pre fitness prevádzky
-          </p>
-
-          <h1 className="mx-auto max-w-4xl text-5xl font-black leading-[0.95] text-white sm:text-7xl lg:text-[88px]">
-            Operačný systém pre{" "}
-            <span className="bg-gradient-to-r from-[#eef2ff] via-[#7892ff] to-[#1238ff] bg-clip-text text-transparent">
-              moderné fitká
-            </span>
-          </h1>
-
-          <div className="mx-auto mt-7 max-w-xl text-sm leading-7 text-slate-400 sm:text-base">
-            Digitálne členstvá, QR vstup, rezervácie, platby a real-time
-            prehľad prevádzky v jednom čistom systéme.
-          </div>
-
-          <motion.div style={{ y: heroPanelY }} className="mx-auto mt-9 max-w-4xl">
-            <HeroPanel />
-          </motion.div>
-
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <a href="#demo" className="primary-button">
-              Rezervovať demo
-              <ArrowRight aria-hidden="true" className="h-4 w-4" />
-            </a>
-            <a href="#funkcie" className="secondary-button">
-              Pozrieť funkcie
-            </a>
-          </div>
-
-          <div className="mt-8 flex items-center justify-center gap-2 text-xs text-slate-500">
-            <span className="inline-flex -space-x-2">
-              <span className="h-7 w-7 rounded-full border border-[#05070d] bg-[#c7d2fe]" />
-              <span className="h-7 w-7 rounded-full border border-[#05070d] bg-[#93c5fd]" />
-              <span className="h-7 w-7 rounded-full border border-[#05070d] bg-[#dbeafe]" />
-            </span>
-            Navrhnuté pre majiteľov, recepciu a trénerov
-          </div>
-        </div>
-      </section>
-
-      <section className="border-y border-white/5 bg-[#080b12] px-4 py-9 sm:px-6">
-        <div className="mx-auto max-w-5xl text-center">
-          <p className="mb-6 text-xs font-bold uppercase text-slate-600">Prevádzkové moduly v jednom toku</p>
-          <div className="grid grid-cols-2 gap-4 text-sm font-bold text-slate-500 sm:grid-cols-3 lg:grid-cols-6">
-            {modules.map((module) => (
-              <div key={module} className="rounded-[8px] border border-white/5 bg-white/[0.02] px-3 py-3">
-                {module}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="funkcie" className="px-4 py-24 sm:px-6 lg:py-32">
-        <div className="mx-auto max-w-5xl text-center">
-          <p className="section-kicker">Funkcie bez šumu</p>
-          <h2 className="mt-4 text-4xl font-black leading-tight sm:text-5xl">
-            Postavené pre rýchlu prevádzku.
-          </h2>
-          <p className="mx-auto mt-4 max-w-lg text-sm leading-6 text-slate-500">
-            Menej ručného overovania, menej rozhádzaných nástrojov, viac jasných
-            dát pre každodenné rozhodovanie.
-          </p>
-        </div>
-
-        <div className="mx-auto mt-20 grid max-w-5xl gap-16">
-          {features.map((feature, index) => (
-            <FeatureBlock key={feature.title} index={index} {...feature} />
-          ))}
-        </div>
-      </section>
-
-      <section id="riesenia" className="px-4 py-24 sm:px-6 lg:py-32">
-        <div className="mx-auto max-w-5xl">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="section-kicker">Pre koho</p>
-            <h2 className="mt-4 text-4xl font-black leading-tight sm:text-5xl">
-              Jeden systém pre celý tím.
-            </h2>
-          </div>
-
-          <div className="mt-16 grid gap-5 md:grid-cols-3">
-            <RoleCard title="Majiteľ" text="Vidí predaje, návštevy, obsadenosť a obnovy bez ručných reportov." icon={<BarChart3 aria-hidden="true" />} />
-            <RoleCard title="Recepcia" text="Overuje QR vstupy, rieši check-in/out a vidí stav členstva okamžite." icon={<ScanLine aria-hidden="true" />} />
-            <RoleCard title="Tréneri" text="Spravujú dostupnosť, rozvrhy a rezervácie bez konfliktov." icon={<UsersRound aria-hidden="true" />} />
-          </div>
-        </div>
-      </section>
-
-      <section id="admin" className="border-y border-white/5 bg-[#080b12] px-4 py-24 sm:px-6 lg:py-32">
-        <div className="mx-auto grid max-w-5xl gap-14 lg:grid-cols-2 lg:items-center">
-          <div>
-            <p className="section-kicker">Admin & kontrola</p>
-            <h2 className="mt-4 text-4xl font-black leading-tight sm:text-5xl">
-              Prehľad prevádzky bez konca mesiaca v tabuľke.
-            </h2>
-            <p className="mt-5 max-w-md text-sm leading-7 text-slate-500">
-              Admin dashboard sleduje obsadenosť, predané členstvá, priemer
-              denných návštev, obnovy, scan logy, frontu overení a prevádzkové
-              pokrytie.
-            </p>
-            <div className="mt-7 grid gap-3 text-sm text-slate-400">
-              {["Obsadenosť v reálnom čase", "Predaje a transakčná história", "Roly user, tréner, recepčný, manager, owner"].map((item) => (
-                <div key={item} className="flex items-center gap-3">
-                  <Check aria-hidden="true" className="h-4 w-4 text-[#4c6bff]" />
-                  {item}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <PerformanceMatrix />
-        </div>
-      </section>
-
-      <section id="bezpecnost" className="border-y border-white/5 bg-[#080b12] px-4 py-24 sm:px-6 lg:py-32">
-        <div className="mx-auto grid max-w-5xl gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
-          <div>
-            <p className="section-kicker">Bezpečnosť</p>
-            <h2 className="mt-4 text-4xl font-black leading-tight sm:text-5xl">
-              Praktické pravidlá namiesto veľkých sľubov.
-            </h2>
-          </div>
-          <div className="grid gap-3">
-            {security.map((item) => (
-              <div key={item} className="flex items-center gap-4 rounded-[8px] border border-white/5 bg-white/[0.02] p-4 text-sm font-semibold text-slate-300">
-                <ShieldCheck aria-hidden="true" className="h-5 w-5 shrink-0 text-[#4c6bff]" />
-                {item}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="demo" className="px-4 py-24 sm:px-6 lg:py-32">
-        <div className="soft-vignette relative mx-auto max-w-5xl overflow-hidden rounded-[28px] border border-white/10 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.2),transparent_34%),linear-gradient(135deg,#3156ff_0%,#1238ff_48%,#081c8d_100%)] px-6 py-16 text-center sm:px-10 lg:px-16">
-          <div className="hero-grid pointer-events-none absolute inset-0 opacity-35" />
-          <div className="relative">
-          <h2 className="mx-auto max-w-2xl text-4xl font-black leading-tight sm:text-5xl">
-            Pozrime sa, ako by Tap-it fungoval vo vašej prevádzke.
-          </h2>
-          <p className="mx-auto mt-5 max-w-lg text-sm leading-6 text-white/75">
-            Demo môže byť zatiaľ len jednoduchý kontakt. Reálny CRM alebo backend
-            endpoint dopojíme neskôr.
-          </p>
-
-          <form onSubmit={submitDemo} className="mx-auto mt-8 grid max-w-xl gap-3 sm:grid-cols-[1fr_1fr_auto]">
-            <input className="minimal-input" name="email" type="email" placeholder="E-mail" required />
-            <input className="minimal-input" name="gym" placeholder="Názov prevádzky" required />
-            <button className="rounded-[8px] bg-white px-5 py-3 text-sm font-black text-[#0b1f90]" type="submit">
-              Rezervovať
-            </button>
-          </form>
-          {submitted ? <p className="mt-4 text-sm font-bold text-white/80">Ďakujeme, demo request je zachytený.</p> : null}
-          </div>
-        </div>
-      </section>
-
+      <Hero />
+      <ModulesMarquee />
+      <FeaturesBento />
+      <RolesSection />
+      <AdminSection />
+      <SecuritySection />
+      <DemoSection />
       <Footer year={year} />
     </main>
   );
@@ -273,7 +98,7 @@ function Navigation({
   useEffect(() => {
     let frame = 0;
 
-    const updateActiveSection = () => {
+    const update = () => {
       const offset = 150;
       const scrollPosition = window.scrollY + offset;
       let current = navItems[0][1];
@@ -290,10 +115,10 @@ function Navigation({
 
     const onScroll = () => {
       window.cancelAnimationFrame(frame);
-      frame = window.requestAnimationFrame(updateActiveSection);
+      frame = window.requestAnimationFrame(update);
     };
 
-    updateActiveSection();
+    update();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
 
@@ -305,35 +130,34 @@ function Navigation({
   }, []);
 
   return (
-    <header className="fixed inset-x-0 top-4 z-50 px-4">
-      <nav className="relative mx-auto flex h-16 max-w-5xl items-center justify-between overflow-hidden rounded-full border border-white/10 bg-[#080d19]/85 px-3 shadow-[0_18px_70px_rgba(0,0,0,0.36)] backdrop-blur-xl sm:px-4">
-        <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
-        <div className="pointer-events-none absolute -top-12 left-1/2 h-24 w-80 -translate-x-1/2 rounded-full bg-[#1238ff]/18 blur-3xl" />
-
-        <a href="#" className="relative flex items-center gap-3 rounded-full">
-          <span className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.2),transparent_30%),linear-gradient(135deg,#244bff,#1024b8)] shadow-[inset_0_1px_0_rgba(255,255,255,0.18)]">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-base/85 backdrop-blur-xl">
+      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+        <a href="#" className="flex items-center gap-2.5">
+          <span className="grid h-9 w-9 place-items-center rounded-xl bg-accent">
             <ScanLine aria-hidden="true" className="h-5 w-5" />
           </span>
           <span className="leading-none">
-            <span className="block text-base font-black">Tap-it</span>
-            <span className="hidden text-[10px] font-bold uppercase text-slate-500 sm:block">Fitness OS</span>
+            <span className="block font-display text-base font-semibold">Tap-it</span>
+            <span className="hidden text-[10px] font-semibold uppercase tracking-wider text-slate-500 sm:block">
+              Fitness OS
+            </span>
           </span>
         </a>
 
-        <div className="relative hidden items-center gap-6 px-2 lg:flex">
+        <div className="hidden items-center gap-7 lg:flex">
           {navItems.map(([label, href]) => (
             <a
               key={href}
               href={href}
               onClick={() => setActiveSection(href)}
-              className={`relative py-2 text-xs font-black transition ${
+              className={`relative py-2 text-sm font-medium transition ${
                 activeSection === href ? "text-white" : "text-slate-400 hover:text-white"
               }`}
             >
               {activeSection === href ? (
                 <motion.span
                   layoutId="active-nav-underline"
-                  className="absolute -bottom-0.5 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-[#6d8cff] via-white to-[#1238ff]"
+                  className="absolute -bottom-0.5 left-0 right-0 h-0.5 rounded-full bg-accent-bright"
                   transition={{ type: "spring", stiffness: 520, damping: 38 }}
                 />
               ) : null}
@@ -342,189 +166,376 @@ function Navigation({
           ))}
         </div>
 
-        <motion.a
-          href="#demo"
-          whileHover={{ y: -1, scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="group relative hidden min-h-11 items-center gap-2 overflow-hidden rounded-full bg-[#1238ff] px-5 text-xs font-black text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_10px_34px_rgba(18,56,255,0.26)] transition hover:bg-[#244bff] lg:inline-flex"
-        >
-          <span className="absolute inset-y-0 -left-10 w-8 rotate-12 bg-white/30 blur-sm transition duration-700 group-hover:left-[120%]" />
-          <span className="relative">Rezervovať demo</span>
-          <ArrowRight aria-hidden="true" className="relative h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-        </motion.a>
+        <div className="flex items-center gap-2">
+          <a
+            href="#demo"
+            className="hidden min-h-10 items-center gap-2 rounded-xl bg-accent px-5 text-sm font-semibold text-white transition hover:bg-accent-bright lg:inline-flex"
+          >
+            Rezervovať demo
+            <ArrowRight aria-hidden="true" className="h-3.5 w-3.5" />
+          </a>
 
-        <button
-          className="relative grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/[0.055] lg:hidden"
-          type="button"
-          aria-label={menuOpen ? "Zatvoriť menu" : "Otvoriť menu"}
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          {menuOpen ? <X aria-hidden="true" className="h-4 w-4" /> : <Menu aria-hidden="true" className="h-4 w-4" />}
-        </button>
+          <button
+            className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/[0.04] lg:hidden"
+            type="button"
+            aria-label={menuOpen ? "Zatvoriť menu" : "Otvoriť menu"}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            {menuOpen ? <X aria-hidden="true" className="h-4 w-4" /> : <Menu aria-hidden="true" className="h-4 w-4" />}
+          </button>
+        </div>
       </nav>
 
       {menuOpen ? (
-        <div className="mx-auto mt-3 grid max-w-5xl gap-1 rounded-[20px] border border-white/10 bg-[#080d19]/95 p-3 shadow-[0_18px_70px_rgba(0,0,0,0.36)] backdrop-blur-xl lg:hidden">
-          {navItems.map(([label, href]) => (
+        <div className="border-t border-white/5 bg-base/95 px-4 pb-4 pt-2 backdrop-blur-xl lg:hidden">
+          <div className="mx-auto grid max-w-6xl gap-1">
+            {navItems.map(([label, href]) => (
+              <a
+                key={href}
+                href={href}
+                onClick={() => {
+                  setActiveSection(href);
+                  setMenuOpen(false);
+                }}
+                className={`rounded-xl px-4 py-3 text-sm font-medium transition ${
+                  activeSection === href
+                    ? "bg-accent-faint text-white"
+                    : "text-slate-300 hover:bg-white/[0.06]"
+                }`}
+              >
+                {label}
+              </a>
+            ))}
             <a
-              key={href}
-              href={href}
-              onClick={() => {
-                setActiveSection(href);
-                setMenuOpen(false);
-              }}
-              className={`relative rounded-[12px] px-4 py-3 text-sm font-black transition ${
-                activeSection === href ? "text-white" : "text-slate-300 hover:bg-white/[0.06]"
-              }`}
+              href="#demo"
+              onClick={() => setMenuOpen(false)}
+              className="mt-2 rounded-xl bg-accent px-4 py-3 text-center text-sm font-semibold transition hover:bg-accent-bright"
             >
-              {activeSection === href ? (
-                <span className="absolute bottom-2 left-4 h-0.5 w-8 rounded-full bg-[#6d8cff]" />
-              ) : null}
-              {label}
+              Rezervovať demo
             </a>
-          ))}
-          <a href="#demo" onClick={() => setMenuOpen(false)} className="mt-2 rounded-[12px] bg-[#1238ff] px-4 py-3 text-center text-sm font-black">
-            Rezervovať demo
-          </a>
+          </div>
         </div>
       ) : null}
     </header>
   );
 }
 
+function Hero() {
+  const reduceMotion = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"]
+  });
+  const panelY = useTransform(scrollYProgress, [0, 1], reduceMotion ? [0, 0] : [0, -60]);
+  const glowY = useTransform(scrollYProgress, [0, 1], reduceMotion ? [0, 0] : [0, 140]);
+  const gridY = useTransform(scrollYProgress, [0, 1], reduceMotion ? [0, 0] : [0, 90]);
+
+  return (
+    <section ref={sectionRef} className="relative isolate overflow-hidden px-4 pb-20 pt-28 sm:px-6 lg:pb-28 lg:pt-36">
+      <motion.div style={{ y: glowY }} className="hero-glow pointer-events-none absolute inset-x-0 top-0 -z-20 h-[720px]" />
+      <motion.div style={{ y: gridY }} className="hero-grid pointer-events-none absolute inset-x-0 top-0 -z-10 h-[620px]" />
+
+      <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1.02fr_0.98fr] lg:gap-10">
+        <motion.div
+          variants={revealContainer}
+          initial="hidden"
+          animate="visible"
+          className="text-center lg:text-left"
+        >
+          <motion.p
+            variants={revealItem}
+            className="mx-auto inline-flex items-center gap-2 rounded-full border border-white/10 bg-surface/80 px-4 py-2 text-xs font-semibold text-accent-soft backdrop-blur lg:mx-0"
+          >
+            <ScanLine aria-hidden="true" className="h-4 w-4" />
+            B2B SaaS pre fitness prevádzky
+          </motion.p>
+
+          <motion.h1
+            variants={revealItem}
+            className="mt-6 font-display text-4xl font-semibold leading-[1.05] tracking-tight text-white sm:text-5xl xl:text-6xl"
+          >
+            Operačný systém pre{" "}
+            <span className="bg-gradient-to-r from-accent-soft via-accent-bright to-accent bg-clip-text text-transparent">
+              moderné fitká
+            </span>
+          </motion.h1>
+
+          <motion.p
+            variants={revealItem}
+            className="mx-auto mt-6 max-w-md text-sm leading-7 text-slate-400 sm:text-base lg:mx-0"
+          >
+            Digitálne členstvá, QR vstup, rezervácie, platby a real-time prehľad
+            prevádzky v jednom čistom systéme.
+          </motion.p>
+
+          <motion.div
+            variants={revealItem}
+            className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start"
+          >
+            <a href="#demo" className="primary-button w-full sm:w-auto">
+              Rezervovať demo
+              <ArrowRight aria-hidden="true" className="h-4 w-4" />
+            </a>
+            <a href="#funkcie" className="secondary-button w-full sm:w-auto">
+              Pozrieť funkcie
+            </a>
+          </motion.div>
+
+          <motion.div
+            variants={revealItem}
+            className="mt-10 grid grid-cols-3 divide-x divide-white/5 rounded-2xl border border-white/5 bg-surface/60"
+          >
+            {[
+              ["15 s", "obnova QR"],
+              ["92 %", "renewal rate"],
+              ["5", "rolí v systéme"]
+            ].map(([value, label]) => (
+              <div key={label} className="px-3 py-4 text-center lg:text-left lg:px-5">
+                <p className="font-display text-xl font-semibold sm:text-2xl">{value}</p>
+                <p className="mt-1 text-[11px] font-medium text-slate-500 sm:text-xs">{label}</p>
+              </div>
+            ))}
+          </motion.div>
+        </motion.div>
+
+        <motion.div
+          style={{ y: panelY }}
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut", delay: 0.25 }}
+        >
+          <HeroPanel />
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
 function HeroPanel() {
   return (
-    <div className="relative rounded-[24px] border border-white/10 bg-[#111622] p-2 shadow-[0_32px_90px_rgba(0,0,0,0.4)]">
-      <div className="pointer-events-none absolute -inset-x-8 -top-8 h-24 rounded-full bg-[#1238ff]/20 blur-3xl" />
-      <div className="soft-vignette relative overflow-hidden rounded-[18px] border border-white/5 bg-[#171c2a]">
-        <div className="panel-grid pointer-events-none absolute inset-0 opacity-45" />
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-[radial-gradient(circle_at_50%_0%,rgba(76,107,255,0.22),transparent_62%)]" />
+    <div className="relative rounded-3xl border border-white/10 bg-raised p-2 shadow-float">
+      <div className="pointer-events-none absolute -inset-x-8 -top-8 h-24 rounded-full bg-accent/15 blur-3xl" />
+      <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-surface">
+        <div className="panel-grid pointer-events-none absolute inset-0 opacity-50" />
         <div className="relative flex h-10 items-center gap-2 border-b border-white/5 px-4">
-          <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
-          <span className="h-2.5 w-2.5 rounded-full bg-[#ffbd2e]" />
-          <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+          <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+          <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
           <span className="ml-auto h-5 w-24 rounded-full bg-white/5" />
         </div>
 
-        <div className="relative grid gap-4 p-4 md:grid-cols-[56px_1fr_180px] lg:grid-cols-[64px_1fr_220px]">
-          <div className="hidden rounded-[12px] bg-[#0d1220] p-3 md:block">
-            <div className="mb-5 grid h-9 w-9 place-items-center rounded-[8px] bg-[#1238ff]">
-              <Layers3 aria-hidden="true" className="h-4 w-4" />
-            </div>
-            <div className="space-y-3">
-              <span className="block h-8 rounded-[8px] bg-white/5" />
-              <span className="block h-8 rounded-[8px] bg-white/5" />
-              <span className="block h-8 rounded-[8px] bg-white/5" />
-            </div>
-          </div>
-
-          <div className="rounded-[14px] bg-[#0d1220] p-5">
-            <div className="mb-7 space-y-3">
+        <div className="relative grid gap-4 p-4 sm:grid-cols-[1fr_150px]">
+          <div className="rounded-xl bg-base/70 p-5">
+            <div className="mb-6 space-y-3 text-left">
               <span className="block h-4 w-28 rounded-full bg-white/10" />
               <span className="block h-3 w-40 rounded-full bg-white/5" />
             </div>
-            <div className="panel-grid flex h-48 items-end gap-3 rounded-[12px] bg-[#151a27] p-5">
+            <div className="flex h-40 items-end gap-3 rounded-xl bg-raised p-4 sm:h-44">
               {[28, 44, 58, 76, 54, 42].map((height, index) => (
                 <motion.div
                   key={`${height}-${index}`}
-                  className={`flex-1 rounded-t-[8px] ${index === 3 ? "bg-[#1238ff]" : "bg-[#132772]"}`}
+                  className={`flex-1 rounded-t-md ${index === 3 ? "bg-accent-bright" : "bg-accent-deep"}`}
                   initial={{ height: "18%" }}
                   whileInView={{ height: `${height}%` }}
                   viewport={{ once: true }}
-                  transition={{ delay: index * 0.05, duration: 0.55 }}
+                  transition={{ delay: 0.4 + index * 0.05, duration: 0.55 }}
                 />
               ))}
             </div>
           </div>
 
-          <div className="grid gap-4">
-            <div className="rounded-[14px] bg-[#0d1220] p-4">
-              <span className="block h-4 w-20 rounded-full bg-white/10" />
-              <span className="mt-3 block h-3 w-28 rounded-full bg-white/5" />
-              <span className="mt-2 block h-3 w-24 rounded-full bg-white/5" />
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-1">
+            <div className="rounded-xl bg-base/70 p-4 text-left">
+              <div className="mb-4 grid h-9 w-9 place-items-center rounded-lg bg-accent">
+                <Layers3 aria-hidden="true" className="h-4 w-4" />
+              </div>
+              <span className="block h-3 w-16 rounded-full bg-white/10" />
+              <span className="mt-2 block h-3 w-12 rounded-full bg-white/5" />
             </div>
-            <div className="grid place-items-center rounded-[14px] bg-[#101b52] p-8 text-[#1238ff]">
-              <Zap aria-hidden="true" className="h-8 w-8" />
+            <div className="grid place-items-center rounded-xl bg-accent-faint p-6 text-accent-soft">
+              <Zap aria-hidden="true" className="h-7 w-7" />
             </div>
           </div>
         </div>
       </div>
 
-      <div className="absolute -right-3 top-14 hidden rounded-[10px] border border-white/10 bg-[#111622] px-4 py-3 text-left shadow-[0_20px_50px_rgba(0,0,0,0.32)] sm:block">
-        <p className="text-[10px] font-bold text-slate-500">QR REFRESH</p>
-        <p className="mt-1 text-xl font-black">15 s</p>
-      </div>
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8, duration: 0.5 }}
+        className="absolute -left-3 bottom-10 hidden rounded-xl border border-white/10 bg-raised px-4 py-3 text-left shadow-card sm:block"
+      >
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Obsadenosť</p>
+        <p className="mt-1 font-display text-xl font-semibold">
+          84 <span className="text-sm font-medium text-emerald-300">live</span>
+        </p>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1, duration: 0.5 }}
+        className="absolute -right-3 top-12 hidden rounded-xl border border-white/10 bg-raised px-4 py-3 text-left shadow-card sm:block"
+      >
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">QR refresh</p>
+        <p className="mt-1 font-display text-xl font-semibold">15 s</p>
+      </motion.div>
     </div>
   );
 }
 
-function FeatureBlock({
-  index,
+function ModulesMarquee() {
+  return (
+    <section className="border-y border-white/5 bg-surface py-8">
+      <p className="mb-6 text-center text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+        Prevádzkové moduly v jednom toku
+      </p>
+      <div className="marquee-mask overflow-hidden">
+        <div className="marquee-track">
+          {[0, 1].map((copy) => (
+            <div
+              key={copy}
+              aria-hidden={copy === 1}
+              className="flex shrink-0 items-center gap-3 pr-3"
+            >
+              {modules.map((module) => (
+                <span
+                  key={module}
+                  className="whitespace-nowrap rounded-full border border-white/5 bg-white/[0.02] px-5 py-2.5 text-sm font-medium text-slate-400"
+                >
+                  {module}
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FeaturesBento() {
+  return (
+    <section id="funkcie" className="px-4 py-20 sm:px-6 lg:py-28">
+      <div className="mx-auto max-w-6xl">
+        <motion.div
+          variants={revealContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          className="mx-auto max-w-2xl text-center"
+        >
+          <motion.p variants={revealItem} className="section-kicker">
+            Funkcie bez šumu
+          </motion.p>
+          <motion.h2
+            variants={revealItem}
+            className="mt-4 font-display text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl"
+          >
+            Postavené pre rýchlu prevádzku.
+          </motion.h2>
+          <motion.p variants={revealItem} className="mx-auto mt-4 max-w-lg text-sm leading-7 text-slate-400">
+            Menej ručného overovania, menej rozhádzaných nástrojov, viac jasných
+            dát pre každodenné rozhodovanie.
+          </motion.p>
+        </motion.div>
+
+        <motion.div
+          variants={revealContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          className="mt-14 grid gap-4 lg:grid-cols-2"
+        >
+          <motion.div variants={revealItem} className="lg:col-span-2">
+            <BentoCard
+              icon={<QrCode aria-hidden="true" />}
+              title="QR vstup bez plastových kartičiek"
+              text="Dynamická QR permanentka sa obnovuje každých 15 sekúnd. Recepcia alebo scanner okamžite vidí, či je vstup platný."
+              wide
+            >
+              <LiveQrCard />
+            </BentoCard>
+          </motion.div>
+
+          <motion.div variants={revealItem}>
+            <BentoCard
+              icon={<Zap aria-hidden="true" />}
+              title="Live prevádzka bez ručného prepisovania"
+              text="Check-in, check-out a scan logy držia obsadenosť aktuálnu. Majiteľ vidí návštevy, predaje a renewal rate v jednom pohľade."
+            >
+              <SyncActivityPanel />
+            </BentoCard>
+          </motion.div>
+
+          <motion.div variants={revealItem}>
+            <BentoCard
+              icon={<CalendarCheck2 aria-hidden="true" />}
+              title="Rezervácie trénerov a priestorov"
+              text="Tréneri, miestnosti a skupinové lekcie s dostupnosťou, pending holdmi, platenými rezerváciami a prevenciou konfliktov."
+            >
+              <InteractiveCalendar />
+            </BentoCard>
+          </motion.div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function BentoCard({
   icon,
   title,
   text,
-  visual
+  wide = false,
+  children
 }: {
-  index: number;
   icon: ReactNode;
   title: string;
   text: string;
-  visual: ReactNode;
+  wide?: boolean;
+  children: ReactNode;
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 34 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.55, ease: "easeOut" }}
-      className={`grid gap-8 md:grid-cols-2 md:items-center ${index % 2 ? "md:[&>*:first-child]:order-2" : ""}`}
+      whileHover={{ y: -4 }}
+      transition={{ type: "spring", stiffness: 260, damping: 22 }}
+      className={`grid h-full gap-8 rounded-3xl border border-white/5 bg-surface p-6 shadow-card sm:p-8 ${
+        wide ? "lg:grid-cols-2 lg:items-center" : "content-start"
+      }`}
     >
       <div>
-        <div className="mb-5 grid h-11 w-11 place-items-center rounded-[8px] bg-[#111a42] text-[#4c6bff]">
+        <div className="mb-5 grid h-11 w-11 place-items-center rounded-xl bg-accent-faint text-accent-soft">
           <IconSlot>{icon}</IconSlot>
         </div>
-        <h3 className="max-w-md text-2xl font-black leading-tight sm:text-3xl">{title}</h3>
-        <p className="mt-4 max-w-md text-sm leading-7 text-slate-500">{text}</p>
+        <h3 className="max-w-md font-display text-2xl font-semibold tracking-tight sm:text-3xl">{title}</h3>
+        <p className="mt-4 max-w-md text-sm leading-7 text-slate-400">{text}</p>
       </div>
-      <motion.div whileHover={{ y: -6 }} transition={{ type: "spring", stiffness: 220, damping: 20 }}>
-        {visual}
-      </motion.div>
+      <div className="rounded-2xl bg-raised p-4 sm:p-5">{children}</div>
     </motion.div>
-  );
-}
-
-function MiniBrowser({ variant }: { variant: "qr" | "sync" | "calendar" }) {
-  return (
-    <div className="rounded-[18px] border border-white/5 bg-[#101520] p-4">
-      <div className="rounded-[14px] bg-[#151a27] p-5">
-        {variant === "qr" ? <LiveQrCard /> : null}
-        {variant === "sync" ? <SyncActivityPanel /> : null}
-        {variant === "calendar" ? <InteractiveCalendar /> : null}
-      </div>
-    </div>
   );
 }
 
 function LiveQrCard() {
   const [messageIndex, setMessageIndex] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(15);
-  const [qrSvg, setQrSvg] = useState("");
+  const [qrUrl, setQrUrl] = useState("");
   const activeMessage = easterEggMessages[messageIndex];
 
   useEffect(() => {
     let active = true;
 
-    QRCodeGenerator.toString(`Tap-it easter egg: ${activeMessage}`, {
-      type: "svg",
-      width: 128,
+    QRCodeGenerator.toDataURL(`Tap-it easter egg: ${activeMessage}`, {
+      width: 512,
       margin: 1,
       color: {
-        dark: "#05070d",
+        dark: "#0A0E16",
         light: "#ffffff"
       }
-    }).then((svg) => {
-      if (active) setQrSvg(svg);
+    }).then((url) => {
+      if (active) setQrUrl(url);
     });
 
     return () => {
@@ -548,26 +559,31 @@ function LiveQrCard() {
   }, []);
 
   return (
-    <div className="grid gap-5 sm:grid-cols-[150px_1fr] sm:items-center">
-      <div className="rounded-[14px] bg-[#1238ff] p-4">
-        <div
-          className="grid aspect-square place-items-center rounded-[10px] bg-white p-2 [&_svg]:h-full [&_svg]:w-full"
-          aria-label="QR kód s Tap-it easter egg správou"
-          dangerouslySetInnerHTML={{ __html: qrSvg }}
-        />
+    <div className="grid gap-5 sm:grid-cols-[170px_1fr] sm:items-center">
+      <div className="mx-auto w-full max-w-[210px] rounded-xl bg-accent p-3.5 sm:mx-0 sm:max-w-none">
+        <div className="grid aspect-square place-items-center overflow-hidden rounded-lg bg-white p-1.5">
+          {qrUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={qrUrl}
+              alt="QR kód s Tap-it easter egg správou"
+              className="h-full w-full"
+            />
+          ) : null}
+        </div>
       </div>
 
       <div>
-        <p className="text-xs font-bold uppercase text-slate-500">Scan easter egg</p>
-        <p className="mt-2 min-h-12 text-sm font-semibold leading-6 text-slate-200">{activeMessage}</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Scan easter egg</p>
+        <p className="mt-2 min-h-12 text-sm font-medium leading-6 text-slate-200">{activeMessage}</p>
         <div className="mt-5 flex items-center justify-between">
-          <span className="text-sm font-bold text-slate-500">Obnova QR</span>
-          <span className="text-3xl font-black">{secondsLeft} s</span>
+          <span className="text-sm font-medium text-slate-500">Obnova QR</span>
+          <span className="font-display text-3xl font-semibold">{secondsLeft} s</span>
         </div>
-        <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/5">
+        <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/5">
           <motion.div
             key={messageIndex}
-            className="h-full rounded-full bg-[#1238ff]"
+            className="h-full rounded-full bg-accent-bright"
             initial={{ width: "100%" }}
             animate={{ width: "0%" }}
             transition={{ duration: 15, ease: "linear" }}
@@ -597,19 +613,19 @@ function SyncActivityPanel() {
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-4">
-        <span className="relative h-10 w-10 rounded-full bg-[#1238ff]">
-          <span className="absolute inset-0 rounded-full bg-[#1238ff] opacity-40 motion-safe:animate-ping" />
+        <span className="relative h-10 w-10 shrink-0 rounded-full bg-accent">
+          <span className="absolute inset-0 rounded-full bg-accent opacity-40 motion-safe:animate-ping" />
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-3">
-            <p className="font-black">Live recepcia</p>
-            <span className="rounded-full bg-emerald-400/10 px-2 py-1 text-[10px] font-black text-emerald-300">
+            <p className="font-display font-semibold">Live recepcia</p>
+            <span className="rounded-full bg-success/10 px-2 py-1 text-[10px] font-semibold text-emerald-300">
               Realtime
             </span>
           </div>
-          <div className="mt-3 h-2 rounded-full bg-white/5">
+          <div className="mt-3 h-1.5 rounded-full bg-white/5">
             <motion.div
-              className="h-full rounded-full bg-[#1238ff]"
+              className="h-full rounded-full bg-accent-bright"
               animate={{ width: ["38%", "72%", "52%", "84%"] }}
               transition={{ duration: 5.8, repeat: Infinity, ease: "easeInOut" }}
             />
@@ -623,15 +639,15 @@ function SyncActivityPanel() {
             key={`${time}-${name}`}
             type="button"
             onClick={() => setActive(index)}
-            className={`rounded-[10px] border p-3 text-left transition ${
+            className={`rounded-xl border p-3 text-left transition ${
               active === index
-                ? "border-[#1238ff]/50 bg-[#1238ff]/15"
+                ? "border-accent/50 bg-accent/15"
                 : "border-white/5 bg-white/[0.03] hover:bg-white/[0.05]"
             }`}
           >
             <div className="flex items-center justify-between gap-4">
-              <p className="text-sm font-black">{action}</p>
-              <span className="text-xs font-bold text-slate-500">{time}</span>
+              <p className="text-sm font-semibold">{action}</p>
+              <span className="text-xs font-medium text-slate-500">{time}</span>
             </div>
             <p className="mt-1 text-xs text-slate-500">
               {name} · {plan}
@@ -650,9 +666,9 @@ function InteractiveCalendar() {
 
   return (
     <div className="grid gap-4">
-      <div className="grid grid-cols-7 gap-2">
+      <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
         {days.map((day) => (
-          <div key={day} className="text-center text-[10px] font-black text-slate-600">
+          <div key={day} className="text-center text-[10px] font-semibold text-slate-500">
             {day}
           </div>
         ))}
@@ -666,12 +682,12 @@ function InteractiveCalendar() {
               key={day}
               type="button"
               onClick={() => setSelectedDay(day)}
-              className={`relative aspect-square rounded-[7px] text-xs font-black transition ${
+              className={`relative aspect-square rounded-md text-xs font-semibold transition ${
                 isSelected
-                  ? "bg-[#1238ff] text-white"
+                  ? "bg-accent text-white"
                   : slot
-                    ? "bg-[#1238ff]/30 text-[#b9c4ff] hover:bg-[#1238ff]/45"
-                    : "bg-white/5 text-slate-600 hover:bg-white/10"
+                    ? "bg-accent/25 text-accent-soft hover:bg-accent/40"
+                    : "bg-white/5 text-slate-500 hover:bg-white/10"
               }`}
               aria-label={`Deň ${day}${slot ? `, ${slot.title}` : ""}`}
             >
@@ -686,13 +702,13 @@ function InteractiveCalendar() {
         key={selectedDay}
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-[10px] border border-white/5 bg-white/[0.03] p-3"
+        className="rounded-xl border border-white/5 bg-white/[0.03] p-3"
       >
         {selectedSlot ? (
           <>
             <div className="flex items-center justify-between gap-3">
-              <p className="font-black">{selectedSlot.title}</p>
-              <span className="rounded-full bg-[#1238ff]/20 px-2 py-1 text-[10px] font-black text-[#b9c4ff]">
+              <p className="font-display font-semibold">{selectedSlot.title}</p>
+              <span className="rounded-full bg-accent/20 px-2 py-1 text-[10px] font-semibold text-accent-soft">
                 {selectedSlot.status}
               </span>
             </div>
@@ -700,7 +716,7 @@ function InteractiveCalendar() {
           </>
         ) : (
           <>
-            <p className="font-black">Voľný slot</p>
+            <p className="font-display font-semibold">Voľný slot</p>
             <p className="mt-1 text-xs text-slate-500">Klikni na modré dni pre rezervácie.</p>
           </>
         )}
@@ -709,23 +725,143 @@ function InteractiveCalendar() {
   );
 }
 
+function RolesSection() {
+  const roles = [
+    {
+      icon: <BarChart3 aria-hidden="true" />,
+      title: "Majiteľ",
+      text: "Vidí predaje, návštevy, obsadenosť a obnovy bez ručných reportov."
+    },
+    {
+      icon: <ScanLine aria-hidden="true" />,
+      title: "Recepcia",
+      text: "Overuje QR vstupy, rieši check-in/out a vidí stav členstva okamžite."
+    },
+    {
+      icon: <UsersRound aria-hidden="true" />,
+      title: "Tréneri",
+      text: "Spravujú dostupnosť, rozvrhy a rezervácie bez konfliktov."
+    }
+  ];
+
+  return (
+    <section id="riesenia" className="border-y border-white/5 bg-surface px-4 py-20 sm:px-6 lg:py-28">
+      <div className="mx-auto max-w-6xl">
+        <motion.div
+          variants={revealContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          className="grid gap-10 lg:grid-cols-[0.9fr_1.4fr] lg:gap-16"
+        >
+          <div>
+            <motion.p variants={revealItem} className="section-kicker">
+              Pre koho
+            </motion.p>
+            <motion.h2
+              variants={revealItem}
+              className="mt-4 font-display text-3xl font-semibold tracking-tight sm:text-4xl"
+            >
+              Jeden systém pre celý tím.
+            </motion.h2>
+            <motion.p variants={revealItem} className="mt-4 max-w-sm text-sm leading-7 text-slate-400">
+              Každá rola vidí presne to, čo potrebuje — nič navyše.
+            </motion.p>
+          </div>
+
+          <div className="grid gap-0 divide-y divide-white/5">
+            {roles.map((role, index) => (
+              <motion.div
+                key={role.title}
+                variants={revealItem}
+                className="group grid grid-cols-[auto_auto_1fr] items-start gap-5 py-6 first:pt-0 last:pb-0 sm:items-center"
+              >
+                <span className="font-display text-sm font-semibold text-slate-600 transition group-hover:text-accent-soft">
+                  0{index + 1}
+                </span>
+                <span className="grid h-11 w-11 place-items-center rounded-xl bg-accent-faint text-accent-soft">
+                  <IconSlot>{role.icon}</IconSlot>
+                </span>
+                <div>
+                  <h3 className="font-display text-lg font-semibold tracking-tight">{role.title}</h3>
+                  <p className="mt-1 text-sm leading-6 text-slate-400">{role.text}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function AdminSection() {
+  const reduceMotion = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+  const matrixY = useTransform(scrollYProgress, [0, 1], reduceMotion ? [0, 0] : [40, -40]);
+
+  return (
+    <section ref={sectionRef} id="admin" className="px-4 py-20 sm:px-6 lg:py-28">
+      <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
+        <motion.div
+          variants={revealContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+        >
+          <motion.p variants={revealItem} className="section-kicker">
+            Admin &amp; kontrola
+          </motion.p>
+          <motion.h2
+            variants={revealItem}
+            className="mt-4 font-display text-3xl font-semibold tracking-tight sm:text-4xl"
+          >
+            Prehľad prevádzky bez konca mesiaca v tabuľke.
+          </motion.h2>
+          <motion.p variants={revealItem} className="mt-5 max-w-md text-sm leading-7 text-slate-400">
+            Admin dashboard sleduje obsadenosť, predané členstvá, priemer
+            denných návštev, obnovy, scan logy, frontu overení a prevádzkové
+            pokrytie.
+          </motion.p>
+          <motion.div variants={revealItem} className="mt-7 grid gap-3 text-sm text-slate-300">
+            {["Obsadenosť v reálnom čase", "Predaje a transakčná história", "Roly user, tréner, recepčný, manager, owner"].map((item) => (
+              <div key={item} className="flex items-center gap-3">
+                <Check aria-hidden="true" className="h-4 w-4 shrink-0 text-accent-bright" />
+                {item}
+              </div>
+            ))}
+          </motion.div>
+        </motion.div>
+
+        <motion.div style={{ y: matrixY }}>
+          <PerformanceMatrix />
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
 function PerformanceMatrix() {
   return (
-    <div className="rounded-[24px] border border-white/5 bg-[#111622] p-5">
-      <div className="mb-6 flex items-center justify-between">
+    <div className="rounded-3xl border border-white/5 bg-raised p-5 shadow-card sm:p-6">
+      <div className="mb-6 flex items-center justify-between gap-4">
         <div>
-          <p className="text-xs font-bold text-slate-500">MAJITEĽSKÝ POHĽAD</p>
-          <h3 className="mt-2 text-2xl font-black">Performance matrix</h3>
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Majiteľský pohľad</p>
+          <h3 className="mt-2 font-display text-2xl font-semibold tracking-tight">Performance matrix</h3>
         </div>
-        <span className="rounded-full bg-[#1238ff]/20 px-3 py-1 text-xs font-black text-[#89a0ff]">
+        <span className="rounded-full bg-accent/20 px-3 py-1 text-xs font-semibold text-accent-soft">
           Live
         </span>
       </div>
-      <div className="flex h-64 items-end gap-3 rounded-[16px] bg-[#0d1220] p-5">
+      <div className="flex h-56 items-end gap-3 rounded-xl bg-base/70 p-5 sm:h-64">
         {[34, 61, 77, 49, 92, 68].map((height, index) => (
           <motion.div
             key={`${height}-${index}`}
-            className={`flex-1 rounded-t-[9px] ${index === 4 ? "bg-[#1238ff]" : "bg-[#132772]"}`}
+            className={`flex-1 rounded-t-md ${index === 4 ? "bg-accent-bright" : "bg-accent-deep"}`}
             initial={{ height: "18%" }}
             whileInView={{ height: `${height}%` }}
             viewport={{ once: true }}
@@ -742,30 +878,112 @@ function PerformanceMatrix() {
   );
 }
 
-function RoleCard({ title, text, icon }: { title: string; text: string; icon: ReactNode }) {
+function SecuritySection() {
   return (
-    <div className="rounded-[16px] border border-white/5 bg-[#101520] p-5">
-      <div className="mb-5 grid h-11 w-11 place-items-center rounded-[8px] bg-[#111a42] text-[#4c6bff]">
-        <IconSlot>{icon}</IconSlot>
+    <section id="bezpecnost" className="border-y border-white/5 bg-surface px-4 py-20 sm:px-6 lg:py-28">
+      <div className="mx-auto max-w-6xl">
+        <motion.div
+          variants={revealContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+        >
+          <div className="mx-auto max-w-2xl text-center">
+            <motion.p variants={revealItem} className="section-kicker">
+              Bezpečnosť
+            </motion.p>
+            <motion.h2
+              variants={revealItem}
+              className="mt-4 font-display text-3xl font-semibold tracking-tight sm:text-4xl"
+            >
+              Praktické pravidlá namiesto veľkých sľubov.
+            </motion.h2>
+          </div>
+
+          <div className="mx-auto mt-12 grid max-w-4xl gap-3 sm:grid-cols-2">
+            {security.map((item, index) => (
+              <motion.div
+                key={item}
+                variants={revealItem}
+                className={`flex items-center gap-4 rounded-2xl border border-white/5 bg-white/[0.02] p-5 text-sm font-medium text-slate-300 ${
+                  index === security.length - 1 ? "sm:col-span-2" : ""
+                }`}
+              >
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent-faint text-accent-soft">
+                  <ShieldCheck aria-hidden="true" className="h-5 w-5" />
+                </span>
+                {item}
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
       </div>
-      <h3 className="text-xl font-black">{title}</h3>
-      <p className="mt-3 text-sm leading-6 text-slate-500">{text}</p>
-    </div>
+    </section>
+  );
+}
+
+function DemoSection() {
+  const [submitted, setSubmitted] = useState(false);
+
+  function submitDemo(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSubmitted(true);
+  }
+
+  return (
+    <section id="demo" className="px-4 py-20 sm:px-6 lg:py-28">
+      <motion.div
+        initial={{ opacity: 0, y: 32 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="relative mx-auto max-w-6xl overflow-hidden rounded-3xl border border-white/10 bg-[linear-gradient(135deg,#33518F_0%,#22345F_55%,#141F3C_100%)] shadow-float"
+      >
+        <div className="hero-grid pointer-events-none absolute inset-0 opacity-40" />
+        <div className="relative grid gap-10 px-6 py-12 sm:px-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-16 lg:px-16 lg:py-16">
+          <div className="text-center lg:text-left">
+            <h2 className="mx-auto max-w-xl font-display text-3xl font-semibold tracking-tight sm:text-4xl lg:mx-0">
+              Pozrime sa, ako by Tap-it fungoval vo vašej prevádzke.
+            </h2>
+            <p className="mx-auto mt-5 max-w-md text-sm leading-7 text-white/70 lg:mx-0">
+              Demo môže byť zatiaľ len jednoduchý kontakt. Reálny CRM alebo
+              backend endpoint dopojíme neskôr.
+            </p>
+          </div>
+
+          <form onSubmit={submitDemo} className="grid gap-3">
+            <input className="minimal-input" name="email" type="email" placeholder="E-mail" required />
+            <input className="minimal-input" name="gym" placeholder="Názov prevádzky" required />
+            <button
+              className="min-h-12 rounded-xl bg-white px-6 text-sm font-semibold text-accent-deep transition hover:bg-slate-100"
+              type="submit"
+            >
+              Rezervovať demo
+            </button>
+            {submitted ? (
+              <p className="text-center text-sm font-medium text-white/80 lg:text-left">
+                Ďakujeme, demo request je zachytený.
+              </p>
+            ) : null}
+          </form>
+        </div>
+      </motion.div>
+    </section>
   );
 }
 
 function Footer({ year }: { year: number }) {
   return (
     <footer className="border-t border-white/5 px-4 py-14 sm:px-6">
-      <div className="mx-auto grid max-w-5xl gap-10 md:grid-cols-[1.2fr_repeat(3,1fr)]">
+      <div className="mx-auto grid max-w-6xl gap-10 sm:grid-cols-2 md:grid-cols-[1.2fr_repeat(3,1fr)]">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="grid h-8 w-8 place-items-center rounded-full bg-[#1238ff]">
+          <div className="flex items-center gap-2.5">
+            <span className="grid h-8 w-8 place-items-center rounded-lg bg-accent">
               <ScanLine aria-hidden="true" className="h-4 w-4" />
             </span>
-            <span className="text-sm font-black">Tap-it</span>
+            <span className="font-display text-sm font-semibold">Tap-it</span>
           </div>
-          <p className="mt-4 max-w-xs text-sm leading-6 text-slate-600">
+          <p className="mt-4 max-w-xs text-sm leading-7 text-slate-500">
             Digitálny operačný systém pre fitness prevádzky.
           </p>
         </div>
@@ -775,8 +993,8 @@ function Footer({ year }: { year: number }) {
           ["Systém", "Platby", "Roly", "Bezpečnosť"]
         ].map(([heading, ...links]) => (
           <div key={heading}>
-            <p className="mb-4 text-xs font-black text-slate-400">{heading}</p>
-            <div className="grid gap-2 text-sm text-slate-600">
+            <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-slate-400">{heading}</p>
+            <div className="grid gap-2 text-sm text-slate-500">
               {links.map((link) => (
                 <span key={link}>{link}</span>
               ))}
@@ -784,22 +1002,19 @@ function Footer({ year }: { year: number }) {
           </div>
         ))}
       </div>
-      <div className="mx-auto mt-12 max-w-5xl border-t border-white/5 pt-6 text-xs text-slate-700">
-        © {year} Tap-it. Všetky práva vyhradené.
+      <div className="mx-auto mt-12 flex max-w-6xl flex-col gap-2 border-t border-white/5 pt-6 text-xs text-slate-600 sm:flex-row sm:items-center sm:justify-between">
+        <span>© {year} Tap-it. Všetky práva vyhradené.</span>
+        <span>Navrhnuté pre majiteľov, recepciu a trénerov.</span>
       </div>
     </footer>
   );
 }
 
-function Line({ width, muted = false }: { width: string; muted?: boolean }) {
-  return <span className={`block h-3 rounded-full ${width} ${muted ? "bg-white/5" : "bg-white/10"}`} />;
-}
-
 function Stat({ value, label }: { value: string; label: string }) {
   return (
-    <div className="rounded-[8px] bg-white/[0.03] p-3">
-      <p className="text-2xl font-black">{value}</p>
-      <p className="mt-1 text-xs font-bold text-slate-600">{label}</p>
+    <div className="rounded-xl bg-white/[0.03] p-3">
+      <p className="font-display text-2xl font-semibold">{value}</p>
+      <p className="mt-1 text-xs font-medium text-slate-500">{label}</p>
     </div>
   );
 }

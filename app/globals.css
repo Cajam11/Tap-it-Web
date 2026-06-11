@@ -4,8 +4,6 @@
 
 :root {
   color-scheme: dark;
-  --navy-rgb: 6 27 58;
-  --blue-rgb: 22 119 255;
 }
 
 * {
@@ -14,15 +12,12 @@
 
 html {
   min-width: 320px;
-  background: #05070d;
+  background: #0a0e16;
 }
 
 body {
   min-height: 100vh;
   overflow-x: hidden;
-  font-family:
-    Inter, "SF Pro Display", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
-    sans-serif;
 }
 
 button,
@@ -33,100 +28,63 @@ textarea {
 }
 
 ::selection {
-  background: rgba(22, 119, 255, 0.18);
-}
-
-.focus-ring {
-  @apply outline-none ring-offset-2 ring-offset-white focus-visible:ring-2 focus-visible:ring-primary;
-}
-
-.section-shell {
-  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
-}
-
-.surface {
-  background: rgba(255, 255, 255, 0.78);
-  border: 1px solid rgba(221, 233, 247, 0.9);
-  box-shadow: 0 18px 58px rgba(6, 27, 58, 0.08);
-  backdrop-filter: blur(18px);
-}
-
-.blue-grid {
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.13) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.13) 1px, transparent 1px);
-  background-size: 42px 42px;
-  mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
-}
-
-.mockup-label {
-  @apply text-[11px] font-semibold uppercase text-muted;
-}
-
-.mockup-card {
-  @apply rounded-[8px] border border-sky/80 bg-white shadow-panel;
+  background: rgba(76, 111, 190, 0.3);
 }
 
 .section-kicker {
-  @apply text-xs font-black uppercase text-[#5d7cff];
-}
-
-.field-input {
-  @apply min-h-11 w-full rounded-[8px] border border-white/[0.1] bg-white/[0.06] px-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-[#6d8cff] focus:ring-2 focus:ring-[#1677ff]/[0.35];
+  @apply text-xs font-semibold uppercase tracking-[0.18em] text-accent-soft;
 }
 
 .primary-button {
-  @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-[8px] bg-[#1238ff] px-5 text-sm font-black text-white transition hover:bg-[#244bff] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5d7cff];
+  @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-accent px-6 text-sm font-semibold text-white transition hover:bg-accent-bright focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft;
 }
 
 .secondary-button {
-  @apply inline-flex min-h-11 items-center justify-center rounded-[8px] border border-white/10 bg-white/[0.03] px-5 text-sm font-black text-white transition hover:bg-white/[0.06] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5d7cff];
+  @apply inline-flex min-h-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] px-6 text-sm font-semibold text-slate-200 transition hover:border-white/20 hover:bg-white/[0.06] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft;
 }
 
 .minimal-input {
-  @apply min-h-12 rounded-[8px] border border-white/15 bg-white/10 px-4 text-sm font-semibold text-white outline-none placeholder:text-white/55 focus:border-white/60;
+  @apply min-h-12 rounded-xl border border-white/15 bg-white/10 px-4 text-sm font-medium text-white outline-none transition placeholder:text-white/50 focus:border-white/45;
 }
 
-.hero-gradient {
+.hero-glow {
   background:
-    radial-gradient(circle at 50% -8%, rgba(18, 56, 255, 0.34), transparent 34%),
-    radial-gradient(circle at 50% 26%, rgba(76, 107, 255, 0.12), transparent 28%),
-    linear-gradient(180deg, rgba(9, 13, 26, 0.98) 0%, rgba(5, 7, 13, 0) 76%);
+    radial-gradient(ellipse 70% 45% at 50% -5%, rgba(58, 91, 168, 0.32), transparent 70%),
+    linear-gradient(180deg, rgba(15, 20, 30, 0.9) 0%, rgba(10, 14, 22, 0) 70%);
 }
 
 .hero-grid {
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
-  background-size: 72px 72px;
-  mask-image: radial-gradient(circle at 50% 18%, black 0%, transparent 68%);
-}
-
-.hero-beam {
-  background:
-    linear-gradient(90deg, transparent 0%, rgba(18, 56, 255, 0.35) 45%, rgba(86, 116, 255, 0.55) 50%, rgba(18, 56, 255, 0.35) 55%, transparent 100%);
-  filter: blur(32px);
+    linear-gradient(rgba(157, 179, 224, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(157, 179, 224, 0.05) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse at 50% 12%, black 0%, transparent 70%);
 }
 
 .panel-grid {
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
-  background-size: 34px 34px;
+    linear-gradient(rgba(157, 179, 224, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(157, 179, 224, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
 
-.soft-vignette {
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    inset 0 -80px 120px rgba(0, 0, 0, 0.28);
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 28s linear infinite;
 }
 
-.qr-grid {
-  background:
-    linear-gradient(90deg, #07111f 14px, transparent 14px) 0 0 / 28px 28px,
-    linear-gradient(#07111f 14px, transparent 14px) 0 0 / 28px 28px,
-    linear-gradient(90deg, transparent 7px, rgba(7, 17, 31, 0.9) 7px 14px, transparent 14px) 10px 10px / 34px 34px,
-    #ffffff;
+.marquee-mask {
+  mask-image: linear-gradient(90deg, transparent 0%, black 12%, black 88%, transparent 100%);
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 .hide-scrollbar {

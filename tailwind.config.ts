@@ -8,27 +8,26 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: "#1677FF",
-        electric: "#00A3FF",
-        navy: "#061B3A",
-        sky: "#EEF6FF",
-        ice: "#F8FBFF",
-        ink: "#07111F",
-        muted: "#5D6B82",
+        base: "#0A0E16",
+        surface: "#0F141E",
+        raised: "#141B28",
+        accent: {
+          DEFAULT: "#3A5BA8",
+          bright: "#4C6FBE",
+          soft: "#9DB3E0",
+          deep: "#22345F",
+          faint: "#16213D"
+        },
         success: "#10B981",
         warning: "#F59E0B"
       },
       boxShadow: {
-        soft: "0 24px 80px rgba(6, 27, 58, 0.12)",
-        panel: "0 18px 60px rgba(22, 119, 255, 0.14)",
-        glow: "0 24px 90px rgba(0, 163, 255, 0.32)"
+        card: "0 16px 50px rgba(4, 8, 18, 0.35)",
+        float: "0 24px 80px rgba(4, 8, 18, 0.45)"
       },
       fontFamily: {
-        sans: ["Inter", "SF Pro Display", "Segoe UI", "system-ui", "sans-serif"]
-      },
-      backgroundImage: {
-        "hero-depth":
-          "radial-gradient(circle at 72% 16%, rgba(255,255,255,0.45), transparent 24%), linear-gradient(135deg, #1677FF 0%, #00A3FF 52%, #EEF6FF 100%)"
+        sans: ["var(--font-body)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "var(--font-body)", "sans-serif"]
       }
     }
   },
