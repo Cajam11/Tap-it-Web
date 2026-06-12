@@ -274,7 +274,7 @@ function Navigation({
 }) {
   const isDark = theme === "dark";
   const navSurface = isDark
-    ? "border-white/10 bg-base/[0.72] shadow-[0_18px_70px_rgba(0,0,0,0.34)]"
+    ? "border-white/15 bg-[#111827]/[0.42] shadow-[0_18px_70px_rgba(0,0,0,0.24)]"
     : "border-white/65 bg-white/[0.72] shadow-[0_18px_70px_rgba(15,23,42,0.14)]";
   const brandText = isDark ? "text-white" : "text-slate-950";
   const linkTone = isDark
@@ -284,7 +284,7 @@ function Navigation({
     ? "border-white/10 bg-white/[0.06] text-white hover:bg-white/[0.1]"
     : "border-slate-950/10 bg-white/70 text-slate-950 hover:bg-white";
   const mobileSurface = isDark
-    ? "border-white/10 bg-base/[0.9] shadow-[0_18px_70px_rgba(0,0,0,0.34)]"
+    ? "border-white/15 bg-[#111827]/[0.86] shadow-[0_18px_70px_rgba(0,0,0,0.28)]"
     : "border-white/65 bg-white/[0.86] shadow-[0_18px_70px_rgba(15,23,42,0.14)]";
 
   return (
@@ -447,58 +447,7 @@ function HeroProductShowcase() {
 
   return (
     <>
-      <section
-        id="platforma"
-        className="relative pb-12 pt-20 sm:pb-16 sm:pt-24 lg:hidden"
-      >
-        <div className="tap-hero-shell relative min-h-[100dvh] overflow-hidden">
-          <div aria-hidden="true" className="tap-hero-sky" />
-          <HeroCloud src="/hero-clouds/cloud-left.png" className="hero-cloud-left" />
-          <HeroCloud src="/hero-clouds/cloud-right.png" className="hero-cloud-right" />
-          <HeroCloud src="/hero-clouds/cloud-low.png" className="hero-cloud-bottom" />
-          <HeroCloud src="/hero-clouds/cloud-right.png" className="hero-cloud-low-right" />
-          <div aria-hidden="true" className="hero-grid opacity-60" />
-          <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center px-4 pb-8 pt-12 text-center sm:px-8">
-            <div className="hero-chip inline-flex items-center gap-2 rounded-full border border-accent/20 bg-white/70 px-3 py-1.5 text-xs font-bold text-accent-deep shadow-[0_10px_30px_rgba(15,23,42,0.08)]">
-              <span className="h-1.5 w-1.5 rounded-full bg-accent-bright" />
-              Tap-it Fitness OS
-            </div>
-            <h1 className="hero-title mt-6 max-w-6xl text-balance text-[2.9rem] font-black leading-[0.95] tracking-tight text-slate-950 sm:text-6xl">
-              <span className="block sm:whitespace-nowrap">
-                Fitness systém, ktorý pustí
-              </span>
-              <span className="block sm:whitespace-nowrap">
-                dnu správnych ľudí.
-              </span>
-            </h1>
-            <p className="hero-copy mt-6 max-w-2xl text-pretty text-base font-semibold leading-7 text-slate-600 sm:text-lg">
-              QR vstupy, členstvá, rezervácie a admin panel, ktorý drží celú
-              prevádzku fitka pokope.
-            </p>
-            <div className="mt-7 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row">
-              <a href="#kontakt" className="primary-button w-full sm:w-auto">
-                Dohodnúť demo
-                <ArrowRight aria-hidden="true" className="h-4 w-4" />
-              </a>
-              <a
-                href="#produkt"
-                className="hero-secondary secondary-button w-full border-slate-950/10 bg-white/70 text-slate-950 hover:bg-white sm:w-auto"
-              >
-                Pozrieť produkt
-              </a>
-            </div>
-          </div>
-          <div className="relative z-10 mx-auto -mb-8 max-w-5xl px-4">
-            <BrowserFrame
-              image={dashboardScreen}
-              alt="Tap-it dashboard v admin paneli"
-              label="Admin dashboard"
-              priority
-              className="shadow-[0_34px_120px_rgba(0,0,0,0.62)]"
-            />
-          </div>
-        </div>
-      </section>
+      <MobileHeroProductShowcase />
       <DesktopHeroProductShowcase
         sectionRef={sectionRef}
         activeScreen={activeScreen}
@@ -513,8 +462,208 @@ function HeroProductShowcase() {
         sectionGlowX={sectionGlowX}
         sectionGlowOpacity={sectionGlowOpacity}
       />
-      <StaticProductTour />
     </>
+  );
+}
+
+function MobileHeroProductShowcase() {
+  const reduceMotion = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const activeScreen = tourScreens[activeIndex];
+  const ActiveIcon = activeScreen.icon;
+  const settlePoint = 0.24;
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+  const contentY = useTransform(
+    scrollYProgress,
+    [0, 0.16, settlePoint],
+    reduceMotion ? [0, 0, 0] : [0, -44, -64],
+  );
+  const contentOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.16, settlePoint],
+    [1, 0.44, 0],
+  );
+  const frameY = useTransform(
+    scrollYProgress,
+    [0, settlePoint],
+    reduceMotion ? [0, 0] : [390, 0],
+  );
+  const frameScale = useTransform(
+    scrollYProgress,
+    [0, settlePoint],
+    reduceMotion ? [1, 1] : [0.9, 1],
+  );
+  const frameWidth = useTransform(
+    scrollYProgress,
+    [0, settlePoint],
+    ["min(calc(100vw - 3rem), 520px)", "min(calc(100vw - 3rem), 576px)"],
+  );
+  const screenFadeOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.14, settlePoint],
+    [1, 0.44, 0],
+  );
+  const detailOpacity = useTransform(
+    scrollYProgress,
+    [0, settlePoint, settlePoint + 0.08],
+    [0, 0, 1],
+  );
+  const detailY = useTransform(
+    scrollYProgress,
+    [0, settlePoint, settlePoint + 0.08],
+    reduceMotion ? [0, 0, 0] : [24, 24, 0],
+  );
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    if (latest < settlePoint) {
+      setActiveIndex((current) => (current === 0 ? current : 0));
+      return;
+    }
+
+    const normalized = (latest - settlePoint) / (1 - settlePoint);
+    const clamped = Math.min(0.999, Math.max(0, normalized));
+    const nextIndex = Math.min(
+      tourScreens.length - 1,
+      Math.floor(clamped * tourScreens.length),
+    );
+
+    setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
+  });
+
+  return (
+    <section
+      ref={sectionRef}
+      id="platforma"
+      className="relative lg:hidden"
+      style={{ height: `${(tourScreens.length + 1) * 96}svh` }}
+    >
+      <span
+        id="produkt"
+        aria-hidden="true"
+        className="absolute top-[96svh] h-px w-px"
+      />
+      <div className="sticky top-0 min-h-[100svh] overflow-hidden">
+        <div className="tap-hero-shell relative flex min-h-[100svh] items-start justify-center overflow-hidden px-3 pb-6 pt-[8.25rem]">
+          <div aria-hidden="true" className="tap-hero-sky" />
+          <HeroCloud
+            src="/hero-clouds/cloud-left.png"
+            className="hero-cloud-left"
+          />
+          <HeroCloud
+            src="/hero-clouds/cloud-right.png"
+            className="hero-cloud-right"
+          />
+          <HeroCloud
+            src="/hero-clouds/cloud-low.png"
+            className="hero-cloud-bottom"
+          />
+          <div aria-hidden="true" className="hero-grid opacity-60" />
+
+          <motion.div
+            style={{ y: contentY, opacity: contentOpacity }}
+            variants={revealContainer}
+            initial="hidden"
+            animate="visible"
+            className="pointer-events-none absolute inset-x-0 top-[6.5rem] z-20 mx-auto flex max-w-xl flex-col items-center px-4 text-center"
+          >
+            <motion.div
+              variants={revealItem}
+              className="hero-chip inline-flex items-center gap-2 rounded-full border border-accent/20 bg-white/70 px-3 py-1.5 text-xs font-bold text-accent-deep shadow-[0_10px_30px_rgba(15,23,42,0.08)]"
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-accent-bright" />
+              Tap-it Fitness OS
+            </motion.div>
+            <motion.h1
+              variants={revealItem}
+              className="hero-title mt-5 max-w-xl text-balance text-[2.35rem] font-black leading-[0.95] tracking-tight text-slate-950 min-[390px]:text-[2.55rem] sm:text-6xl"
+            >
+              <span className="block">Fitness systém, ktorý pustí</span>
+              <span className="block">dnu správnych ľudí.</span>
+            </motion.h1>
+            <motion.p
+              variants={revealItem}
+              className="hero-copy mt-4 max-w-md text-pretty text-sm font-semibold leading-6 text-slate-600 sm:text-base"
+            >
+              QR vstupy, členstvá, rezervácie a admin panel, ktorý drží celú
+              prevádzku fitka pokope.
+            </motion.p>
+            <motion.div
+              variants={revealItem}
+              className="pointer-events-auto mt-5 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row"
+            >
+              <a href="#kontakt" className="primary-button w-full sm:w-auto">
+                Dohodnúť demo
+                <ArrowRight aria-hidden="true" className="h-4 w-4" />
+              </a>
+              <a
+                href="#produkt"
+                className="hero-secondary secondary-button w-full border-slate-950/10 bg-white/70 text-slate-950 hover:bg-white sm:w-auto"
+              >
+                Pozrieť produkt
+              </a>
+            </motion.div>
+          </motion.div>
+
+          <div className="relative z-10 flex w-full flex-col items-center">
+            <motion.div
+              style={{
+                y: frameY,
+                scale: frameScale,
+                width: frameWidth,
+              }}
+              className="screen-stage relative aspect-[16/10]"
+            >
+              <motion.div
+                aria-hidden="true"
+                className="hero-screen-fade"
+                style={{ opacity: screenFadeOpacity }}
+              />
+              <StackedTourBrowserFrame activeIndex={activeIndex} />
+            </motion.div>
+
+            <motion.div
+              style={{ opacity: detailOpacity, y: detailY }}
+              className="mobile-tour-card mt-4 w-full max-w-xl rounded-3xl border border-white/55 bg-white/72 p-4 text-left shadow-[0_24px_70px_rgba(15,23,42,0.14)] backdrop-blur-xl"
+            >
+              <div className="flex items-start gap-3">
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-accent text-white shadow-brand">
+                  <ActiveIcon aria-hidden="true" className="h-5 w-5" />
+                </span>
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.16em] text-accent">
+                    {activeScreen.eyebrow}
+                  </p>
+                  <h2 className="mt-1 text-xl font-black leading-tight text-slate-950">
+                    {activeScreen.title}
+                  </h2>
+                </div>
+              </div>
+              <p className="mt-3 text-sm font-semibold leading-6 text-slate-600">
+                {activeScreen.body}
+              </p>
+              <div className="mt-4 flex items-end justify-between border-t border-slate-950/10 pt-3">
+                <div>
+                  <p className="text-2xl font-black leading-none text-slate-950">
+                    {activeScreen.metric}
+                  </p>
+                  <p className="mt-1 text-xs font-bold text-slate-500">
+                    {activeScreen.metricLabel}
+                  </p>
+                </div>
+                <span className="rounded-full border border-accent/25 bg-accent/10 px-3 py-1 text-xs font-black text-accent">
+                  {String(activeIndex + 1).padStart(2, "0")} /{" "}
+                  {String(tourScreens.length).padStart(2, "0")}
+                </span>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -1245,7 +1394,7 @@ function FullFooter({ year }: { year: number }) {
   ];
 
   return (
-    <footer className="border-t border-white/5 bg-[#050506] px-4 py-16 sm:px-6 lg:py-20">
+    <footer className="site-footer border-t border-white/5 bg-[#050506] px-4 py-16 sm:px-6 lg:py-20">
       <div className="mx-auto max-w-7xl">
         <div className="grid gap-12 lg:grid-cols-[1.25fr_0.9fr_0.9fr_1fr_1fr]">
           <div>
