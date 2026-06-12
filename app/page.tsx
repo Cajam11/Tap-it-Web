@@ -50,8 +50,10 @@ import {
 import analyticsScreen from "../screenshots/Analytics.png";
 import bookingsScreen from "../screenshots/Bookings.png";
 import dashboardScreen from "../screenshots/Dashboard.png";
+import filipFounder from "../founders/Filip_Paučo.jpg";
 import membershipsScreen from "../screenshots/Memberships.png";
 import newsScreen from "../screenshots/News.png";
+import patrikFounder from "../founders/Patrik_Repkovský.jpg";
 import priestoryScreen from "../screenshots/Priestory.png";
 import scanLogsScreen from "../screenshots/Scan_Logs.png";
 import smenyScreen from "../screenshots/Smeny.png";
@@ -1372,14 +1374,6 @@ function FullFooter({ year }: { year: number }) {
     ["Prevádzka", "#prevadzka"],
     ["Demo", "#kontakt"],
   ];
-  const productLinks = [
-    "QR vstupy",
-    "Členstvá",
-    "Rezervácie",
-    "Smeny",
-    "Priestory",
-    "Novinky",
-  ];
   const infoLinks = [
     "Všeobecné obchodné podmienky",
     "Ochrana osobných údajov",
@@ -1391,6 +1385,18 @@ function FullFooter({ year }: { year: number }) {
     { label: "Instagram", icon: Instagram },
     { label: "X", icon: Twitter },
     { label: "LinkedIn", icon: Linkedin },
+  ];
+  const founders = [
+    {
+      name: "Filip Paučo",
+      role: "Co-founder / produkt",
+      image: filipFounder,
+    },
+    {
+      name: "Patrik Repkovský",
+      role: "Co-founder / technológia",
+      image: patrikFounder,
+    },
   ];
 
   return (
@@ -1432,14 +1438,6 @@ function FullFooter({ year }: { year: number }) {
             ))}
           </FooterColumn>
 
-          <FooterColumn title="Produkt">
-            {productLinks.map((item) => (
-              <a key={item} href="#produkt" className="footer-link">
-                {item}
-              </a>
-            ))}
-          </FooterColumn>
-
           <FooterColumn title="Kontakt">
             <a href="#kontakt" className="footer-contact-row">
               <MapPin aria-hidden="true" className="h-4 w-4" />
@@ -1465,6 +1463,29 @@ function FullFooter({ year }: { year: number }) {
                 {item}
               </a>
             ))}
+          </FooterColumn>
+
+          <FooterColumn title="Founderi">
+            <div className="flex -space-x-3">
+              {founders.map((founder) => (
+                <div
+                  key={founder.name}
+                  className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-[#050506] bg-raised"
+                  title={founder.name}
+                >
+                  <Image
+                    src={founder.image}
+                    alt={founder.name}
+                    fill
+                    sizes="48px"
+                    className="object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+            <p className="max-w-[13rem] text-sm font-semibold leading-6 text-slate-500">
+              Tap-it stavajú Filip Paučo a Patrik Repkovský.
+            </p>
           </FooterColumn>
         </div>
 

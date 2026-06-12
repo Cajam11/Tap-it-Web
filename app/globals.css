@@ -223,6 +223,16 @@ textarea {
   background-color: rgba(255, 255, 255, 0.78);
 }
 
+.theme-light .site-footer .bg-white\/\[0\.03\],
+.theme-light .site-footer .bg-base\/\[0\.45\],
+.theme-light .site-footer .bg-raised {
+  background-color: rgba(255, 255, 255, 0.78);
+}
+
+.theme-light .site-footer .border-\[\#050506\] {
+  border-color: #f3f7fd;
+}
+
 .theme-light .site-footer .footer-link:hover,
 .theme-light .site-footer .footer-contact-row:hover,
 .theme-light .site-footer a:hover {
