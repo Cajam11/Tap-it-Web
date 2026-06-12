@@ -502,12 +502,7 @@ function MobileHeroProductShowcase() {
   const frameWidth = useTransform(
     scrollYProgress,
     [0, settlePoint],
-    ["min(calc(100vw - 3rem), 520px)", "min(calc(100vw - 3rem), 576px)"],
-  );
-  const screenFadeOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.14, settlePoint],
-    [1, 0.44, 0],
+    ["min(calc(100vw - 1.5rem), 520px)", "min(calc(100vw - 1.5rem), 576px)"],
   );
   const detailOpacity = useTransform(
     scrollYProgress,
@@ -541,15 +536,15 @@ function MobileHeroProductShowcase() {
       ref={sectionRef}
       id="platforma"
       className="relative lg:hidden"
-      style={{ height: `${(tourScreens.length + 1) * 96}svh` }}
+      style={{ height: `${(tourScreens.length + 1) * 96}dvh` }}
     >
       <span
         id="produkt"
         aria-hidden="true"
-        className="absolute top-[96svh] h-px w-px"
+        className="absolute top-[96dvh] h-px w-px"
       />
-      <div className="sticky top-0 min-h-[100svh] overflow-hidden">
-        <div className="tap-hero-shell relative flex min-h-[100svh] items-start justify-center overflow-hidden px-3 pb-6 pt-[8.25rem]">
+      <div className="sticky top-0 min-h-[100dvh] overflow-hidden">
+        <div className="tap-hero-shell relative flex min-h-[100dvh] items-start justify-center overflow-hidden px-3 pb-6 pt-[8.25rem]">
           <div aria-hidden="true" className="tap-hero-sky" />
           <HeroCloud
             src="/hero-clouds/cloud-left.png"
@@ -619,12 +614,7 @@ function MobileHeroProductShowcase() {
               }}
               className="screen-stage relative aspect-[16/10]"
             >
-              <motion.div
-                aria-hidden="true"
-                className="hero-screen-fade"
-                style={{ opacity: screenFadeOpacity }}
-              />
-              <StackedTourBrowserFrame activeIndex={activeIndex} />
+            <StackedTourBrowserFrame activeIndex={activeIndex} />
             </motion.div>
 
             <motion.div
