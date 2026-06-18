@@ -602,15 +602,15 @@ function MobileHeroProductShowcase() {
       ref={sectionRef}
       id="platforma"
       className="relative lg:hidden"
-      style={{ height: `${(tourScreens.length + 1) * 96}dvh` }}
+      style={{ height: `${(tourScreens.length + 1) * 96}svh` }}
     >
       <span
         id="produkt"
         aria-hidden="true"
-        className="absolute top-[96dvh] h-px w-px"
+        className="absolute top-[96svh] h-px w-px"
       />
-      <div className="sticky top-0 min-h-[100dvh] overflow-hidden">
-        <div className="tap-hero-shell relative flex min-h-[100dvh] items-start justify-center overflow-hidden px-3 pb-6 pt-[8.25rem]">
+      <div className="sticky top-0 min-h-[100svh] overflow-hidden">
+        <div className="tap-hero-shell relative flex min-h-[100svh] items-start justify-center overflow-hidden px-3 pb-6 pt-[8.25rem]">
           <div aria-hidden="true" className="tap-hero-sky" />
           <HeroCloud
             src="/hero-clouds/cloud-left.png"
@@ -771,8 +771,8 @@ function DesktopHeroProductShowcase({
         aria-hidden="true"
         className="absolute top-[112vh] h-px w-px"
       />
-      <div className="sticky top-0 min-h-[100dvh] overflow-hidden">
-        <div className="tap-hero-shell relative flex min-h-[100dvh] w-full items-center justify-center overflow-hidden">
+      <div className="sticky top-0 min-h-[100svh] overflow-hidden">
+        <div className="tap-hero-shell relative flex min-h-[100svh] w-full items-center justify-center overflow-hidden">
         <div aria-hidden="true" className="tap-hero-sky" />
         <HeroCloud src="/hero-clouds/cloud-left.png" className="hero-cloud-left" />
         <HeroCloud src="/hero-clouds/cloud-right.png" className="hero-cloud-right" />

@@ -276,7 +276,7 @@ textarea {
 
 @media (max-width: 1023px) {
   .tap-hero-shell {
-    min-height: 100dvh;
+    min-height: 100svh;
   }
 }
 
