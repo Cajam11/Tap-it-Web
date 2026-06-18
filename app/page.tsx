@@ -43,6 +43,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type MouseEvent as ReactMouseEvent,
   type RefObject,
   type ReactNode,
 } from "react";
@@ -66,6 +67,29 @@ const navItems = [
   ["Prevádzka", "#prevadzka"],
   ["Kontakt", "#kontakt"],
 ];
+
+// Several sections render mutually-exclusive mobile/desktop variants that share
+// the same id, so resolve in-page anchors to whichever copy is currently visible.
+function scrollToAnchor(
+  event: ReactMouseEvent<HTMLAnchorElement>,
+  href: string,
+) {
+  if (!href.startsWith("#")) return;
+  const candidates = Array.from(
+    document.querySelectorAll<HTMLElement>(`[id="${href.slice(1)}"]`),
+  );
+  const target =
+    candidates.find((el) => el.offsetParent !== null) ?? candidates[0];
+  if (!target) return;
+  event.preventDefault();
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+  target.scrollIntoView({
+    behavior: prefersReducedMotion ? "auto" : "smooth",
+    block: "start",
+  });
+}
 
 const revealContainer: Variants = {
   hidden: {},
@@ -300,12 +324,24 @@ function Navigation({
     ? "border-white/15 bg-[#111827]/[0.86] shadow-[0_18px_70px_rgba(0,0,0,0.28)]"
     : "border-white/65 bg-white/[0.86] shadow-[0_18px_70px_rgba(15,23,42,0.14)]";
 
+  const handleNavClick = (
+    event: ReactMouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) => {
+    setMenuOpen(false);
+    scrollToAnchor(event, href);
+  };
+
   return (
     <header className="fixed inset-x-0 top-3 z-50 px-3 sm:top-4 sm:px-6">
       <nav
         className={`mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 rounded-2xl border px-3 backdrop-blur-2xl backdrop-saturate-150 transition-colors duration-300 sm:px-4 ${navSurface}`}
       >
-        <a href="#platforma" className="flex min-w-0 items-center gap-3">
+        <a
+          href="#platforma"
+          onClick={(event) => handleNavClick(event, "#platforma")}
+          className="flex min-w-0 items-center gap-3"
+        >
           <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent text-sm font-black text-white shadow-brand">
             T
           </span>
@@ -321,6 +357,7 @@ function Navigation({
             <a
               key={href}
               href={href}
+              onClick={(event) => handleNavClick(event, href)}
               className={`rounded-full px-4 py-2 text-sm font-semibold transition ${linkTone}`}
             >
               {label}
@@ -371,7 +408,7 @@ function Navigation({
             <a
               key={href}
               href={href}
-              onClick={() => setMenuOpen(false)}
+              onClick={(event) => handleNavClick(event, href)}
               className={`rounded-xl px-4 py-3 text-sm font-semibold transition ${linkTone}`}
             >
               {label}
@@ -627,6 +664,7 @@ function MobileHeroProductShowcase() {
               </a>
               <a
                 href="#produkt"
+                onClick={(event) => scrollToAnchor(event, "#produkt")}
                 className="hero-secondary secondary-button w-full border-slate-950/10 bg-white/70 text-slate-950 hover:bg-white sm:w-auto"
               >
                 Pozrieť produkt
@@ -792,6 +830,7 @@ function DesktopHeroProductShowcase({
             </a>
             <a
               href="#produkt"
+              onClick={(event) => scrollToAnchor(event, "#produkt")}
               className="hero-secondary secondary-button w-full border-slate-950/10 bg-white/70 text-slate-950 hover:bg-white sm:w-auto"
             >
               Pozrieť produkt
@@ -1525,7 +1564,12 @@ function FullFooter({ year }: { year: number }) {
 
           <FooterColumn title="Navigácia">
             {footerNavigation.map(([label, href]) => (
-              <a key={href} href={href} className="footer-link">
+              <a
+                key={href}
+                href={href}
+                onClick={(event) => scrollToAnchor(event, href)}
+                className="footer-link"
+              >
                 {label}
               </a>
             ))}
@@ -1588,6 +1632,7 @@ function FullFooter({ year }: { year: number }) {
             Powered by{" "}
             <a
               href="#platforma"
+              onClick={(event) => scrollToAnchor(event, "#platforma")}
               className="text-accent-soft transition hover:text-white"
             >
               Tap-it Fitness OS

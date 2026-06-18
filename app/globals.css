@@ -95,6 +95,29 @@ textarea {
   background-color: rgba(241, 246, 253, 0.82);
 }
 
+.theme-light section:not(#platforma) .bg-base\/\[0\.65\],
+.theme-light section:not(#platforma) .bg-base\/\[0\.7\],
+.theme-light section:not(#platforma) .bg-base\/\[0\.8\] {
+  background-color: rgba(241, 246, 253, 0.82);
+}
+
+.theme-light section:not(#platforma) .bg-accent-faint {
+  background-color: rgba(239, 36, 40, 0.1);
+}
+
+.theme-light section:not(#platforma) .text-accent-soft,
+.theme-light section:not(#platforma) .section-kicker {
+  color: #c2161b;
+}
+
+.theme-light section:not(#platforma) .group:hover .group-hover\:bg-accent {
+  background-color: #ef2428;
+}
+
+.theme-light section:not(#platforma) .group:hover .group-hover\:text-white {
+  color: #ffffff;
+}
+
 .theme-light section:not(#platforma) .border-white\/5,
 .theme-light section:not(#platforma) .border-white\/10 {
   border-color: rgba(15, 23, 42, 0.08);
@@ -543,6 +566,18 @@ textarea {
 
 .theme-dark .hero-secondary:hover {
   background: rgba(255, 255, 255, 0.1);
+}
+
+.theme-light .hero-secondary {
+  border-color: rgba(15, 23, 42, 0.16);
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+.theme-light .hero-secondary:hover {
+  border-color: rgba(15, 23, 42, 0.28);
+  background: #ffffff;
 }
 
 .theme-dark .hero-screen-fade {
