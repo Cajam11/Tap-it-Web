@@ -85,6 +85,7 @@ type TourScreen = {
   title: string;
   eyebrow: string;
   body: string;
+  blurb: string;
   metric: string;
   metricLabel: string;
   image: StaticImageData;
@@ -97,6 +98,7 @@ const tourScreens: TourScreen[] = [
     title: "Dashboard pre majiteľa",
     eyebrow: "Live prehľad",
     body: "Majiteľ vidí návštevy, predané členstvá, obnovy a posledné scan logy na jednom mieste bez exportovania tabuliek.",
+    blurb: "Návštevy, členstvá a scan logy na jednom mieste.",
     metric: "1 pohľad",
     metricLabel: "na celý gym",
     image: dashboardScreen,
@@ -107,6 +109,7 @@ const tourScreens: TourScreen[] = [
     title: "User management",
     eyebrow: "Používatelia",
     body: "Recepcia, tréneri, manažéri aj členovia sú v jednom zozname s rolami, overením a onboarding stavom.",
+    blurb: "Členovia, tréneri a manažéri v jednom zozname.",
     metric: "10",
     metricLabel: "profilov v databáze",
     image: usersScreen,
@@ -117,6 +120,7 @@ const tourScreens: TourScreen[] = [
     title: "Verifikácia nových účtov",
     eyebrow: "Bezpečný onboarding",
     body: "Nový člen alebo pracovník sa do systému nedostane len tak. Admin potvrdí verifikáciu a až potom sa účet objaví v ostrej prevádzke.",
+    blurb: "Nové účty schvaľuje admin pred ostrou prevádzkou.",
     metric: "4",
     metricLabel: "čakajúci používatelia",
     image: verificationScreen,
@@ -127,6 +131,7 @@ const tourScreens: TourScreen[] = [
     title: "Členstvá bez chaosu",
     eyebrow: "Predplatné",
     body: "Mesačné, ročné aj jednorazové vstupy sú prepojené na profil člena. Expirácie a zmeny plánu sú riešené priamo v administrácii.",
+    blurb: "Vstupy a expirácie prepojené na profil člena.",
     metric: "5+",
     metricLabel: "aktívnych členstiev",
     image: membershipsScreen,
@@ -137,6 +142,7 @@ const tourScreens: TourScreen[] = [
     title: "Analytics",
     eyebrow: "Prehľady",
     body: "Analytická vrstva je pripravené miesto pre detailnejšie prehľady návštev, členstiev a trendov prevádzky.",
+    blurb: "Pripravené miesto pre detailné prehľady a trendy.",
     metric: "soon",
     metricLabel: "detailné štatistiky",
     image: analyticsScreen,
@@ -147,6 +153,7 @@ const tourScreens: TourScreen[] = [
     title: "QR vstupy a scan logy",
     eyebrow: "Kontrola vstupu",
     body: "Každý príchod a odchod zostane zapísaný. Recepcia okamžite vidí, kto vstúpil, kedy a či má platné členstvo.",
+    blurb: "Každý príchod a odchod zostane zapísaný.",
     metric: "114",
     metricLabel: "udalostí v logu",
     image: scanLogsScreen,
@@ -157,6 +164,7 @@ const tourScreens: TourScreen[] = [
     title: "Rezervácie a kalendár",
     eyebrow: "Triedy a termíny",
     body: "Skupinové tréningy, opakované hodiny a rezervácie priestoru sú v jednom kalendári, aby tím nemusel koordinovať termíny bokom.",
+    blurb: "Tréningy aj rezervácie priestoru v jednom kalendári.",
     metric: "30 dní",
     metricLabel: "plánovania dopredu",
     image: bookingsScreen,
@@ -167,6 +175,7 @@ const tourScreens: TourScreen[] = [
     title: "Smeny a pokrytie",
     eyebrow: "Denná prevádzka",
     body: "Tím vidí pokrytie recepcie, diery v službách a čakajúce smeny, ktoré treba vyriešiť pred začiatkom dňa.",
+    blurb: "Pokrytie recepcie a diery v službách na očiach.",
     metric: "06:00",
     metricLabel: "štart pokrytia",
     image: smenyScreen,
@@ -177,6 +186,7 @@ const tourScreens: TourScreen[] = [
     title: "Priestory, ceny a kapacity",
     eyebrow: "Rezervovateľné zóny",
     body: "Basketbal, bedminton, solárium alebo vlastná miestnosť. Každý priestor má cenu, pravidlá a obrázok, ktorý sa použije v rezervačnom toku.",
+    blurb: "Každý priestor má cenu, pravidlá aj obrázok.",
     metric: "5",
     metricLabel: "typov priestoru",
     image: priestoryScreen,
@@ -187,6 +197,7 @@ const tourScreens: TourScreen[] = [
     title: "Novinky pre členov",
     eyebrow: "Komunikácia",
     body: "Sviatky, opravy alebo nové služby viete poslať členom ako oznam, ktorý má jasné obdobie platnosti a správny vizuál.",
+    blurb: "Oznamy členom s platnosťou a vlastným vizuálom.",
     metric: "2",
     metricLabel: "aktívne oznamy",
     image: newsScreen,
@@ -412,9 +423,24 @@ function HeroProductShowcase() {
   const frameWidth = useTransform(
     scrollYProgress,
     [0, settlePoint],
-    ["min(82vw, 1320px)", "min(86vw, 1420px)"],
+    ["min(62vw, 1040px)", "min(66vw, 1120px)"],
   );
   const frameOpacity = useTransform(scrollYProgress, [0, 0.08], [0.94, 1]);
+  const bubbleOpacity = useTransform(
+    scrollYProgress,
+    [0, settlePoint, settlePoint + 0.06],
+    [0, 0, 1],
+  );
+  const bubbleDriftX = useTransform(
+    scrollYProgress,
+    [0, 1],
+    reduceMotion ? [0, 0] : [-10, 10],
+  );
+  const bubbleDriftY = useTransform(
+    scrollYProgress,
+    [0, 1],
+    reduceMotion ? [0, 0] : [12, -12],
+  );
   const screenFadeOpacity = useTransform(
     scrollYProgress,
     [0, 0.14, settlePoint],
@@ -463,6 +489,9 @@ function HeroProductShowcase() {
         screenFadeOpacity={screenFadeOpacity}
         sectionGlowX={sectionGlowX}
         sectionGlowOpacity={sectionGlowOpacity}
+        bubbleOpacity={bubbleOpacity}
+        bubbleDriftX={bubbleDriftX}
+        bubbleDriftY={bubbleDriftY}
       />
     </>
   );
@@ -672,6 +701,9 @@ function DesktopHeroProductShowcase({
   screenFadeOpacity,
   sectionGlowX,
   sectionGlowOpacity,
+  bubbleOpacity,
+  bubbleDriftX,
+  bubbleDriftY,
 }: {
   sectionRef: RefObject<HTMLElement | null>;
   activeScreen: TourScreen;
@@ -685,6 +717,9 @@ function DesktopHeroProductShowcase({
   screenFadeOpacity: MotionValue<number>;
   sectionGlowX: MotionValue<string>;
   sectionGlowOpacity: MotionValue<number>;
+  bubbleOpacity: MotionValue<number>;
+  bubbleDriftX: MotionValue<number>;
+  bubbleDriftY: MotionValue<number>;
 }) {
   return (
     <section
@@ -784,10 +819,78 @@ function DesktopHeroProductShowcase({
             ))}
           </motion.div>
           <StackedTourBrowserFrame activeIndex={activeIndex} />
+          <TourInfoBubble
+            activeScreen={activeScreen}
+            activeIndex={activeIndex}
+            bubbleOpacity={bubbleOpacity}
+            driftX={bubbleDriftX}
+            driftY={bubbleDriftY}
+          />
         </motion.div>
         </div>
       </div>
     </section>
+  );
+}
+
+const bubblePositions = [
+  { top: "16%", left: "1%" },
+  { top: "84%", left: "99%" },
+  { top: "16%", left: "99%" },
+  { top: "84%", left: "1%" },
+];
+
+function TourInfoBubble({
+  activeScreen,
+  activeIndex,
+  bubbleOpacity,
+  driftX,
+  driftY,
+}: {
+  activeScreen: TourScreen;
+  activeIndex: number;
+  bubbleOpacity: MotionValue<number>;
+  driftX: MotionValue<number>;
+  driftY: MotionValue<number>;
+}) {
+  const reduceMotion = useReducedMotion();
+  const Icon = activeScreen.icon;
+  const position = bubblePositions[activeIndex % bubblePositions.length];
+
+  return (
+    <motion.div
+      aria-hidden="true"
+      className="tour-bubble pointer-events-none absolute z-30 w-[clamp(11rem,15vw,14rem)]"
+      style={{ x: "-50%", y: "-50%", opacity: bubbleOpacity }}
+      animate={{ top: position.top, left: position.left }}
+      transition={
+        reduceMotion
+          ? { duration: 0 }
+          : { type: "spring", stiffness: 120, damping: 20 }
+      }
+    >
+      <motion.div style={{ x: driftX, y: driftY }}>
+        <motion.div
+          key={activeIndex}
+          initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.32, ease: "easeOut" }}
+          className="rounded-3xl border border-white/60 bg-white/90 p-4 shadow-[0_24px_70px_rgba(15,23,42,0.2)] backdrop-blur-xl"
+        >
+          <div className="flex items-center gap-2.5">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-2xl bg-accent text-white shadow-brand">
+              <Icon aria-hidden="true" className="h-4 w-4" />
+            </span>
+            <h3 className="text-sm font-black leading-tight text-slate-950">
+              {activeScreen.title}
+            </h3>
+          </div>
+          <p className="mt-3 text-xs font-semibold leading-5 text-slate-600">
+            {activeScreen.blurb}
+          </p>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 }
 

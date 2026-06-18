@@ -582,6 +582,24 @@ textarea {
   border-color: rgba(255, 255, 255, 0.1);
 }
 
+.tour-bubble {
+  color: #172033;
+}
+
+.theme-dark .tour-bubble > div > div {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(9, 9, 13, 0.78);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
+}
+
+.theme-dark .tour-bubble .text-slate-950 {
+  color: #f8fafc;
+}
+
+.theme-dark .tour-bubble .text-slate-600 {
+  color: rgba(203, 213, 225, 0.78);
+}
+
 .contact-field {
   position: absolute;
   inset: 0;
