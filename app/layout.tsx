@@ -16,13 +16,13 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "Tap-it | SaaS systém pre fitness centrá",
+  title: "Tap-it | Fitness OS pre moderné fitness centrá",
   description:
-    "Tap-it spája QR vstupy, členstvá, rezervácie, smeny a admin panel do jedného operačného systému pre fitness centrá.",
+    "Tap-it navrhuje QR vstupy, členstvá, rezervácie, migráciu z existujúceho systému, turnikety, skenery, admin panel a mobilnú appku podľa reality tvojej fitness prevádzky.",
   openGraph: {
-    title: "Tap-it | Fitness OS",
+    title: "Tap-it | Fitness OS pre moderné fitness centrá",
     description:
-      "QR vstupy, členstvá, rezervácie a prevádzka fitka v jednom SaaS systéme.",
+      "QR vstupy, členstvá, rezervácie, migrácia z existujúceho systému, turnikety, skenery, admin panel a mobilná appka podľa reality tvojej fitness prevádzky.",
     type: "website",
   },
 };
