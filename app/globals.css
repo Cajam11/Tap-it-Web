@@ -318,9 +318,39 @@ textarea {
     #dbe9fb;
 }
 
+.tap-hero-shell::after {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 2;
+  height: min(34svh, 22rem);
+  pointer-events: none;
+  content: "";
+  background:
+    radial-gradient(
+      ellipse 72% 82% at 12% 100%,
+      rgba(54, 36, 58, 0.62),
+      transparent 68%
+    ),
+    radial-gradient(
+      ellipse 70% 76% at 88% 96%,
+      rgba(27, 45, 88, 0.72),
+      transparent 70%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(219, 235, 255, 0),
+      rgba(14, 19, 32, 0.48) 52%,
+      rgba(9, 9, 13, 0.94)
+    );
+}
+
 @media (max-width: 1023px) {
   .tap-hero-shell {
     min-height: 100svh;
+  }
+
+  .tap-hero-shell::after {
+    height: min(30svh, 17rem);
   }
 }
 
@@ -534,6 +564,26 @@ textarea {
     linear-gradient(180deg, #101524, #0b1020 62%, #111827);
 }
 
+.theme-dark .tap-hero-shell::after {
+  background:
+    radial-gradient(
+      ellipse 72% 82% at 12% 100%,
+      rgba(97, 36, 56, 0.34),
+      transparent 68%
+    ),
+    radial-gradient(
+      ellipse 70% 76% at 88% 96%,
+      rgba(62, 99, 221, 0.36),
+      transparent 70%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(17, 24, 39, 0),
+      rgba(10, 13, 22, 0.68) 48%,
+      rgba(9, 9, 13, 0.96)
+    );
+}
+
 @media (max-width: 1023px) {
   .theme-dark .tap-hero-shell {
     background:
@@ -690,6 +740,119 @@ textarea {
       rgba(255, 255, 255, 0.08),
       transparent 70%
     );
+}
+
+.app-showcase-section {
+  position: relative;
+  isolation: isolate;
+  overflow: visible;
+}
+
+.app-showcase-section::before,
+.app-showcase-section::after {
+  position: absolute;
+  right: 0;
+  left: 0;
+  z-index: 0;
+  pointer-events: none;
+  content: "";
+}
+
+.app-showcase-section::before {
+  top: 0;
+  height: min(34svh, 24rem);
+  background:
+    radial-gradient(
+      ellipse 54% 74% at 14% 0%,
+      rgba(78, 42, 78, 0.36),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 62% 74% at 88% 0%,
+      rgba(62, 99, 221, 0.28),
+      transparent 72%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(8, 8, 13, 0.94),
+      rgba(10, 12, 19, 0.58) 46%,
+      rgba(14, 15, 21, 0)
+    );
+}
+
+.app-showcase-section::after {
+  bottom: 0;
+  height: min(36svh, 25rem);
+  background:
+    radial-gradient(
+      ellipse 52% 72% at 14% 100%,
+      rgba(239, 36, 40, 0.16),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 62% 70% at 86% 100%,
+      rgba(62, 99, 221, 0.18),
+      transparent 72%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(14, 15, 21, 0),
+      rgba(10, 10, 15, 0.64) 58%,
+      rgba(9, 9, 13, 0.98)
+    );
+}
+
+.app-showcase-section > .sticky {
+  z-index: 1;
+}
+
+.app-showcase-section > :not(.sticky) {
+  position: relative;
+  z-index: 1;
+}
+
+.contact-transition-section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  margin-top: -1px;
+  background:
+    radial-gradient(
+      ellipse 70% 34% at 50% 0%,
+      rgba(62, 99, 221, 0.1),
+      transparent 74%
+    ),
+    linear-gradient(180deg, #09090d 0%, #08080c 40%, #09090d 100%);
+}
+
+.contact-transition-section::before {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 0;
+  height: min(30svh, 22rem);
+  pointer-events: none;
+  content: "";
+  background:
+    radial-gradient(
+      ellipse 54% 78% at 16% 0%,
+      rgba(239, 36, 40, 0.14),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 58% 78% at 86% 0%,
+      rgba(62, 99, 221, 0.16),
+      transparent 74%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(14, 15, 21, 0.92),
+      rgba(9, 9, 13, 0)
+    );
+}
+
+.contact-transition-section > * {
+  position: relative;
+  z-index: 1;
 }
 
 .app-parallax-glow {
@@ -887,6 +1050,7 @@ textarea {
 }
 
 .experience-band::before,
+.experience-band::after,
 .experience-band-grid,
 .experience-band-glow {
   position: absolute;
@@ -909,6 +1073,30 @@ textarea {
     transparent
   );
   opacity: 0.18;
+}
+
+.experience-band::after {
+  inset: -14rem 0 auto;
+  z-index: 0;
+  height: 22rem;
+  content: "";
+  background:
+    radial-gradient(
+      ellipse 64% 58% at 12% 42%,
+      rgba(83, 42, 75, 0.42),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 62% 60% at 88% 38%,
+      rgba(62, 99, 221, 0.34),
+      transparent 70%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(9, 9, 13, 0),
+      rgba(9, 9, 13, 0.88) 58%,
+      rgba(9, 9, 13, 0)
+    );
 }
 
 .experience-band-grid {

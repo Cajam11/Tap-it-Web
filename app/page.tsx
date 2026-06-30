@@ -2185,7 +2185,7 @@ function ParallaxMobileAppSection() {
     <section
       ref={sectionRef}
       id="appka"
-      className="relative border-y border-white/5 bg-surface"
+      className="app-showcase-section relative bg-surface"
       style={{ height: `${appScreens.length * 84}svh` }}
     >
       <div className="sticky top-0 h-[100svh] overflow-hidden">
@@ -2373,7 +2373,7 @@ function StaticMobileAppGallery() {
   return (
     <section
       id="appka"
-      className="border-y border-white/5 bg-surface px-4 py-20 sm:px-6 lg:py-28"
+      className="app-showcase-section bg-surface px-4 py-20 sm:px-6 lg:py-28"
     >
       <div className="mx-auto max-w-7xl">
         <div className="max-w-3xl">
@@ -2452,7 +2452,10 @@ function ContactSection() {
   }
 
   return (
-    <section id="kontakt" className="px-4 py-20 sm:px-6 lg:py-28">
+    <section
+      id="kontakt"
+      className="contact-transition-section px-4 py-20 sm:px-6 lg:py-28"
+    >
       <div>
         <motion.div
           initial={{ opacity: 0, y: 32 }}
