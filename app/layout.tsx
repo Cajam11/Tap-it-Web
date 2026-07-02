@@ -1,6 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Manrope } from "next/font/google";
 import "./globals.css";
+import {
+  seoKeywords,
+  siteDescription,
+  siteName,
+  siteTitle,
+  siteUrl,
+  structuredData,
+} from "./seo-content";
 
 const fraunces = Fraunces({
   subsets: ["latin", "latin-ext"],
@@ -16,14 +24,44 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "Tap-it | Fitness OS pre moderné fitness centrá",
-  description:
-    "Tap-it navrhuje QR vstupy, členstvá, rezervácie, migráciu z existujúceho systému, turnikety, skenery, admin panel a mobilnú appku podľa reality tvojej fitness prevádzky.",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: siteTitle,
+    template: `%s | ${siteName}`,
+  },
+  description: siteDescription,
+  applicationName: "Tap-it Fitness OS",
+  keywords: seoKeywords,
+  authors: [{ name: "Tap-it" }],
+  creator: "Tap-it",
+  publisher: "Tap-it",
+  category: "fitness software",
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-snippet": -1,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+    },
+  },
   openGraph: {
-    title: "Tap-it | Fitness OS pre moderné fitness centrá",
-    description:
-      "QR vstupy, členstvá, rezervácie, migrácia z existujúceho systému, turnikety, skenery, admin panel a mobilná appka podľa reality tvojej fitness prevádzky.",
+    title: siteTitle,
+    description: siteDescription,
+    url: "/",
+    siteName,
+    locale: "sk_SK",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteTitle,
+    description: siteDescription,
   },
 };
 
@@ -31,6 +69,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
 };
+
+const jsonLd = JSON.stringify(structuredData).replace(/</g, "\\u003c");
 
 export default function RootLayout({
   children,
@@ -44,6 +84,10 @@ export default function RootLayout({
     >
       <body className="bg-base font-sans text-slate-100 antialiased">
         {children}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: jsonLd }}
+        />
       </body>
     </html>
   );

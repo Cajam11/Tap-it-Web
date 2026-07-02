@@ -37,11 +37,11 @@ import {
   type Variants,
 } from "framer-motion";
 import {
-  FormEvent,
   useEffect,
   useMemo,
   useRef,
   useState,
+  type FormEvent,
   type MouseEvent as ReactMouseEvent,
   type RefObject,
   type ReactNode,
@@ -72,6 +72,8 @@ import scanLogsScreen from "../screenshots/web/Scan_Logs.png";
 import smenyScreen from "../screenshots/web/Smeny.png";
 import usersScreen from "../screenshots/web/User_Management.png";
 import verificationScreen from "../screenshots/web/Verification.png";
+import { projectTypes, type ProjectType } from "./contact-options";
+import { fitnessFaqItems } from "./fitness-faq";
 
 const navItems = [
   ["Platforma", "#platforma"],
@@ -598,18 +600,12 @@ const nextItems = [
   "Lepšie vstupné kroky pre nový gym a nový tím",
 ];
 
-const projectTypes = [
-  "Chcem kompletný prechod",
-  "Prechádzam z iného systému",
-  "Riešim turniket/skener",
-  "Chcem audit",
-];
-
 type ThemeMode = "light" | "dark";
+type ContactSubmitStatus = "idle" | "submitting" | "success" | "error";
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [theme, setTheme] = useState<ThemeMode>("light");
+  const [theme, setTheme] = useState<ThemeMode>("dark");
   const year = useMemo(() => new Date().getFullYear(), []);
   const toggleTheme = () => {
     setTheme((current) => (current === "light" ? "dark" : "light"));
@@ -637,6 +633,7 @@ export default function Home() {
         <ProofSection />
       </MiddleExperienceBackdrop>
       <MobilePreviewSection />
+      <SeoAnswersSection />
       <ContactSection />
       <FullFooter year={year} />
     </main>
@@ -1000,17 +997,17 @@ function MobileHeroProductShowcase() {
               variants={revealItem}
               className="hero-title mt-5 max-w-xl text-balance text-[2.35rem] font-black leading-[0.95] tracking-tight text-slate-950 min-[390px]:text-[2.55rem] sm:text-6xl"
             >
-              <span className="block">Fitness OS pre gymy,</span>
+              <span className="block">Softvér pre fitká,</span>
               <span className="block">
-                ktoré nechcú krabicový softvér.
+                ktoré nechcú krabicový systém.
               </span>
             </motion.h1>
             <motion.p
               variants={revealItem}
               className="hero-copy mt-4 max-w-md text-pretty text-sm font-semibold leading-6 text-slate-600 sm:text-base"
             >
-              Prevedieme dáta, vstup, turnikety, členstvá a appku do jedného
-              systému podľa tvojej prevádzky.
+              Tap-it Fitness OS spája QR vstupy, členstvá, rezervácie,
+              turnikety a appku do jedného systému podľa tvojej prevádzky.
             </motion.p>
             <motion.div
               variants={revealItem}
@@ -1174,16 +1171,16 @@ function DesktopHeroProductShowcase({
               variants={revealItem}
               className="hero-title mt-6 max-w-6xl text-balance text-[2.9rem] font-black leading-[0.95] tracking-tight text-slate-950 sm:text-6xl lg:text-7xl xl:text-8xl"
             >
-              <span className="block">Fitness OS pre gymy,</span>
-              <span className="block">ktoré nechcú krabicový softvér.</span>
+              <span className="block">Softvér pre fitká,</span>
+              <span className="block">ktoré nechcú krabicový systém.</span>
             </motion.h1>
 
-          <motion.p
-            variants={revealItem}
-            className="hero-copy mt-6 max-w-2xl text-pretty text-base font-semibold leading-7 text-slate-600 sm:text-lg"
-          >
-            Prevedieme dáta, vstup, turnikety, členstvá a appku do jedného
-            systému podľa tvojej prevádzky.
+            <motion.p
+              variants={revealItem}
+              className="hero-copy mt-6 max-w-2xl text-pretty text-base font-semibold leading-7 text-slate-600 sm:text-lg"
+            >
+              Tap-it Fitness OS spája QR vstupy, členstvá, rezervácie,
+              turnikety a appku do jedného systému podľa tvojej prevádzky.
             </motion.p>
 
             <motion.div
@@ -2442,13 +2439,130 @@ function StaticAppPhoneShot({
   );
 }
 
-function ContactSection() {
-  const [projectType, setProjectType] = useState(projectTypes[0]);
-  const [submitted, setSubmitted] = useState(false);
+function SeoAnswersSection() {
+  return (
+    <section id="otazky" className="bg-surface px-4 py-20 sm:px-6 lg:py-28">
+      <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.82fr_1.18fr] lg:items-stretch">
+        <div className="lg:self-stretch">
+          <div className="lg:sticky lg:top-28">
+            <motion.div
+              variants={revealContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+            >
+              <motion.p variants={revealItem} className="section-kicker">
+                Otázky majiteľov fitiek
+              </motion.p>
+              <motion.h2
+                variants={revealItem}
+                className="mt-4 max-w-2xl text-4xl font-black leading-none tracking-tight text-white sm:text-5xl lg:text-6xl"
+              >
+                Keď hľadáš systém pre fitko, najprv potrebuješ jasné odpovede.
+              </motion.h2>
+              <motion.p
+                variants={revealItem}
+                className="mt-5 max-w-xl text-base leading-7 text-slate-400"
+              >
+                Softvér pre fitness centrum nie je len zoznam modulov. Pred
+                rozhodnutím treba vedieť, ako sa vyrieši vstup, migrácia dát,
+                členstvá, recepcia, hardvér a každodenné výnimky.
+              </motion.p>
+              <motion.div
+                variants={revealItem}
+                className="relative mt-8 overflow-hidden rounded-3xl border border-accent/30 bg-accent-faint/45 p-5 shadow-[0_24px_80px_rgba(62,99,221,0.12)]"
+              >
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-x-0 top-0 h-px bg-accent-bright"
+                />
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-accent-soft">
+                  Pre rýchlu odpoveď
+                </p>
+                <p className="mt-3 text-lg font-black leading-7 text-white">
+                  Tap-it je systém pre fitká, ktoré riešia QR vstup,
+                  členstvá, rezervácie, hardvér a migráciu dát naraz.
+                </p>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
 
-  function submitInquiry(event: FormEvent<HTMLFormElement>) {
+        <motion.div
+          variants={revealContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          className="grid gap-4"
+        >
+          {fitnessFaqItems.map((item, index) => (
+            <motion.article
+              key={item.question}
+              variants={revealItem}
+              className="rounded-3xl border border-white/10 bg-base/[0.72] p-5 shadow-card transition hover:border-accent/35 hover:bg-raised sm:p-6"
+            >
+              <div className="flex items-start gap-4">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-accent-faint text-sm font-black text-accent-soft">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <div>
+                  <h3 className="text-lg font-black leading-7 tracking-tight text-white">
+                    {item.question}
+                  </h3>
+                  <p className="mt-3 text-sm font-semibold leading-7 text-slate-400">
+                    {item.answer}
+                  </p>
+                </div>
+              </div>
+            </motion.article>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function ContactSection() {
+  const [projectType, setProjectType] = useState<ProjectType>(projectTypes[0]);
+  const [submitStatus, setSubmitStatus] =
+    useState<ContactSubmitStatus>("idle");
+  const [submitError, setSubmitError] = useState("");
+
+  async function submitInquiry(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSubmitted(true);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    setSubmitStatus("submitting");
+    setSubmitError("");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(Object.fromEntries(formData)),
+      });
+      const result = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(
+          result?.message ?? "Mail sa nepodarilo odoslať. Skús to prosím znova.",
+        );
+      }
+
+      form.reset();
+      setProjectType(projectTypes[0]);
+      setSubmitStatus("success");
+    } catch (error) {
+      setSubmitStatus("error");
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : "Mail sa nepodarilo odoslať. Skús to prosím znova.",
+      );
+    }
   }
 
   return (
@@ -2494,21 +2608,29 @@ function ContactSection() {
               </div>
             </div>
 
-            {submitted ? (
+            {submitStatus === "success" ? (
               <div className="flex min-h-[360px] flex-col items-start justify-center rounded-3xl border border-white/10 bg-base/[0.7] p-8">
                 <span className="grid h-14 w-14 place-items-center rounded-2xl bg-accent text-white shadow-brand">
                   <Check aria-hidden="true" className="h-7 w-7" />
                 </span>
                 <p className="mt-6 text-3xl font-black leading-tight text-white">
-                  Super, dopyt k prechodu je pripravený.
+                  Super, dopyt odišiel.
                 </p>
                 <p className="mt-3 max-w-md text-sm leading-7 text-slate-400">
-                  Formulár je zatiaľ lokálny stav bez backendu. Predajný postup
-                  a copy sú pripravené na napojenie.
+                  Správa je odoslaná na Tap-it e-mail. Ozveme sa s návrhom
+                  auditu alebo ďalším krokom.
                 </p>
               </div>
             ) : (
               <form onSubmit={submitInquiry} className="grid content-start gap-7">
+                <input
+                  aria-hidden="true"
+                  autoComplete="off"
+                  className="hidden"
+                  name="company"
+                  tabIndex={-1}
+                  type="text"
+                />
                 <div className="grid gap-7 sm:grid-cols-2">
                   <label className="block">
                     <span className="field-label">Meno</span>
@@ -2564,16 +2686,27 @@ function ContactSection() {
 
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <button
-                    className="primary-button w-full sm:w-auto"
+                    className="primary-button w-full disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                    disabled={submitStatus === "submitting"}
                     type="submit"
                   >
-                    Odoslať prechod
+                    {submitStatus === "submitting"
+                      ? "Odosielam..."
+                      : "Odoslať prechod"}
                     <ArrowRight aria-hidden="true" className="h-4 w-4" />
                   </button>
                   <p className="text-center text-xs font-semibold text-slate-500 sm:text-right">
                     Bez newslettera. Len odpoveď k Tap-it prechodu.
                   </p>
                 </div>
+                {submitStatus === "error" ? (
+                  <p
+                    className="rounded-2xl border border-red-400/20 bg-red-500/10 px-4 py-3 text-sm font-semibold text-red-200"
+                    role="alert"
+                  >
+                    {submitError}
+                  </p>
+                ) : null}
               </form>
             )}
           </div>

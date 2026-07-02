@@ -1,0 +1,28 @@
+# Tap-it
+
+Tap-it je slovenský webový a softvérový tím, ktorý navrhuje webové stránky, redizajny, custom softvér, e-shopy a produkt Tap-it Fitness OS.
+
+## Tap-it Fitness OS
+
+Tap-it Fitness OS je softvér pre fitká a fitness centrá. Rieši QR vstupy, členstvá, rezervácie, migráciu z existujúceho systému, turnikety, QR skenery, admin panel a mobilnú aplikáciu pre členov.
+
+## Pre koho je produkt
+
+Produkt je určený pre majiteľov fitness centier a gymov, ktorí nechcú krabicový softvér a potrebujú systém prispôsobený recepcii, členom, vstupu, hardvéru a existujúcim dátam.
+
+## Dôležité témy
+
+- softvér pre fitká
+- systém pre fitko
+- softvér pre fitness centrum
+- QR vstup do fitka
+- turniketový systém pre fitness centrum
+- rezervačný systém pre fitko
+- správa členstiev
+- mobilná appka pre fitko
+- migrácia fitness systému
+
+## Kontakt
+
+Web: https://tap-it.sk
+E-mail: info@tap-it.sk
