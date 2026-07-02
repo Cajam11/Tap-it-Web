@@ -1,7 +1,7 @@
 import { fitnessFaqItems } from "./fitness-faq";
 
 export const siteUrl = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://tap-it.sk"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.tap-it.sk"
 ).replace(/\/$/, "");
 
 export const siteName = "Tap-it";
