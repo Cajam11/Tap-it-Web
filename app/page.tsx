@@ -1511,28 +1511,27 @@ function ValueSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-80px" }}
-          className="mt-12 grid gap-8 md:grid-cols-2 md:gap-6 xl:grid-cols-4 xl:gap-4"
+          className="mt-14 grid gap-x-8 gap-y-11 sm:grid-cols-2 xl:grid-cols-4"
         >
           {valueCards.map((card) => {
             const Icon = card.icon;
 
             return (
-              <div key={card.title} className="h-full">
-                <motion.article
-                  variants={revealItem}
-                  className="group h-full rounded-3xl border border-white/10 bg-surface p-6 transition hover:border-accent/40 hover:bg-raised"
-                >
-                  <span className="grid h-12 w-12 place-items-center rounded-2xl bg-accent-faint text-accent-soft transition group-hover:bg-accent group-hover:text-white">
-                    <Icon aria-hidden="true" className="h-6 w-6" />
-                  </span>
-                  <h3 className="mt-8 text-xl font-black tracking-tight text-white">
-                    {card.title}
-                  </h3>
-                  <p className="mt-3 text-sm leading-7 text-slate-400">
-                    {card.text}
-                  </p>
-                </motion.article>
-              </div>
+              <motion.article
+                key={card.title}
+                variants={revealItem}
+                className="group border-t border-white/10 pt-7"
+              >
+                <span className="grid h-12 w-12 place-items-center rounded-2xl bg-accent-faint text-accent-soft transition group-hover:bg-accent group-hover:text-white">
+                  <Icon aria-hidden="true" className="h-6 w-6" />
+                </span>
+                <h3 className="mt-6 text-xl font-black tracking-tight text-white">
+                  {card.title}
+                </h3>
+                <p className="mt-3 text-sm leading-7 text-slate-400">
+                  {card.text}
+                </p>
+              </motion.article>
             );
           })}
         </motion.div>
@@ -1569,99 +1568,74 @@ function BoxVsTapitSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-80px" }}
-          className="relative grid overflow-hidden rounded-[2rem] border border-white/15 bg-base/[0.96] shadow-float lg:grid-cols-2"
+          className="grid overflow-hidden rounded-[2rem] border border-white/10 lg:grid-cols-2"
         >
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.05] via-transparent to-accent-deep/25"
-          />
           {comparisonColumns.map((column, index) => {
             const Icon = column.icon;
             const isTapit = index === 1;
 
             return (
-              <div key={column.title} className="min-h-full">
-                <motion.article
-                  variants={revealItem}
-                  className={`relative min-h-full p-6 sm:p-8 lg:p-10 ${
-                    isTapit
-                      ? "bg-gradient-to-br from-accent-deep/60 via-accent-deep/40 to-base/[0.88]"
-                      : "border-b border-white/15 bg-gradient-to-br from-surface/80 via-base/[0.72] to-base/[0.92] lg:border-b-0 lg:border-r"
-                  }`}
-                >
-                  {isTapit ? (
-                    <div
-                      aria-hidden="true"
-                      className="absolute inset-y-8 left-0 hidden w-px bg-gradient-to-b from-transparent via-accent-soft/80 to-transparent lg:block"
-                    />
-                  ) : null}
-                  <div className="relative flex min-h-full flex-col">
-                    <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-                      <div>
-                        <span className="inline-flex rounded-full border border-white/15 bg-white/[0.07] px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-white/70">
-                          {column.badge}
-                        </span>
-                        <h3 className="mt-5 text-4xl font-black tracking-tight text-white/95 sm:text-5xl">
-                          {column.title}
-                        </h3>
-                      </div>
+              <motion.article
+                key={column.title}
+                variants={revealItem}
+                className={`flex flex-col p-7 sm:p-9 lg:p-10 ${
+                  isTapit
+                    ? "bg-accent-deep/15"
+                    : "border-b border-white/10 lg:border-b-0 lg:border-r"
+                }`}
+              >
+                <div className="flex items-start justify-between gap-5">
+                  <div>
+                    <span className="inline-flex rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-white/65">
+                      {column.badge}
+                    </span>
+                    <h3 className="mt-5 text-3xl font-black tracking-tight text-white sm:text-4xl">
+                      {column.title}
+                    </h3>
+                  </div>
+                  <span
+                    className={`grid h-14 w-14 shrink-0 place-items-center rounded-2xl ${
+                      isTapit
+                        ? "bg-accent text-white shadow-brand"
+                        : "bg-white/[0.06] text-white/70"
+                    }`}
+                  >
+                    <Icon aria-hidden="true" className="h-6 w-6" />
+                  </span>
+                </div>
+
+                <p className="mt-5 max-w-xl text-base leading-8 text-white/70">
+                  {column.text}
+                </p>
+
+                <div className="mt-7 divide-y divide-white/10 border-t border-white/10">
+                  {column.points.map((point) => (
+                    <div key={point} className="flex items-start gap-3 py-3.5">
                       <span
-                        className={`grid h-14 w-14 shrink-0 place-items-center rounded-2xl ${
+                        className={`mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full ${
                           isTapit
-                            ? "bg-accent text-white shadow-brand"
-                            : "border border-white/15 bg-white/[0.08] text-white/75"
+                            ? "bg-accent text-white"
+                            : "bg-white/[0.08] text-white/70"
                         }`}
                       >
-                        <Icon aria-hidden="true" className="h-6 w-6" />
+                        <Check aria-hidden="true" className="h-3.5 w-3.5" />
                       </span>
-                    </div>
-
-                    <p className="mt-5 max-w-xl text-base font-semibold leading-8 !text-white/80">
-                      {column.text}
-                    </p>
-
-                    <div className="mt-8 grid gap-3">
-                      {column.points.map((point, pointIndex) => (
-                        <div
-                          key={point}
-                          className="flex items-start gap-4 rounded-2xl border border-white/15 bg-white/[0.07] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
-                        >
-                          <span
-                            className={`mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full ${
-                              isTapit
-                                ? "bg-accent text-white"
-                                : "border border-white/15 bg-white/[0.08] text-white/70"
-                            }`}
-                          >
-                            <Check aria-hidden="true" className="h-3.5 w-3.5" />
-                          </span>
-                          <p className="text-sm font-black leading-6 text-white/90">
-                            {point}
-                          </p>
-                          <span className="ml-auto pt-1 text-xs font-black text-white/30">
-                            {String(pointIndex + 1).padStart(2, "0")}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div
-                      className={`mt-8 rounded-3xl border p-5 ${
-                        isTapit
-                          ? "border-accent/40 bg-accent/20"
-                          : "border-white/15 bg-white/[0.05]"
-                      }`}
-                    >
-                      <p className="text-xs font-black uppercase tracking-[0.14em] text-white/50">
-                        Pointa
-                      </p>
-                      <p className="mt-2 text-base font-black leading-7 text-white/90">
-                        {column.outcome}
+                      <p className="text-sm font-semibold leading-6 text-white/85">
+                        {point}
                       </p>
                     </div>
-                  </div>
-                </motion.article>
-              </div>
+                  ))}
+                </div>
+
+                <div className="mt-7 border-t border-white/10 pt-5">
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-white/45">
+                    Pointa
+                  </p>
+                  <p className="mt-2 text-base font-bold leading-7 text-white/90">
+                    {column.outcome}
+                  </p>
+                </div>
+              </motion.article>
             );
           })}
         </motion.div>
@@ -1701,16 +1675,12 @@ function AuditSection() {
               </motion.p>
               <motion.div
                 variants={revealItem}
-                className="relative mt-8 overflow-hidden rounded-3xl border border-accent/30 bg-accent-faint/45 p-5 shadow-[0_24px_80px_rgba(62,99,221,0.12)]"
+                className="mt-8 rounded-r-2xl border-l-2 border-accent bg-accent-faint/25 py-5 pl-5 pr-4"
               >
-                <span
-                  aria-hidden="true"
-                  className="absolute inset-x-0 top-0 h-px bg-accent-bright"
-                />
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-accent-soft">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-accent-soft">
                   Výstup auditu
                 </p>
-                <p className="mt-3 text-lg font-black leading-7 text-white">
+                <p className="mt-3 text-lg font-bold leading-7 text-white">
                   Mapa modulov, priorít, rizík a pilotného rozsahu pre prvé
                   nasadenie.
                 </p>
@@ -1724,28 +1694,27 @@ function AuditSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-80px" }}
-          className="grid gap-7 sm:grid-cols-2"
+          className="grid gap-x-8 gap-y-9 sm:grid-cols-2"
         >
           {auditSteps.map((step) => {
             const Icon = step.icon;
 
             return (
-              <div key={step.title} className="h-full">
-                <motion.article
-                  variants={revealItem}
-                  className="h-full rounded-3xl border border-white/10 bg-surface p-5 transition hover:border-accent/35 hover:bg-raised"
-                >
-                  <span className="grid h-11 w-11 place-items-center rounded-2xl bg-accent-faint text-accent-soft">
-                    <Icon aria-hidden="true" className="h-5 w-5" />
-                  </span>
-                  <h3 className="mt-6 text-xl font-black tracking-tight text-white">
-                    {step.title}
-                  </h3>
-                  <p className="mt-3 text-sm font-semibold leading-6 text-slate-400">
-                    {step.text}
-                  </p>
-                </motion.article>
-              </div>
+              <motion.article
+                key={step.title}
+                variants={revealItem}
+                className="group border-t border-white/10 pt-6"
+              >
+                <span className="grid h-11 w-11 place-items-center rounded-2xl bg-accent-faint text-accent-soft transition group-hover:bg-accent group-hover:text-white">
+                  <Icon aria-hidden="true" className="h-5 w-5" />
+                </span>
+                <h3 className="mt-5 text-xl font-black tracking-tight text-white">
+                  {step.title}
+                </h3>
+                <p className="mt-3 text-sm font-semibold leading-6 text-slate-400">
+                  {step.text}
+                </p>
+              </motion.article>
             );
           })}
         </motion.div>
@@ -1785,56 +1754,46 @@ function MigrationHardwareSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-80px" }}
-          className="relative mt-12 overflow-hidden rounded-[2rem] border border-white/15 bg-base/[0.96] p-4 shadow-float sm:p-6 lg:p-8"
+          className="mt-14"
         >
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.04] via-transparent to-accent-deep/30"
-          />
-
-          <div className="relative grid gap-6 lg:grid-cols-[1fr_auto_1fr_auto_1fr] lg:items-stretch lg:gap-4">
+          <div className="grid gap-8 lg:grid-cols-[1fr_auto_1fr_auto_1fr] lg:items-start lg:gap-4">
             {migrationSteps.map((step, index) => {
               const Icon = step.icon;
+              const isTapit = index === 1;
 
               return (
                 <div key={step.title} className="contents">
-                  <div className="min-h-full">
-                    <motion.article
-                      variants={revealItem}
-                      className={`h-full rounded-3xl border p-5 ${
-                        index === 1
-                          ? "border-accent/40 bg-accent/20"
-                          : "border-white/15 bg-white/[0.06]"
+                  <motion.article
+                    variants={revealItem}
+                    className={`pt-6 ${
+                      isTapit
+                        ? "border-t-2 border-accent"
+                        : "border-t border-white/10"
+                    }`}
+                  >
+                    <span
+                      className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl ${
+                        isTapit
+                          ? "bg-accent text-white shadow-brand"
+                          : "bg-white/[0.06] text-white/75"
                       }`}
                     >
-                      <div className="flex items-start justify-between gap-4">
-                        <span
-                          className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl ${
-                            index === 1
-                              ? "bg-accent text-white shadow-brand"
-                              : "border border-white/15 bg-white/[0.08] text-white/75"
-                          }`}
-                        >
-                          <Icon aria-hidden="true" className="h-5 w-5" />
-                        </span>
-                        <span className="pt-1 text-xs font-black text-white/30">
-                          {String(index + 1).padStart(2, "0")}
-                        </span>
-                      </div>
-                      <h3 className="mt-6 text-2xl font-black tracking-tight !text-white">
-                        {step.title}
-                      </h3>
-                      <p className="mt-3 text-sm font-semibold leading-6 !text-white/70">
-                        {step.text}
-                      </p>
-                    </motion.article>
-                  </div>
+                      <Icon aria-hidden="true" className="h-5 w-5" />
+                    </span>
+                    <h3 className="mt-5 text-2xl font-black tracking-tight text-white">
+                      {step.title}
+                    </h3>
+                    <p className="mt-3 text-sm font-semibold leading-6 text-white/70">
+                      {step.text}
+                    </p>
+                  </motion.article>
 
                   {index < migrationSteps.length - 1 ? (
-                    <div className="hidden items-center justify-center lg:flex">
-                      <span className="grid h-11 w-11 place-items-center rounded-full border border-white/15 bg-white/[0.06] text-white/50">
-                        <ArrowRight aria-hidden="true" className="h-4 w-4" />
-                      </span>
+                    <div className="hidden items-center justify-center pt-6 lg:flex">
+                      <ArrowRight
+                        aria-hidden="true"
+                        className="h-5 w-5 text-white/25"
+                      />
                     </div>
                   ) : null}
                 </div>
@@ -1842,71 +1801,58 @@ function MigrationHardwareSection() {
             })}
           </div>
 
-          <div className="relative mt-6 grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-4">
-            <div className="h-full">
-              <motion.div
-                variants={revealItem}
-                className="h-full rounded-3xl border border-white/15 bg-white/[0.05] p-5"
-              >
-                <h3 className="text-2xl font-black tracking-tight !text-white">
-                  Hardvér na kľúč.
-                </h3>
-                <p className="mt-3 text-sm font-semibold leading-6 !text-white/70">
-                  Turniket alebo skener nie je doplnok na koniec. Je to súčasť
-                  vstupného procesu, ktorý musí sedieť členovi aj recepcii.
-                </p>
-                <div className="mt-6 grid gap-3">
-                  {hardwareItems.map((item) => {
-                    const Icon = item.icon;
+          <div className="mt-14 grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+            <motion.div variants={revealItem}>
+              <h3 className="text-2xl font-black tracking-tight text-white">
+                Hardvér na kľúč.
+              </h3>
+              <p className="mt-3 text-sm font-semibold leading-6 text-white/70">
+                Turniket alebo skener nie je doplnok na koniec. Je to súčasť
+                vstupného procesu, ktorý musí sedieť členovi aj recepcii.
+              </p>
+              <div className="mt-6 divide-y divide-white/10 border-t border-white/10">
+                {hardwareItems.map((item) => {
+                  const Icon = item.icon;
 
-                    return (
-                      <div
-                        key={item.title}
-                        className="flex gap-4 rounded-2xl border border-white/10 bg-base/[0.55] p-4"
-                      >
-                        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent-faint text-accent-soft">
-                          <Icon aria-hidden="true" className="h-5 w-5" />
-                        </span>
-                        <div>
-                          <p className="text-sm font-black !text-white/90">
-                            {item.title}
-                          </p>
-                          <p className="mt-1 text-xs font-semibold leading-5 !text-white/60">
-                            {item.text}
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </motion.div>
-            </div>
-
-            <div className="h-full">
-              <motion.div
-                variants={revealItem}
-                className="h-full rounded-3xl border border-accent/30 bg-accent-deep/30 p-5"
-              >
-                <h3 className="text-2xl font-black tracking-tight !text-white">
-                  Pred ostrým prepnutím musí byť jasno.
-                </h3>
-                <div className="mt-6 grid gap-3">
-                  {cutoverChecks.map((item) => (
-                    <div
-                      key={item}
-                      className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4"
-                    >
-                      <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-accent text-white">
-                        <Check aria-hidden="true" className="h-4 w-4" />
+                  return (
+                    <div key={item.title} className="flex gap-4 py-4">
+                      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent-faint text-accent-soft">
+                        <Icon aria-hidden="true" className="h-5 w-5" />
                       </span>
-                      <p className="text-sm font-black leading-6 !text-white/80">
-                        {item}
-                      </p>
+                      <div>
+                        <p className="text-sm font-bold text-white/90">
+                          {item.title}
+                        </p>
+                        <p className="mt-1 text-xs font-semibold leading-5 text-white/60">
+                          {item.text}
+                        </p>
+                      </div>
                     </div>
-                  ))}
-                </div>
-              </motion.div>
-            </div>
+                  );
+                })}
+              </div>
+            </motion.div>
+
+            <motion.div
+              variants={revealItem}
+              className="lg:border-l lg:border-white/10 lg:pl-16"
+            >
+              <h3 className="text-2xl font-black tracking-tight text-white">
+                Pred ostrým prepnutím musí byť jasno.
+              </h3>
+              <div className="mt-6 divide-y divide-white/10 border-t border-white/10">
+                {cutoverChecks.map((item) => (
+                  <div key={item} className="flex items-start gap-3 py-4">
+                    <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-accent text-white">
+                      <Check aria-hidden="true" className="h-4 w-4" />
+                    </span>
+                    <p className="text-sm font-semibold leading-6 text-white/80">
+                      {item}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
           </div>
         </motion.div>
       </div>
@@ -1948,19 +1894,19 @@ function OperationsSection() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-80px" }}
-            className="rounded-3xl border border-white/10 bg-surface p-3 shadow-card"
+            className="rounded-3xl border border-white/10 bg-white/[0.02] px-6"
           >
-            <div className="grid gap-3">
+            <div className="divide-y divide-white/10">
               {operations.map((item, index) => (
                 <motion.div
                   key={item}
                   variants={revealItem}
-                  className="grid gap-4 rounded-2xl border border-white/5 bg-base/[0.65] p-5 sm:grid-cols-[3rem_1fr] sm:items-center"
+                  className="grid gap-4 py-5 sm:grid-cols-[3rem_1fr] sm:items-center"
                 >
-                  <span className="grid h-12 w-12 place-items-center rounded-2xl bg-accent-faint text-sm font-black text-accent-soft">
+                  <span className="grid h-11 w-11 place-items-center rounded-2xl bg-accent-faint text-sm font-black text-accent-soft">
                     {String(index + 1).padStart(2, "0")}
                   </span>
-                  <p className="text-base font-bold leading-7 text-white">
+                  <p className="text-base font-semibold leading-7 text-white">
                     {item}
                   </p>
                 </motion.div>
@@ -2010,31 +1956,30 @@ function PilotSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-80px" }}
-          className="mt-12 grid gap-8 md:grid-cols-2 md:gap-6 xl:grid-cols-4 xl:gap-4"
+          className="mt-14 grid gap-x-8 gap-y-11 sm:grid-cols-2 xl:grid-cols-4"
         >
           {pilotWeeks.map((item, index) => (
-            <div key={item.week} className="h-full">
-              <motion.article
-                variants={revealItem}
-                className="relative h-full overflow-hidden rounded-3xl border border-white/10 bg-surface p-6 shadow-card"
+            <motion.article
+              key={item.week}
+              variants={revealItem}
+              className="relative border-t border-white/10 pt-7"
+            >
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute right-0 top-6 font-display text-6xl font-semibold leading-none text-white/[0.05]"
               >
-                <div
-                  aria-hidden="true"
-                  className="absolute right-5 top-5 font-display text-6xl font-semibold leading-none text-white/[0.04]"
-                >
-                  {String(index + 1).padStart(2, "0")}
-                </div>
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-accent-soft">
-                  {item.week}
-                </p>
-                <h3 className="mt-5 text-2xl font-black tracking-tight text-white">
-                  {item.title}
-                </h3>
-                <p className="mt-4 text-sm font-semibold leading-6 text-slate-400">
-                  {item.text}
-                </p>
-              </motion.article>
-            </div>
+                {String(index + 1).padStart(2, "0")}
+              </div>
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-accent-soft">
+                {item.week}
+              </p>
+              <h3 className="mt-4 text-2xl font-black tracking-tight text-white">
+                {item.title}
+              </h3>
+              <p className="mt-4 text-sm font-semibold leading-6 text-slate-400">
+                {item.text}
+              </p>
+            </motion.article>
           ))}
         </motion.div>
       </div>
@@ -2051,62 +1996,55 @@ function ProofSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-80px" }}
-          className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-5"
+          className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16"
         >
-          <div className="h-full">
-            <motion.article
-              variants={revealItem}
-              className="h-full rounded-[2rem] border border-white/10 bg-surface p-6 shadow-card sm:p-8 lg:p-10"
-            >
-              <p className="section-kicker">Čo už máme hotové</p>
-              <h2 className="mt-4 text-4xl font-black leading-none tracking-tight text-white sm:text-5xl">
-                Reálne obrazovky, nie sľub na papieri.
-              </h2>
-              <p className="mt-5 max-w-2xl text-base leading-7 text-slate-400">
-                Tap-it je pilotný produkt a hlavná prípadová štúdia nášho tímu.
-                Preto ukazujeme skutočný admin aj skutočnú mobilnú appku
-                namiesto vymyslených referencií.
-              </p>
-              <div className="mt-8 grid gap-3">
-                {proofItems.map((item) => (
-                  <div key={item} className="flex items-start gap-3">
-                    <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-accent text-white">
-                      <Check aria-hidden="true" className="h-4 w-4" />
-                    </span>
-                    <span className="text-sm font-bold leading-6 text-slate-300">
-                      {item}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </motion.article>
-          </div>
-
-          <div className="h-full">
-            <motion.article
-              variants={revealItem}
-              className="h-full rounded-[2rem] border border-white/10 bg-base/[0.72] p-6 sm:p-8 lg:p-10"
-            >
-              <p className="section-kicker">Čo testujeme ďalej</p>
-              <h3 className="mt-4 text-3xl font-black leading-none tracking-tight text-white sm:text-4xl">
-                Plán bez divadla.
-              </h3>
-              <p className="mt-5 text-base leading-7 text-slate-400">
-                Nechceme sľubovať všetko naraz. Testujeme veci, ktoré rozhodujú
-                o tom, či systém prežije bežný deň v reálnom gyme.
-              </p>
-              <div className="mt-8 grid gap-3">
-                {nextItems.map((item) => (
-                  <div
-                    key={item}
-                    className="rounded-2xl border border-white/5 bg-surface p-4 text-sm font-bold leading-6 text-slate-300"
-                  >
+          <motion.div variants={revealItem}>
+            <p className="section-kicker">Čo už máme hotové</p>
+            <h2 className="mt-4 text-4xl font-black leading-none tracking-tight text-white sm:text-5xl">
+              Reálne obrazovky, nie sľub na papieri.
+            </h2>
+            <p className="mt-5 max-w-2xl text-base leading-7 text-slate-400">
+              Tap-it je pilotný produkt a hlavná prípadová štúdia nášho tímu.
+              Preto ukazujeme skutočný admin aj skutočnú mobilnú appku
+              namiesto vymyslených referencií.
+            </p>
+            <div className="mt-8 divide-y divide-white/10 border-t border-white/10">
+              {proofItems.map((item) => (
+                <div key={item} className="flex items-start gap-3 py-3.5">
+                  <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-accent text-white">
+                    <Check aria-hidden="true" className="h-4 w-4" />
+                  </span>
+                  <span className="text-sm font-semibold leading-6 text-slate-300">
                     {item}
-                  </div>
-                ))}
-              </div>
-            </motion.article>
-          </div>
+                  </span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div
+            variants={revealItem}
+            className="lg:border-l lg:border-white/10 lg:pl-16"
+          >
+            <p className="section-kicker">Čo testujeme ďalej</p>
+            <h3 className="mt-4 text-3xl font-black leading-none tracking-tight text-white sm:text-4xl">
+              Plán bez divadla.
+            </h3>
+            <p className="mt-5 text-base leading-7 text-slate-400">
+              Nechceme sľubovať všetko naraz. Testujeme veci, ktoré rozhodujú
+              o tom, či systém prežije bežný deň v reálnom gyme.
+            </p>
+            <div className="mt-8 divide-y divide-white/10 border-t border-white/10">
+              {nextItems.map((item) => (
+                <div
+                  key={item}
+                  className="py-4 text-sm font-semibold leading-6 text-slate-300"
+                >
+                  {item}
+                </div>
+              ))}
+            </div>
+          </motion.div>
         </motion.div>
       </div>
     </section>
@@ -2313,16 +2251,12 @@ function SeoAnswersSection() {
               </motion.p>
               <motion.div
                 variants={revealItem}
-                className="relative mt-8 overflow-hidden rounded-3xl border border-accent/30 bg-accent-faint/45 p-5 shadow-[0_24px_80px_rgba(62,99,221,0.12)]"
+                className="mt-8 rounded-r-2xl border-l-2 border-accent bg-accent-faint/25 py-5 pl-5 pr-4"
               >
-                <span
-                  aria-hidden="true"
-                  className="absolute inset-x-0 top-0 h-px bg-accent-bright"
-                />
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-accent-soft">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-accent-soft">
                   Pre rýchlu odpoveď
                 </p>
-                <p className="mt-3 text-lg font-black leading-7 text-white">
+                <p className="mt-3 text-lg font-bold leading-7 text-white">
                   Tap-it je systém pre fitká, ktoré riešia QR vstup,
                   členstvá, rezervácie, hardvér a migráciu dát naraz.
                 </p>
