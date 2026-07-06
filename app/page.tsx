@@ -31,7 +31,6 @@ import {
 import {
   AnimatePresence,
   motion,
-  useMotionValueEvent,
   useReducedMotion,
   useScroll,
   useTransform,
@@ -2115,308 +2114,149 @@ function ProofSection() {
 }
 
 function MobilePreviewSection() {
-  const reduceMotion = useReducedMotion();
-
-  if (reduceMotion) {
-    return <StaticMobileAppGallery />;
-  }
-
-  return <ParallaxMobileAppSection />;
+  return <AppRoadmapSection />;
 }
 
-const appPhonePoses = [
-  {
-    phoneX: "24vw",
-    copyX: "-23vw",
-    rotateY: -18,
-    rotateX: 4,
-    rotateZ: 3,
-    y: -12,
-  },
-  {
-    phoneX: "-24vw",
-    copyX: "23vw",
-    rotateY: 18,
-    rotateX: 3,
-    rotateZ: -4,
-    y: 10,
-  },
-  {
-    phoneX: "19vw",
-    copyX: "-24vw",
-    rotateY: -12,
-    rotateX: -2,
-    rotateZ: 5,
-    y: -18,
-  },
-  {
-    phoneX: "-20vw",
-    copyX: "24vw",
-    rotateY: 15,
-    rotateX: 5,
-    rotateZ: -2,
-    y: 2,
-  },
-];
-
-function ParallaxMobileAppSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
-  });
-  const glowX = useTransform(scrollYProgress, [0, 1], ["18%", "82%"]);
-  const glowY = useTransform(scrollYProgress, [0, 1], ["26%", "72%"]);
-  const ringRotate = useTransform(scrollYProgress, [0, 1], [0, 28]);
-  const pose = appPhonePoses[activeIndex % appPhonePoses.length];
-
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    const clamped = Math.min(0.999, Math.max(0, latest));
-    const nextIndex = Math.min(
-      appScreens.length - 1,
-      Math.floor(clamped * appScreens.length),
-    );
-
-    setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
-  });
-
-  return (
-    <section
-      ref={sectionRef}
-      id="appka"
-      className="app-showcase-section relative bg-surface"
-      style={{ height: `${appScreens.length * 84}svh` }}
-    >
-      <div className="sticky top-0 h-[100svh] overflow-hidden">
-        <motion.div
-          aria-hidden="true"
-          className="app-parallax-glow"
-          style={{ left: glowX, top: glowY }}
-        />
-        <motion.div
-          aria-hidden="true"
-          className="app-parallax-ring"
-          style={{ rotate: ringRotate }}
-        />
-
-        <div className="relative mx-auto hidden h-full max-w-7xl items-center justify-center px-6 lg:flex">
-          <div className="absolute left-1/2 top-1/2 w-[clamp(16rem,20vw,21.5rem)] -translate-x-1/2 -translate-y-1/2">
-            <motion.div
-              animate={{
-                x: pose.phoneX,
-                y: pose.y,
-                rotateX: pose.rotateX,
-                rotateY: pose.rotateY,
-                rotateZ: pose.rotateZ,
-              }}
-              transition={{ type: "spring", stiffness: 92, damping: 22 }}
-              className="member-phone-tilt"
-            >
-              <AppPhoneMockup activeIndex={activeIndex} />
-            </motion.div>
-          </div>
-
-          <div className="absolute left-1/2 top-1/2 w-[min(38vw,34rem)] -translate-x-1/2 -translate-y-1/2">
-            <motion.div
-              animate={{ x: pose.copyX, y: pose.y * -0.35 }}
-              transition={{ type: "spring", stiffness: 96, damping: 24 }}
-            >
-              <AppScreenCopy activeIndex={activeIndex} />
-            </motion.div>
-          </div>
-        </div>
-
-        <div className="relative flex h-full flex-col justify-center px-4 pb-6 pt-20 lg:hidden">
-          <motion.div
-            animate={{
-              y: activeIndex % 2 === 0 ? -4 : 4,
-              rotateZ: activeIndex % 2 === 0 ? 2 : -2,
-            }}
-            transition={{ type: "spring", stiffness: 105, damping: 20 }}
-            className="mx-auto w-[min(54vw,24svh,13.75rem)]"
-          >
-            <AppPhoneMockup activeIndex={activeIndex} />
-          </motion.div>
-          <div className="mx-auto mt-5 w-full max-w-md">
-            <AppScreenCopy activeIndex={activeIndex} compact />
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function AppScreenCopy({
-  activeIndex,
-  compact = false,
-}: {
-  activeIndex: number;
-  compact?: boolean;
-}) {
-  const reduceMotion = useReducedMotion();
-  const screen = appScreens[activeIndex];
-  const Icon = screen.icon;
-
-  return (
-    <article className="rounded-[1.75rem] border border-white/10 bg-base/[0.72] p-5 shadow-float backdrop-blur-2xl sm:p-6 lg:p-8">
-      <div className={compact ? "hidden" : "mb-7"}>
-        <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-bold text-slate-300">
-          <Smartphone aria-hidden="true" className="h-4 w-4 text-accent-soft" />
-          Mobilná aplikácia
-        </div>
-        <h2 className="mt-5 text-4xl font-black leading-none tracking-tight text-white xl:text-5xl">
-          Člen vidí presne to, čo potrebuje.
-        </h2>
-        <p className="mt-4 max-w-md text-sm leading-6 text-slate-400">
-          Od prvého prihlásenia po VOP: appka rieši vstup, rezervácie, platby
-          aj podporu v jednom postupe.
-        </p>
-      </div>
-
-      <motion.div
-        key={screen.label}
-        initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.34, ease: "easeOut" }}
-      >
-        <div className="flex items-start gap-3">
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-accent text-white shadow-brand">
-            <Icon aria-hidden="true" className="h-5 w-5" />
-          </span>
-          <div>
-            <p className="text-xs font-bold text-accent-soft">
-              {screen.label}
-            </p>
-            <h3
-              className={`font-black leading-tight tracking-tight text-white ${
-                compact ? "text-2xl" : "text-3xl"
-              }`}
-            >
-              {screen.title}
-            </h3>
-          </div>
-        </div>
-        <p
-          className={`mt-4 font-semibold text-slate-400 ${
-            compact ? "text-sm leading-6" : "text-base leading-7"
-          }`}
-        >
-          {screen.body}
-        </p>
-        <div className="mt-5 grid gap-3">
-          {screen.features.map((feature) => (
-            <div key={feature} className="flex items-start gap-3">
-              <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-accent-faint text-accent-soft">
-                <Check aria-hidden="true" className="h-4 w-4" />
-              </span>
-              <span className="text-sm font-semibold leading-6 text-slate-300">
-                {feature}
-              </span>
-            </div>
-          ))}
-        </div>
-      </motion.div>
-    </article>
-  );
-}
-
-function AppPhoneMockup({ activeIndex }: { activeIndex: number }) {
-  const [previousIndex, setPreviousIndex] = useState<number | null>(null);
-  const lastActiveIndex = useRef(activeIndex);
-
-  useEffect(() => {
-    if (activeIndex === lastActiveIndex.current) {
-      return;
-    }
-
-    setPreviousIndex(lastActiveIndex.current);
-    lastActiveIndex.current = activeIndex;
-
-    const timeout = window.setTimeout(() => {
-      setPreviousIndex(null);
-    }, 380);
-
-    return () => window.clearTimeout(timeout);
-  }, [activeIndex]);
-
-  return (
-    <figure className="member-phone-frame">
-      <div aria-hidden="true" className="member-phone-speaker" />
-      <div className="member-phone-screen">
-        {appScreens.map((screen, index) => {
-          const isActive = index === activeIndex;
-          const isPrevious = index === previousIndex;
-
-          return (
-            <Image
-              key={screen.label}
-              src={screen.image}
-              alt={isActive ? screen.alt : ""}
-              aria-hidden={!isActive}
-              fill
-              priority={index === 0}
-              sizes="(min-width: 1024px) 390px, 62vw"
-              className={`select-none object-cover transition-opacity duration-300 ease-out ${
-                isActive || isPrevious ? "opacity-100" : "opacity-0"
-              }`}
-              style={{ zIndex: isActive ? 20 : isPrevious ? 10 : 0 }}
-            />
-          );
-        })}
-      </div>
-    </figure>
-  );
-}
-
-function StaticMobileAppGallery() {
+function AppRoadmapSection() {
   return (
     <section
       id="appka"
       className="app-showcase-section bg-surface px-4 py-20 sm:px-6 lg:py-28"
     >
-      <div className="mx-auto max-w-7xl">
-        <div className="max-w-3xl">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-base/[0.7] px-3 py-1.5 text-xs font-bold text-slate-300">
+      <div className="mx-auto max-w-6xl">
+        <motion.div
+          variants={revealContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          className="max-w-3xl"
+        >
+          <motion.div
+            variants={revealItem}
+            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-base/[0.7] px-3 py-1.5 text-xs font-bold text-slate-300"
+          >
             <Smartphone aria-hidden="true" className="h-4 w-4 text-accent-soft" />
             Mobilná aplikácia
-          </div>
-          <h2 className="mt-5 text-4xl font-black leading-none tracking-tight text-white sm:text-5xl lg:text-6xl">
-            Člen vidí presne to, čo potrebuje.
-          </h2>
-          <p className="mt-5 max-w-xl text-base leading-7 text-slate-400">
-            Reálne obrazovky aplikácie Tap-it sú zoradené podľa času uloženia
-            screenshotov.
-          </p>
-        </div>
+          </motion.div>
+          <motion.h2
+            variants={revealItem}
+            className="mt-5 text-4xl font-black leading-none tracking-tight text-white sm:text-5xl lg:text-6xl"
+          >
+            Celá cesta člena, obrazovka po obrazovke.
+          </motion.h2>
+          <motion.p
+            variants={revealItem}
+            className="mt-5 max-w-xl text-base leading-7 text-slate-400"
+          >
+            Roadmapa mobilnej aplikácie Tap-it — od prvého spustenia cez
+            rezervácie a QR vstup až po podporu a dokumenty, v poradí, v akom
+            ich člen zažije.
+          </motion.p>
+        </motion.div>
 
-        <div className="mt-12 grid gap-8 md:grid-cols-2 xl:grid-cols-3">
-          {appScreens.map((screen, index) => (
-            <article
-              key={screen.label}
-              className="rounded-[1.75rem] border border-white/10 bg-base/[0.62] p-4 shadow-card"
-            >
-              <div className="mx-auto w-[min(70vw,13.5rem)]">
-                <StaticAppPhoneShot screen={screen} priority={index === 0} />
-              </div>
-              <div className="mt-5">
-                <p className="text-xs font-bold text-accent-soft">
-                  {screen.label}
-                </p>
-                <h3 className="mt-1 text-2xl font-black leading-tight text-white">
-                  {screen.title}
-                </h3>
-                <p className="mt-3 text-sm font-semibold leading-6 text-slate-400">
-                  {screen.body}
-                </p>
-              </div>
-            </article>
-          ))}
+        <div className="roadmap relative mt-16 lg:mt-20">
+          <span aria-hidden="true" className="roadmap-spine" />
+          <div className="flex flex-col gap-16 sm:gap-20 lg:gap-0">
+            {appScreens.map((screen, index) => (
+              <RoadmapStop
+                key={screen.label}
+                screen={screen}
+                index={index}
+                total={appScreens.length}
+                priority={index === 0}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>
   );
 }
+
+function RoadmapStop({
+  screen,
+  index,
+  total,
+  priority,
+}: {
+  screen: AppScreen;
+  index: number;
+  total: number;
+  priority: boolean;
+}) {
+  const reduceMotion = useReducedMotion();
+  const phoneLeft = index % 2 === 0;
+  const number = String(index + 1).padStart(2, "0");
+  const totalLabel = String(total).padStart(2, "0");
+
+  return (
+    <div className="roadmap-stop relative grid grid-cols-1 items-center gap-x-12 gap-y-6 pl-12 sm:gap-y-7 lg:grid-cols-2 lg:gap-x-24 lg:py-14 lg:pl-0">
+      <span aria-hidden="true" className="roadmap-node" />
+
+      <motion.div
+        initial={reduceMotion ? false : { opacity: 0, y: 26 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-70px" }}
+        transition={{ duration: 0.55, ease: "easeOut" }}
+        className={`order-2 flex justify-center ${
+          phoneLeft
+            ? "lg:order-1 lg:justify-end"
+            : "lg:order-2 lg:justify-start"
+        }`}
+      >
+        <div
+          data-side={phoneLeft ? "left" : "right"}
+          className="roadmap-phone w-[min(56vw,24svh,14rem)] lg:w-[clamp(16rem,20vw,21.5rem)]"
+        >
+          <StaticAppPhoneShot screen={screen} priority={priority} />
+        </div>
+      </motion.div>
+
+      <motion.div
+        initial={reduceMotion ? false : { opacity: 0, y: 26 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-70px" }}
+        transition={{ duration: 0.55, ease: "easeOut", delay: 0.05 }}
+        className={`order-1 ${
+          phoneLeft ? "lg:order-2" : "lg:order-1 lg:text-right"
+        }`}
+      >
+        <div className={`lg:max-w-md ${phoneLeft ? "" : "lg:ml-auto"}`}>
+          <p className="text-xs font-bold uppercase tracking-[0.22em] text-accent-soft">
+            <span className="tabular-nums text-white">{number}</span>
+            <span className="mx-1.5 text-slate-500">/</span>
+            <span className="tabular-nums text-slate-500">{totalLabel}</span>
+            <span className="ml-3">{screen.label}</span>
+          </p>
+          <h3 className="mt-3 text-2xl font-black leading-tight tracking-tight text-white sm:text-3xl">
+            {screen.title}
+          </h3>
+          <p className="mt-3 text-sm font-semibold leading-6 text-slate-400 sm:text-base sm:leading-7">
+            {screen.body}
+          </p>
+          <ul className="mt-5 grid gap-2.5">
+            {screen.features.map((feature) => (
+              <li
+                key={feature}
+                className={`flex items-start gap-3 ${
+                  phoneLeft ? "" : "lg:flex-row-reverse lg:text-right"
+                }`}
+              >
+                <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-accent-faint text-accent-soft">
+                  <Check aria-hidden="true" className="h-3.5 w-3.5" />
+                </span>
+                <span className="text-sm font-semibold leading-6 text-slate-300">
+                  {feature}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
 
 function StaticAppPhoneShot({
   screen,

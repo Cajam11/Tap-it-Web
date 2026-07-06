@@ -31,6 +31,15 @@ const config: Config = {
         sans: ["var(--font-body)", "system-ui", "sans-serif"],
         display: ["var(--font-display)", "Georgia", "serif"]
       }
+    },
+    // `base` collides with the core `text-base` font-size utility: leaving it in
+    // the text-color palette makes `.text-base` also emit `color:#09090D`, which
+    // silently overrides the intended text color and renders copy invisible on
+    // the dark surface. Keep `base` as a background color only.
+    textColor: ({ theme }) => {
+      const palette = { ...theme("colors") } as Record<string, string>;
+      delete palette.base;
+      return palette;
     }
   },
   plugins: []
