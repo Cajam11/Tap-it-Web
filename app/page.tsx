@@ -3,6 +3,7 @@
 import Image, { type StaticImageData } from "next/image";
 import {
   Activity,
+  ArrowLeft,
   ArrowRight,
   BadgeCheck,
   Bell,
@@ -28,12 +29,12 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import {
+  AnimatePresence,
   motion,
   useMotionValueEvent,
   useReducedMotion,
   useScroll,
   useTransform,
-  type MotionValue,
   type Variants,
 } from "framer-motion";
 import {
@@ -43,7 +44,6 @@ import {
   useState,
   type FormEvent,
   type MouseEvent as ReactMouseEvent,
-  type RefObject,
   type ReactNode,
 } from "react";
 
@@ -719,10 +719,6 @@ function Navigation({
         </div>
 
         <div className="flex items-center gap-2">
-          <a href="#kontakt" className="primary-button hidden sm:inline-flex">
-            Dohodnúť audit
-            <ArrowRight aria-hidden="true" className="h-4 w-4" />
-          </a>
           <button
             type="button"
             className={`grid h-10 w-10 place-items-center rounded-xl border transition ${iconButtonTone}`}
@@ -780,190 +776,134 @@ function Navigation({
   );
 }
 
+// Scattered layout for the desktop horizontal gallery. Index 0 is the large
+// "hero" browser frame; the rest are smaller shots dropped at varied heights so
+// the track reads like an editorial collage as it scrolls sideways.
+const desktopGalleryLayout = [
+  { width: "clamp(34rem, 46vw, 54rem)", offsetY: 0, rotate: 0 },
+  { width: "clamp(15rem, 19vw, 22rem)", offsetY: -84, rotate: -1.5 },
+  { width: "clamp(17rem, 23vw, 27rem)", offsetY: 66, rotate: 1.2 },
+  { width: "clamp(14rem, 17vw, 20rem)", offsetY: -36, rotate: 2 },
+  { width: "clamp(18rem, 25vw, 29rem)", offsetY: 48, rotate: -1 },
+  { width: "clamp(15rem, 19vw, 22rem)", offsetY: -92, rotate: 1.6 },
+  { width: "clamp(16rem, 21vw, 24rem)", offsetY: 30, rotate: -2 },
+  { width: "clamp(14rem, 17vw, 20rem)", offsetY: -52, rotate: 1 },
+  { width: "clamp(17rem, 23vw, 26rem)", offsetY: 72, rotate: -1.4 },
+  { width: "clamp(15rem, 19vw, 22rem)", offsetY: -22, rotate: 2 },
+];
+
+// Scattered vertical layout for the mobile gallery (screens after the hero).
+// Varied widths + left/right/center alignment give it the editorial collage
+// feel instead of a uniform stack. One entry per tourScreens.slice(1) item.
+const mobileGalleryLayout = [
+  { width: "72%", align: "flex-start", gap: "0rem" },
+  { width: "58%", align: "flex-end", gap: "4.5rem" },
+  { width: "84%", align: "flex-start", gap: "5rem" },
+  { width: "62%", align: "flex-end", gap: "4.5rem" },
+  { width: "76%", align: "center", gap: "5rem" },
+  { width: "58%", align: "flex-start", gap: "4.5rem" },
+  { width: "86%", align: "flex-end", gap: "5rem" },
+  { width: "64%", align: "flex-start", gap: "4.5rem" },
+  { width: "74%", align: "flex-end", gap: "5rem" },
+] as const;
+
 function HeroProductShowcase() {
-  const reduceMotion = useReducedMotion();
-  const sectionRef = useRef<HTMLElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
-  });
-  const activeScreen = tourScreens[activeIndex];
-  const settlePoint = 0.24;
-  const contentY = useTransform(
-    scrollYProgress,
-    [0, 0.18, settlePoint],
-    reduceMotion ? [0, 0, 0] : [0, -62, -90],
-  );
-  const contentOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.14, settlePoint],
-    [1, 0.5, 0],
-  );
-  const frameY = useTransform(
-    scrollYProgress,
-    [0, settlePoint],
-    reduceMotion ? [0, 0] : [420, 0],
-  );
-  const frameScale = useTransform(
-    scrollYProgress,
-    [0, settlePoint],
-    reduceMotion ? [1, 1] : [0.78, 1],
-  );
-  const frameWidth = useTransform(
-    scrollYProgress,
-    [0, settlePoint],
-    ["min(62vw, 1040px)", "min(66vw, 1120px)"],
-  );
-  const frameOpacity = useTransform(scrollYProgress, [0, 0.08], [0.94, 1]);
-  const bubbleOpacity = useTransform(
-    scrollYProgress,
-    [0, settlePoint, settlePoint + 0.06],
-    [0, 0, 1],
-  );
-  const bubbleDriftX = useTransform(
-    scrollYProgress,
-    [0, 1],
-    reduceMotion ? [0, 0] : [-10, 10],
-  );
-  const bubbleDriftY = useTransform(
-    scrollYProgress,
-    [0, 1],
-    reduceMotion ? [0, 0] : [12, -12],
-  );
-  const screenFadeOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.14, settlePoint],
-    [1, 0.45, 0],
-  );
-  const sectionGlowX = useTransform(
-    scrollYProgress,
-    [0, 1],
-    reduceMotion ? ["45%", "45%"] : ["18%", "82%"],
-  );
-  const sectionGlowOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.5, 1],
-    [0.5, 1, 0.62],
-  );
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    if (latest < settlePoint) {
-      setActiveIndex((current) => (current === 0 ? current : 0));
-      return;
-    }
-
-    const normalized = (latest - settlePoint) / (1 - settlePoint);
-    const clamped = Math.min(0.999, Math.max(0, normalized));
-    const nextIndex = Math.min(
-      tourScreens.length - 1,
-      Math.floor(clamped * tourScreens.length),
+  const closeDetail = () => setOpenIndex(null);
+  const stepDetail = (step: number) =>
+    setOpenIndex((current) =>
+      current === null
+        ? current
+        : (current + step + tourScreens.length) % tourScreens.length,
     );
-
-    setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
-  });
 
   return (
     <>
-      <MobileHeroProductShowcase />
-      <DesktopHeroProductShowcase
-        sectionRef={sectionRef}
-        activeScreen={activeScreen}
-        activeIndex={activeIndex}
-        contentY={contentY}
-        contentOpacity={contentOpacity}
-        frameY={frameY}
-        frameScale={frameScale}
-        frameWidth={frameWidth}
-        frameOpacity={frameOpacity}
-        screenFadeOpacity={screenFadeOpacity}
-        sectionGlowX={sectionGlowX}
-        sectionGlowOpacity={sectionGlowOpacity}
-        bubbleOpacity={bubbleOpacity}
-        bubbleDriftX={bubbleDriftX}
-        bubbleDriftY={bubbleDriftY}
+      <MobileHeroProductShowcase onOpen={setOpenIndex} />
+      <DesktopHeroProductShowcase onOpen={setOpenIndex} />
+      <TourDetailOverlay
+        activeIndex={openIndex}
+        onClose={closeDetail}
+        onPrev={() => stepDetail(-1)}
+        onNext={() => stepDetail(1)}
       />
     </>
   );
 }
 
-function MobileHeroProductShowcase() {
-  const reduceMotion = useReducedMotion();
-  const sectionRef = useRef<HTMLElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const activeScreen = tourScreens[activeIndex];
-  const ActiveIcon = activeScreen.icon;
-  const settlePoint = 0.24;
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
-  });
-  const contentY = useTransform(
-    scrollYProgress,
-    [0, 0.16, settlePoint],
-    reduceMotion ? [0, 0, 0] : [0, -44, -64],
-  );
-  const contentOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.16, settlePoint],
-    [1, 0.44, 0],
-  );
-  const frameY = useTransform(
-    scrollYProgress,
-    [0, settlePoint],
-    reduceMotion ? [0, 0] : [390, 0],
-  );
-  const frameScale = useTransform(
-    scrollYProgress,
-    [0, settlePoint],
-    reduceMotion ? [1, 1] : [0.9, 1],
-  );
-  const frameWidth = useTransform(
-    scrollYProgress,
-    [0, settlePoint],
-    ["min(calc(100vw - 1.5rem), 520px)", "min(calc(100vw - 1.5rem), 576px)"],
-  );
-  const detailOpacity = useTransform(
-    scrollYProgress,
-    [0, settlePoint, settlePoint + 0.08],
-    [0, 0, 1],
-  );
-  const detailY = useTransform(
-    scrollYProgress,
-    [0, settlePoint, settlePoint + 0.08],
-    reduceMotion ? [0, 0, 0] : [24, 24, 0],
-  );
-
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    if (latest < settlePoint) {
-      setActiveIndex((current) => (current === 0 ? current : 0));
-      return;
-    }
-
-    const normalized = (latest - settlePoint) / (1 - settlePoint);
-    const clamped = Math.min(0.999, Math.max(0, normalized));
-    const nextIndex = Math.min(
-      tourScreens.length - 1,
-      Math.floor(clamped * tourScreens.length),
-    );
-
-    setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
-  });
+function HeroCopy({ variant }: { variant: "mobile" | "desktop" }) {
+  const isDesktop = variant === "desktop";
 
   return (
-    <section
-      ref={sectionRef}
-      id="platforma"
-      className="relative lg:hidden"
-      style={{ height: `${(tourScreens.length + 1) * 96}svh` }}
-    >
-      <span
-        id="produkt"
-        aria-hidden="true"
-        className="absolute top-[96svh] h-px w-px"
-      />
-      <div className="sticky top-0 min-h-[100svh] overflow-hidden">
-        <div className="tap-hero-shell relative flex min-h-[100svh] items-start justify-center overflow-hidden px-3 pb-6 pt-[8.25rem]">
+    <>
+      <motion.div
+        variants={revealItem}
+        className={`hero-chip inline-flex items-center gap-2 rounded-full border border-accent/20 bg-white/75 px-3 py-1.5 text-xs font-bold text-accent-deep shadow-[0_10px_30px_rgba(15,23,42,0.08)] ${
+          isDesktop ? "backdrop-blur" : ""
+        }`}
+      >
+        <span className="h-1.5 w-1.5 rounded-full bg-accent-bright" />
+        Tap-it Fitness OS
+      </motion.div>
+
+      <motion.h1
+        variants={revealItem}
+        className={
+          isDesktop
+            ? "hero-title mt-6 max-w-6xl text-balance text-[2.9rem] font-black leading-[0.95] tracking-tight text-slate-950 sm:text-6xl lg:text-7xl xl:text-8xl"
+            : "hero-title mt-5 max-w-xl text-balance text-[2.35rem] font-black leading-[0.95] tracking-tight text-slate-950 min-[390px]:text-[2.55rem] sm:text-6xl"
+        }
+      >
+        <span className="block">Softvér pre fitká,</span>
+        <span className="block">ktoré nechcú krabicový systém.</span>
+      </motion.h1>
+
+      <motion.p
+        variants={revealItem}
+        className={
+          isDesktop
+            ? "hero-copy mt-6 max-w-2xl text-pretty text-base font-semibold leading-7 text-slate-600 sm:text-lg"
+            : "hero-copy mt-4 max-w-md text-pretty text-sm font-semibold leading-6 text-slate-600 sm:text-base"
+        }
+      >
+        Tap-it Fitness OS spája QR vstupy, členstvá, rezervácie, turnikety a appku
+        do jedného systému podľa tvojej prevádzky.
+      </motion.p>
+
+      <motion.div
+        variants={revealItem}
+        className={`pointer-events-auto flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row ${
+          isDesktop ? "mt-8" : "mt-5"
+        }`}
+      >
+        <a href="#kontakt" className="primary-button w-full sm:w-auto">
+          Dohodnúť audit
+          <ArrowRight aria-hidden="true" className="h-4 w-4" />
+        </a>
+        <a
+          href="#produkt"
+          onClick={(event) => scrollToAnchor(event, "#produkt")}
+          className="hero-secondary secondary-button w-full border-slate-950/10 bg-white/70 text-slate-950 hover:bg-white sm:w-auto"
+        >
+          Pozrieť produkt
+        </a>
+      </motion.div>
+    </>
+  );
+}
+
+function MobileHeroProductShowcase({
+  onOpen,
+}: {
+  onOpen: (index: number) => void;
+}) {
+  const heroScreen = tourScreens[0];
+
+  return (
+    <section id="platforma" className="relative overflow-hidden lg:hidden">
+      <div className="tap-hero-shell relative overflow-hidden">
+        <div className="relative flex min-h-[100svh] flex-col items-center px-3 pb-12 pt-[8.25rem]">
           <div aria-hidden="true" className="tap-hero-sky" />
           <HeroCloud
             src="/hero-clouds/cloud-left.png"
@@ -980,100 +920,82 @@ function MobileHeroProductShowcase() {
           <div aria-hidden="true" className="hero-grid opacity-60" />
 
           <motion.div
-            style={{ y: contentY, opacity: contentOpacity }}
             variants={revealContainer}
             initial="hidden"
             animate="visible"
-            className="pointer-events-none absolute inset-x-0 top-[6.5rem] z-20 mx-auto flex max-w-xl flex-col items-center px-4 text-center"
+            className="relative z-20 flex max-w-xl flex-col items-center text-center"
           >
-            <motion.div
-              variants={revealItem}
-              className="hero-chip inline-flex items-center gap-2 rounded-full border border-accent/20 bg-white/70 px-3 py-1.5 text-xs font-bold text-accent-deep shadow-[0_10px_30px_rgba(15,23,42,0.08)]"
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-accent-bright" />
-              Tap-it Fitness OS
-            </motion.div>
-            <motion.h1
-              variants={revealItem}
-              className="hero-title mt-5 max-w-xl text-balance text-[2.35rem] font-black leading-[0.95] tracking-tight text-slate-950 min-[390px]:text-[2.55rem] sm:text-6xl"
-            >
-              <span className="block">Softvér pre fitká,</span>
-              <span className="block">
-                ktoré nechcú krabicový systém.
-              </span>
-            </motion.h1>
-            <motion.p
-              variants={revealItem}
-              className="hero-copy mt-4 max-w-md text-pretty text-sm font-semibold leading-6 text-slate-600 sm:text-base"
-            >
-              Tap-it Fitness OS spája QR vstupy, členstvá, rezervácie,
-              turnikety a appku do jedného systému podľa tvojej prevádzky.
-            </motion.p>
-            <motion.div
-              variants={revealItem}
-              className="pointer-events-auto mt-5 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row"
-            >
-              <a href="#kontakt" className="primary-button w-full sm:w-auto">
-                Dohodnúť audit
-                <ArrowRight aria-hidden="true" className="h-4 w-4" />
-              </a>
-              <a
-                href="#produkt"
-                onClick={(event) => scrollToAnchor(event, "#produkt")}
-                className="hero-secondary secondary-button w-full border-slate-950/10 bg-white/70 text-slate-950 hover:bg-white sm:w-auto"
-              >
-                Pozrieť produkt
-              </a>
-            </motion.div>
+            <HeroCopy variant="mobile" />
           </motion.div>
 
-          <div className="relative z-10 flex w-full flex-col items-center">
-            <motion.div
-              style={{
-                y: frameY,
-                scale: frameScale,
-                width: frameWidth,
-              }}
-              className="screen-stage relative aspect-[16/10]"
-            >
-              <StackedTourBrowserFrame activeIndex={activeIndex} />
-            </motion.div>
+          <motion.button
+            type="button"
+            onClick={() => onOpen(0)}
+            whileTap={{ scale: 0.985 }}
+            aria-label={`Otvoriť detail: ${heroScreen.title}`}
+            className="relative z-10 mt-9 w-full max-w-md focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft"
+          >
+            <BrowserFrame
+              image={heroScreen.image}
+              alt={heroScreen.alt}
+              label="Tap-it admin"
+              priority
+              sizes="(min-width: 768px) 600px, 92vw"
+            />
+          </motion.button>
+        </div>
 
-            <motion.div
-              style={{ opacity: detailOpacity, y: detailY }}
-              className="mobile-tour-card mt-4 w-full max-w-xl rounded-3xl border border-white/55 bg-white/72 p-4 text-left shadow-[0_24px_70px_rgba(15,23,42,0.14)] backdrop-blur-xl"
-            >
-              <div className="flex items-start gap-3">
-                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-accent text-white shadow-brand">
-                  <ActiveIcon aria-hidden="true" className="h-5 w-5" />
-                </span>
-                <div>
-                  <p className="text-xs font-black uppercase tracking-[0.16em] text-accent">
-                    {activeScreen.eyebrow}
-                  </p>
-                  <h2 className="mt-1 text-xl font-black leading-tight text-slate-950">
-                    {activeScreen.title}
-                  </h2>
-                </div>
-              </div>
-              <p className="mt-3 text-sm font-semibold leading-6 text-slate-600">
-                {activeScreen.body}
-              </p>
-              <div className="mt-4 flex items-end justify-between border-t border-slate-950/10 pt-3">
-                <div>
-                  <p className="text-2xl font-black leading-none text-slate-950">
-                    {activeScreen.metric}
-                  </p>
-                  <p className="mt-1 text-xs font-bold text-slate-500">
-                    {activeScreen.metricLabel}
-                  </p>
-                </div>
-                <span className="rounded-full border border-accent/25 bg-accent/10 px-3 py-1 text-xs font-black text-accent">
-                  {String(activeIndex + 1).padStart(2, "0")} /{" "}
-                  {String(tourScreens.length).padStart(2, "0")}
-                </span>
-              </div>
-            </motion.div>
+        <div className="relative px-5 pb-28 pt-8">
+          <span id="produkt" aria-hidden="true" className="block h-px w-px" />
+          <p className="tour-tile-eyebrow mb-2 text-[0.7rem] font-bold uppercase tracking-[0.24em]">
+            Ďalšie obrazovky
+          </p>
+
+          <div className="flex flex-col">
+            {tourScreens.slice(1).map((screen, offset) => {
+              const index = offset + 1;
+              const layout =
+                mobileGalleryLayout[offset] ??
+                mobileGalleryLayout[offset % mobileGalleryLayout.length];
+
+              return (
+                <motion.button
+                  key={screen.title}
+                  type="button"
+                  onClick={() => onOpen(index)}
+                  whileTap={{ scale: 0.98 }}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-12%" }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                  aria-label={`Otvoriť detail: ${screen.title}`}
+                  style={{
+                    width: layout.width,
+                    alignSelf: layout.align,
+                    marginTop: layout.gap,
+                  }}
+                  className="group block text-left focus:outline-none"
+                >
+                  <span className="tour-tile-eyebrow mb-3 flex items-center gap-2 text-[0.68rem] font-bold uppercase tracking-[0.22em]">
+                    <span className="tabular-nums">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span className="h-px w-5 bg-current opacity-40" />
+                    {screen.eyebrow}
+                  </span>
+                  <div className="tour-tile-card relative overflow-hidden rounded-2xl p-1.5">
+                    <div className="overflow-hidden rounded-xl">
+                      <Image
+                        src={screen.image}
+                        alt={screen.alt}
+                        sizes="90vw"
+                        className="h-auto w-full select-none"
+                      />
+                    </div>
+                  </div>
+                </motion.button>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -1082,51 +1004,99 @@ function MobileHeroProductShowcase() {
 }
 
 function DesktopHeroProductShowcase({
-  sectionRef,
-  activeScreen,
-  activeIndex,
-  contentY,
-  contentOpacity,
-  frameY,
-  frameScale,
-  frameWidth,
-  frameOpacity,
-  screenFadeOpacity,
-  sectionGlowX,
-  sectionGlowOpacity,
-  bubbleOpacity,
-  bubbleDriftX,
-  bubbleDriftY,
+  onOpen,
 }: {
-  sectionRef: RefObject<HTMLElement | null>;
-  activeScreen: TourScreen;
-  activeIndex: number;
-  contentY: MotionValue<number>;
-  contentOpacity: MotionValue<number>;
-  frameY: MotionValue<number>;
-  frameScale: MotionValue<number>;
-  frameWidth: MotionValue<string>;
-  frameOpacity: MotionValue<number>;
-  screenFadeOpacity: MotionValue<number>;
-  sectionGlowX: MotionValue<string>;
-  sectionGlowOpacity: MotionValue<number>;
-  bubbleOpacity: MotionValue<number>;
-  bubbleDriftX: MotionValue<number>;
-  bubbleDriftY: MotionValue<number>;
+  onOpen: (index: number) => void;
 }) {
+  const reduceMotion = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [maxScroll, setMaxScroll] = useState(0);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+
+  useEffect(() => {
+    if (reduceMotion) return;
+
+    const measure = () => {
+      const track = trackRef.current;
+      if (!track) return;
+      const distance = track.scrollWidth - window.innerWidth;
+      setMaxScroll(distance > 0 ? distance : 0);
+    };
+
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [reduceMotion]);
+
+  // Choreography: the hero text sits over the big first frame, which peeks up
+  // from the bottom. Scrolling lifts the text out while the frame rises to fill
+  // its place; only after that does the horizontal gallery of the other screens
+  // scroll in.
+  const textOutEnd = 0.16;
+  const riseEnd = 0.26;
+  const contentY = useTransform(
+    scrollYProgress,
+    [0, textOutEnd],
+    reduceMotion ? [0, 0] : [0, -150],
+  );
+  const contentOpacity = useTransform(
+    scrollYProgress,
+    [0, textOutEnd * 0.55, textOutEnd],
+    [1, 0.35, 0],
+  );
+  const galleryY = useTransform(
+    scrollYProgress,
+    [0, riseEnd],
+    reduceMotion ? [0, 0] : [440, 0],
+  );
+  const galleryScale = useTransform(
+    scrollYProgress,
+    [0, riseEnd],
+    reduceMotion ? [1, 1] : [0.9, 1],
+  );
+  const galleryOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.04],
+    reduceMotion ? [1, 1] : [0.7, 1],
+  );
+  const trackX = useTransform(scrollYProgress, [riseEnd, 1], [0, -maxScroll]);
+  const hintOpacity = useTransform(
+    scrollYProgress,
+    [0, riseEnd, riseEnd + 0.04, 0.9, 1],
+    [0, 0, 1, 1, 0],
+  );
+  const sectionGlowX = useTransform(
+    scrollYProgress,
+    [0, 1],
+    reduceMotion ? ["50%", "50%"] : ["26%", "74%"],
+  );
+
   return (
     <section
       ref={sectionRef}
       id="platforma"
       className="relative hidden bg-base lg:block"
-      style={{ height: `${(tourScreens.length + 1) * 112}vh` }}
+      style={
+        reduceMotion
+          ? undefined
+          : { height: `${(tourScreens.length + 3) * 46}vh` }
+      }
     >
       <span
         id="produkt"
         aria-hidden="true"
-        className="absolute top-[112vh] h-px w-px"
+        className="absolute left-0 top-[100vh] h-px w-px"
       />
-      <div className="sticky top-0 min-h-[100svh] overflow-hidden">
+      <div
+        className={`min-h-[100svh] overflow-hidden ${
+          reduceMotion ? "" : "sticky top-0"
+        }`}
+      >
         <div className="tap-hero-shell relative flex min-h-[100svh] w-full items-center justify-center overflow-hidden">
           <div aria-hidden="true" className="tap-hero-sky" />
           <HeroCloud
@@ -1146,12 +1116,12 @@ function DesktopHeroProductShowcase({
             className="hero-cloud-low-right"
           />
           <div aria-hidden="true" className="hero-grid opacity-60" />
-          <div aria-hidden="true" className="product-field" />
           <motion.div
             aria-hidden="true"
             className="product-orbit"
-            style={{ left: sectionGlowX, opacity: sectionGlowOpacity }}
+            style={{ left: sectionGlowX }}
           />
+
           <motion.div
             style={{ y: contentY, opacity: contentOpacity }}
             variants={revealContainer}
@@ -1159,79 +1129,47 @@ function DesktopHeroProductShowcase({
             animate="visible"
             className="pointer-events-none absolute inset-x-0 top-[7rem] z-20 mx-auto flex max-w-5xl flex-col items-center px-8 text-center"
           >
-            <motion.div
-              variants={revealItem}
-              className="hero-chip inline-flex items-center gap-2 rounded-full border border-accent/20 bg-white/75 px-3 py-1.5 text-xs font-bold text-accent-deep shadow-[0_10px_30px_rgba(15,23,42,0.08)] backdrop-blur"
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-accent-bright" />
-              Tap-it Fitness OS
-            </motion.div>
-
-            <motion.h1
-              variants={revealItem}
-              className="hero-title mt-6 max-w-6xl text-balance text-[2.9rem] font-black leading-[0.95] tracking-tight text-slate-950 sm:text-6xl lg:text-7xl xl:text-8xl"
-            >
-              <span className="block">Softvér pre fitká,</span>
-              <span className="block">ktoré nechcú krabicový systém.</span>
-            </motion.h1>
-
-            <motion.p
-              variants={revealItem}
-              className="hero-copy mt-6 max-w-2xl text-pretty text-base font-semibold leading-7 text-slate-600 sm:text-lg"
-            >
-              Tap-it Fitness OS spája QR vstupy, členstvá, rezervácie,
-              turnikety a appku do jedného systému podľa tvojej prevádzky.
-            </motion.p>
-
-            <motion.div
-              variants={revealItem}
-              className="pointer-events-auto mt-8 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row"
-            >
-              <a href="#kontakt" className="primary-button w-full sm:w-auto">
-                Dohodnúť audit
-                <ArrowRight aria-hidden="true" className="h-4 w-4" />
-              </a>
-              <a
-                href="#produkt"
-                onClick={(event) => scrollToAnchor(event, "#produkt")}
-                className="hero-secondary secondary-button w-full border-slate-950/10 bg-white/70 text-slate-950 hover:bg-white sm:w-auto"
-              >
-                Pozrieť produkt
-              </a>
-            </motion.div>
+            <HeroCopy variant="desktop" />
           </motion.div>
 
           <motion.div
             style={{
-              y: frameY,
-              scale: frameScale,
-              width: frameWidth,
-              opacity: frameOpacity,
+              y: galleryY,
+              scale: galleryScale,
+              opacity: galleryOpacity,
             }}
-            className="screen-stage relative z-10 mx-auto aspect-[16/9]"
+            className="relative z-10 w-full"
           >
-            <motion.div
-              aria-hidden="true"
-              className="hero-screen-fade"
-              style={{ opacity: screenFadeOpacity }}
-            />
-            <motion.div
-              aria-hidden="true"
-              className="hero-proof-strip"
-              style={{ opacity: screenFadeOpacity }}
-            >
-              {["Migrácia", "Turnikety", "QR vstup", "Appka"].map((item) => (
-                <span key={item}>{item}</span>
-              ))}
-            </motion.div>
-            <StackedTourBrowserFrame activeIndex={activeIndex} />
-            <TourInfoBubble
-              activeScreen={activeScreen}
-              activeIndex={activeIndex}
-              bubbleOpacity={bubbleOpacity}
-              driftX={bubbleDriftX}
-              driftY={bubbleDriftY}
-            />
+            <div className={reduceMotion ? "w-full overflow-x-auto pb-6" : "w-full"}>
+              <motion.div
+                ref={trackRef}
+                style={{
+                  ...(reduceMotion ? {} : { x: trackX }),
+                  gap: "clamp(4.5rem, 8vw, 9rem)",
+                  paddingLeft: "calc(50vw - clamp(17rem, 23vw, 27rem))",
+                  paddingRight: "calc(50vw - clamp(7.5rem, 9.5vw, 11rem))",
+                }}
+                className="flex w-max items-center"
+              >
+                {tourScreens.map((screen, index) => (
+                  <GalleryTile
+                    key={screen.title}
+                    screen={screen}
+                    index={index}
+                    onOpen={onOpen}
+                  />
+                ))}
+              </motion.div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            aria-hidden="true"
+            style={reduceMotion ? { opacity: 1 } : { opacity: hintOpacity }}
+            className="tour-scroll-hint pointer-events-none absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 text-[0.7rem] font-bold uppercase tracking-[0.24em]"
+          >
+            Skroluj galériou
+            <ArrowRight className="h-3.5 w-3.5" />
           </motion.div>
         </div>
       </div>
@@ -1239,64 +1177,194 @@ function DesktopHeroProductShowcase({
   );
 }
 
-const bubblePositions = [
-  { top: "16%", left: "1%" },
-  { top: "84%", left: "99%" },
-  { top: "16%", left: "99%" },
-  { top: "84%", left: "1%" },
-];
-
-function TourInfoBubble({
-  activeScreen,
-  activeIndex,
-  bubbleOpacity,
-  driftX,
-  driftY,
+function GalleryTile({
+  screen,
+  index,
+  onOpen,
 }: {
-  activeScreen: TourScreen;
-  activeIndex: number;
-  bubbleOpacity: MotionValue<number>;
-  driftX: MotionValue<number>;
-  driftY: MotionValue<number>;
+  screen: TourScreen;
+  index: number;
+  onOpen: (index: number) => void;
 }) {
   const reduceMotion = useReducedMotion();
-  const Icon = activeScreen.icon;
-  const position = bubblePositions[activeIndex % bubblePositions.length];
+  const layout =
+    desktopGalleryLayout[index] ??
+    desktopGalleryLayout[index % desktopGalleryLayout.length];
+  const isHero = index === 0;
 
   return (
-    <motion.div
-      aria-hidden="true"
-      className="tour-bubble pointer-events-none absolute z-30 w-[clamp(11rem,15vw,14rem)]"
-      style={{ x: "-50%", y: "-50%", opacity: bubbleOpacity }}
-      animate={{ top: position.top, left: position.left }}
-      transition={
-        reduceMotion
-          ? { duration: 0 }
-          : { type: "spring", stiffness: 120, damping: 20 }
-      }
+    <div
+      className="shrink-0"
+      style={{
+        width: layout.width,
+        transform: `translateY(${layout.offsetY}px) rotate(${layout.rotate}deg)`,
+      }}
     >
-      <motion.div style={{ x: driftX, y: driftY }}>
-        <motion.div
-          key={activeIndex}
-          initial={reduceMotion ? false : { opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.32, ease: "easeOut" }}
-          className="rounded-3xl border border-white/60 bg-white/90 p-4 shadow-[0_24px_70px_rgba(15,23,42,0.2)] backdrop-blur-xl"
-        >
-          <div className="flex items-center gap-2.5">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-2xl bg-accent text-white shadow-brand">
-              <Icon aria-hidden="true" className="h-4 w-4" />
+      <motion.button
+        type="button"
+        onClick={() => onOpen(index)}
+        whileHover={reduceMotion ? undefined : { y: -10 }}
+        transition={{ type: "spring", stiffness: 220, damping: 22 }}
+        aria-label={`Otvoriť detail: ${screen.title}`}
+        className="group block w-full text-left focus:outline-none"
+      >
+        {isHero ? null : (
+          <span className="tour-tile-eyebrow mb-3 flex items-center gap-2 text-[0.7rem] font-bold uppercase tracking-[0.24em]">
+            <span className="tabular-nums">
+              {String(index + 1).padStart(2, "0")}
             </span>
-            <h3 className="text-sm font-black leading-tight text-slate-950">
-              {activeScreen.title}
-            </h3>
+            <span className="h-px w-6 bg-current opacity-40" />
+            {screen.eyebrow}
+          </span>
+        )}
+
+        {isHero ? (
+          <BrowserFrame
+            image={screen.image}
+            alt={screen.alt}
+            label="Tap-it admin"
+            priority
+            sizes="(min-width: 1280px) 900px, 46vw"
+          />
+        ) : (
+          <div className="tour-tile-card relative overflow-hidden rounded-3xl p-2">
+            <div className="overflow-hidden rounded-2xl">
+              <Image
+                src={screen.image}
+                alt={screen.alt}
+                sizes="(min-width: 1024px) 30vw, 90vw"
+                className="h-auto w-full select-none transition duration-500 group-hover:scale-[1.03]"
+              />
+            </div>
+            <span className="pointer-events-none absolute right-4 top-4 inline-flex items-center gap-1 rounded-full bg-base/70 px-3 py-1 text-[0.68rem] font-bold text-white opacity-0 backdrop-blur transition group-hover:opacity-100">
+              Zobraziť
+              <ArrowRight aria-hidden="true" className="h-3 w-3" />
+            </span>
           </div>
-          <p className="mt-3 text-xs font-semibold leading-5 text-slate-600">
-            {activeScreen.blurb}
-          </p>
+        )}
+      </motion.button>
+    </div>
+  );
+}
+
+function TourDetailOverlay({
+  activeIndex,
+  onClose,
+  onPrev,
+  onNext,
+}: {
+  activeIndex: number | null;
+  onClose: () => void;
+  onPrev: () => void;
+  onNext: () => void;
+}) {
+  const reduceMotion = useReducedMotion();
+  const isOpen = activeIndex !== null;
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+      else if (event.key === "ArrowLeft") onPrev();
+      else if (event.key === "ArrowRight") onNext();
+    };
+
+    document.addEventListener("keydown", onKey);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isOpen, onClose, onPrev, onNext]);
+
+  const screen = activeIndex === null ? null : tourScreens[activeIndex];
+
+  return (
+    <AnimatePresence>
+      {isOpen && screen ? (
+        <motion.div
+          className="tour-detail fixed inset-0 z-[70] flex items-center justify-center px-4 py-16 sm:px-8"
+          initial={reduceMotion ? { opacity: 1 } : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={reduceMotion ? { opacity: 0 } : { opacity: 0 }}
+          transition={{ duration: 0.26, ease: "easeOut" }}
+          role="dialog"
+          aria-modal="true"
+          aria-label={screen.title}
+          onClick={onClose}
+        >
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Zavrieť"
+            className="tour-detail-close absolute right-5 top-5 grid h-12 w-12 place-items-center rounded-full transition sm:right-8 sm:top-8"
+          >
+            <X aria-hidden="true" className="h-5 w-5" />
+          </button>
+
+          <motion.div
+            key={activeIndex}
+            onClick={(event) => event.stopPropagation()}
+            initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="grid w-full max-w-6xl items-center gap-10 lg:grid-cols-[1.12fr_1fr] lg:gap-16"
+          >
+            <div className="order-2 lg:order-1">
+              <BrowserFrame
+                image={screen.image}
+                alt={screen.alt}
+                label="Tap-it admin"
+                sizes="(min-width: 1024px) 640px, 92vw"
+              />
+            </div>
+
+            <div className="order-1 lg:order-2">
+              <p className="tour-detail-eyebrow text-xs font-bold uppercase tracking-[0.32em]">
+                Tap-it admin — {String(activeIndex + 1).padStart(2, "0")} /{" "}
+                {String(tourScreens.length).padStart(2, "0")}
+              </p>
+              <h2 className="tour-detail-title mt-5 font-display text-4xl font-semibold tracking-tight sm:text-5xl">
+                {screen.title}
+              </h2>
+              <p className="tour-detail-body mt-5 max-w-md text-base leading-7 sm:text-lg">
+                {screen.body}
+              </p>
+
+              <div className="tour-detail-rule mt-8 h-px w-full" />
+
+              <div className="mt-6 flex items-center gap-8">
+                <button
+                  type="button"
+                  onClick={onPrev}
+                  className="tour-detail-nav group inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.2em] transition"
+                >
+                  <ArrowLeft
+                    aria-hidden="true"
+                    className="h-4 w-4 transition group-hover:-translate-x-1"
+                  />
+                  Späť
+                </button>
+                <button
+                  type="button"
+                  onClick={onNext}
+                  className="tour-detail-nav group inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.2em] transition"
+                >
+                  Ďalej
+                  <ArrowRight
+                    aria-hidden="true"
+                    className="h-4 w-4 transition group-hover:translate-x-1"
+                  />
+                </button>
+              </div>
+            </div>
+          </motion.div>
         </motion.div>
-      </motion.div>
-    </motion.div>
+      ) : null}
+    </AnimatePresence>
   );
 }
 
@@ -1361,71 +1429,6 @@ function StaticProductTour() {
         </div>
       </div>
     </section>
-  );
-}
-
-function StackedTourBrowserFrame({ activeIndex }: { activeIndex: number }) {
-  const firstImage = tourScreens[0].image;
-  const [previousIndex, setPreviousIndex] = useState<number | null>(null);
-  const lastActiveIndex = useRef(activeIndex);
-
-  useEffect(() => {
-    if (activeIndex === lastActiveIndex.current) {
-      return;
-    }
-
-    setPreviousIndex(lastActiveIndex.current);
-    lastActiveIndex.current = activeIndex;
-
-    const timeout = window.setTimeout(() => {
-      setPreviousIndex(null);
-    }, 360);
-
-    return () => window.clearTimeout(timeout);
-  }, [activeIndex]);
-
-  return (
-    <figure
-      className="app-window absolute inset-0 overflow-hidden rounded-3xl border border-white/10 bg-raised p-2 shadow-[0_44px_150px_rgba(0,0,0,0.72)]"
-    >
-      <div className="flex h-10 items-center justify-between rounded-2xl border border-white/5 bg-base/[0.8] px-3">
-        <div className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-accent" />
-          <span className="h-2.5 w-2.5 rounded-full bg-warning" />
-          <span className="h-2.5 w-2.5 rounded-full bg-success" />
-        </div>
-        <span className="truncate px-4 text-xs font-bold text-slate-500">
-          Tap-it admin
-        </span>
-        <span className="hidden rounded-full bg-accent-faint px-2.5 py-1 text-[10px] font-bold text-accent-soft sm:inline-flex">
-          tap-it.sk
-        </span>
-      </div>
-      <div
-        className="relative mt-2 overflow-hidden rounded-2xl border border-white/5 bg-base"
-        style={{ aspectRatio: `${firstImage.width} / ${firstImage.height}` }}
-      >
-        {tourScreens.map((screen, index) => {
-          const isActive = index === activeIndex;
-          const isPrevious = index === previousIndex;
-
-          return (
-            <Image
-              key={screen.title}
-              src={screen.image}
-              alt={screen.alt}
-              fill
-              priority={index === 0}
-              sizes="(min-width: 1280px) 1100px, 90vw"
-              className={`select-none object-cover transition-opacity duration-300 ease-out ${
-                isActive || isPrevious ? "opacity-100" : "opacity-0"
-              }`}
-              style={{ zIndex: isActive ? 20 : isPrevious ? 10 : 0 }}
-            />
-          );
-        })}
-      </div>
-    </figure>
   );
 }
 

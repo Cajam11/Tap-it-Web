@@ -729,6 +729,111 @@ textarea {
   color: rgba(203, 213, 225, 0.78);
 }
 
+/* Product tour gallery + click-to-open detail overlay */
+.tour-tile-eyebrow {
+  color: rgba(15, 23, 42, 0.5);
+}
+
+.theme-dark .tour-tile-eyebrow {
+  color: rgba(203, 213, 225, 0.66);
+}
+
+/* The admin mockups stay dark-framed in both themes, matching .app-window. */
+.tour-tile-card {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #14161f;
+  box-shadow: 0 34px 90px rgba(2, 6, 23, 0.5);
+}
+
+.theme-light .tour-tile-card {
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.2);
+}
+
+.tour-scroll-hint {
+  color: rgba(15, 23, 42, 0.55);
+}
+
+.theme-dark .tour-scroll-hint {
+  color: rgba(203, 213, 225, 0.66);
+}
+
+.tour-detail {
+  background: rgba(236, 242, 250, 0.82);
+  backdrop-filter: blur(24px);
+}
+
+.theme-dark .tour-detail {
+  background: rgba(5, 6, 11, 0.9);
+}
+
+.tour-detail-eyebrow {
+  color: rgba(15, 23, 42, 0.5);
+}
+
+.theme-dark .tour-detail-eyebrow {
+  color: rgba(148, 163, 184, 0.82);
+}
+
+.tour-detail-title {
+  color: #0f172a;
+}
+
+.theme-dark .tour-detail-title {
+  color: #eceae2;
+}
+
+.tour-detail-body {
+  color: rgba(15, 23, 42, 0.72);
+}
+
+.theme-dark .tour-detail-body {
+  color: rgba(203, 213, 225, 0.82);
+}
+
+.tour-detail-rule {
+  background: rgba(15, 23, 42, 0.16);
+}
+
+.theme-dark .tour-detail-rule {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.tour-detail-nav {
+  color: rgba(15, 23, 42, 0.62);
+}
+
+.tour-detail-nav:hover {
+  color: #0f172a;
+}
+
+.theme-dark .tour-detail-nav {
+  color: rgba(226, 232, 240, 0.7);
+}
+
+.theme-dark .tour-detail-nav:hover {
+  color: #f8fafc;
+}
+
+.tour-detail-close {
+  border: 1px solid rgba(15, 23, 42, 0.16);
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.tour-detail-close:hover {
+  background: #ffffff;
+}
+
+.theme-dark .tour-detail-close {
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #f8fafc;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.theme-dark .tour-detail-close:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
 .contact-field {
   position: absolute;
   inset: 0;
