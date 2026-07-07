@@ -3,6 +3,7 @@
 import Image, { type StaticImageData } from "next/image";
 import {
   Activity,
+  ArrowLeft,
   ArrowRight,
   BadgeCheck,
   Bell,
@@ -28,12 +29,11 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import {
+  AnimatePresence,
   motion,
-  useMotionValueEvent,
   useReducedMotion,
   useScroll,
   useTransform,
-  type MotionValue,
   type Variants,
 } from "framer-motion";
 import {
@@ -43,7 +43,6 @@ import {
   useState,
   type FormEvent,
   type MouseEvent as ReactMouseEvent,
-  type RefObject,
   type ReactNode,
 } from "react";
 
@@ -719,10 +718,6 @@ function Navigation({
         </div>
 
         <div className="flex items-center gap-2">
-          <a href="#kontakt" className="primary-button hidden sm:inline-flex">
-            Dohodnúť audit
-            <ArrowRight aria-hidden="true" className="h-4 w-4" />
-          </a>
           <button
             type="button"
             className={`grid h-10 w-10 place-items-center rounded-xl border transition ${iconButtonTone}`}
@@ -780,190 +775,134 @@ function Navigation({
   );
 }
 
+// Scattered layout for the desktop horizontal gallery. Index 0 is the large
+// "hero" browser frame; the rest are smaller shots dropped at varied heights so
+// the track reads like an editorial collage as it scrolls sideways.
+const desktopGalleryLayout = [
+  { width: "clamp(34rem, 46vw, 54rem)", offsetY: 0, rotate: 0 },
+  { width: "clamp(15rem, 19vw, 22rem)", offsetY: -84, rotate: -1.5 },
+  { width: "clamp(17rem, 23vw, 27rem)", offsetY: 66, rotate: 1.2 },
+  { width: "clamp(14rem, 17vw, 20rem)", offsetY: -36, rotate: 2 },
+  { width: "clamp(18rem, 25vw, 29rem)", offsetY: 48, rotate: -1 },
+  { width: "clamp(15rem, 19vw, 22rem)", offsetY: -92, rotate: 1.6 },
+  { width: "clamp(16rem, 21vw, 24rem)", offsetY: 30, rotate: -2 },
+  { width: "clamp(14rem, 17vw, 20rem)", offsetY: -52, rotate: 1 },
+  { width: "clamp(17rem, 23vw, 26rem)", offsetY: 72, rotate: -1.4 },
+  { width: "clamp(15rem, 19vw, 22rem)", offsetY: -22, rotate: 2 },
+];
+
+// Scattered vertical layout for the mobile gallery (screens after the hero).
+// Varied widths + left/right/center alignment give it the editorial collage
+// feel instead of a uniform stack. One entry per tourScreens.slice(1) item.
+const mobileGalleryLayout = [
+  { width: "72%", align: "flex-start", gap: "0rem" },
+  { width: "58%", align: "flex-end", gap: "4.5rem" },
+  { width: "84%", align: "flex-start", gap: "5rem" },
+  { width: "62%", align: "flex-end", gap: "4.5rem" },
+  { width: "76%", align: "center", gap: "5rem" },
+  { width: "58%", align: "flex-start", gap: "4.5rem" },
+  { width: "86%", align: "flex-end", gap: "5rem" },
+  { width: "64%", align: "flex-start", gap: "4.5rem" },
+  { width: "74%", align: "flex-end", gap: "5rem" },
+] as const;
+
 function HeroProductShowcase() {
-  const reduceMotion = useReducedMotion();
-  const sectionRef = useRef<HTMLElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
-  });
-  const activeScreen = tourScreens[activeIndex];
-  const settlePoint = 0.24;
-  const contentY = useTransform(
-    scrollYProgress,
-    [0, 0.18, settlePoint],
-    reduceMotion ? [0, 0, 0] : [0, -62, -90],
-  );
-  const contentOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.14, settlePoint],
-    [1, 0.5, 0],
-  );
-  const frameY = useTransform(
-    scrollYProgress,
-    [0, settlePoint],
-    reduceMotion ? [0, 0] : [420, 0],
-  );
-  const frameScale = useTransform(
-    scrollYProgress,
-    [0, settlePoint],
-    reduceMotion ? [1, 1] : [0.78, 1],
-  );
-  const frameWidth = useTransform(
-    scrollYProgress,
-    [0, settlePoint],
-    ["min(62vw, 1040px)", "min(66vw, 1120px)"],
-  );
-  const frameOpacity = useTransform(scrollYProgress, [0, 0.08], [0.94, 1]);
-  const bubbleOpacity = useTransform(
-    scrollYProgress,
-    [0, settlePoint, settlePoint + 0.06],
-    [0, 0, 1],
-  );
-  const bubbleDriftX = useTransform(
-    scrollYProgress,
-    [0, 1],
-    reduceMotion ? [0, 0] : [-10, 10],
-  );
-  const bubbleDriftY = useTransform(
-    scrollYProgress,
-    [0, 1],
-    reduceMotion ? [0, 0] : [12, -12],
-  );
-  const screenFadeOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.14, settlePoint],
-    [1, 0.45, 0],
-  );
-  const sectionGlowX = useTransform(
-    scrollYProgress,
-    [0, 1],
-    reduceMotion ? ["45%", "45%"] : ["18%", "82%"],
-  );
-  const sectionGlowOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.5, 1],
-    [0.5, 1, 0.62],
-  );
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    if (latest < settlePoint) {
-      setActiveIndex((current) => (current === 0 ? current : 0));
-      return;
-    }
-
-    const normalized = (latest - settlePoint) / (1 - settlePoint);
-    const clamped = Math.min(0.999, Math.max(0, normalized));
-    const nextIndex = Math.min(
-      tourScreens.length - 1,
-      Math.floor(clamped * tourScreens.length),
+  const closeDetail = () => setOpenIndex(null);
+  const stepDetail = (step: number) =>
+    setOpenIndex((current) =>
+      current === null
+        ? current
+        : (current + step + tourScreens.length) % tourScreens.length,
     );
-
-    setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
-  });
 
   return (
     <>
-      <MobileHeroProductShowcase />
-      <DesktopHeroProductShowcase
-        sectionRef={sectionRef}
-        activeScreen={activeScreen}
-        activeIndex={activeIndex}
-        contentY={contentY}
-        contentOpacity={contentOpacity}
-        frameY={frameY}
-        frameScale={frameScale}
-        frameWidth={frameWidth}
-        frameOpacity={frameOpacity}
-        screenFadeOpacity={screenFadeOpacity}
-        sectionGlowX={sectionGlowX}
-        sectionGlowOpacity={sectionGlowOpacity}
-        bubbleOpacity={bubbleOpacity}
-        bubbleDriftX={bubbleDriftX}
-        bubbleDriftY={bubbleDriftY}
+      <MobileHeroProductShowcase onOpen={setOpenIndex} />
+      <DesktopHeroProductShowcase onOpen={setOpenIndex} />
+      <TourDetailOverlay
+        activeIndex={openIndex}
+        onClose={closeDetail}
+        onPrev={() => stepDetail(-1)}
+        onNext={() => stepDetail(1)}
       />
     </>
   );
 }
 
-function MobileHeroProductShowcase() {
-  const reduceMotion = useReducedMotion();
-  const sectionRef = useRef<HTMLElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const activeScreen = tourScreens[activeIndex];
-  const ActiveIcon = activeScreen.icon;
-  const settlePoint = 0.24;
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
-  });
-  const contentY = useTransform(
-    scrollYProgress,
-    [0, 0.16, settlePoint],
-    reduceMotion ? [0, 0, 0] : [0, -44, -64],
-  );
-  const contentOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.16, settlePoint],
-    [1, 0.44, 0],
-  );
-  const frameY = useTransform(
-    scrollYProgress,
-    [0, settlePoint],
-    reduceMotion ? [0, 0] : [390, 0],
-  );
-  const frameScale = useTransform(
-    scrollYProgress,
-    [0, settlePoint],
-    reduceMotion ? [1, 1] : [0.9, 1],
-  );
-  const frameWidth = useTransform(
-    scrollYProgress,
-    [0, settlePoint],
-    ["min(calc(100vw - 1.5rem), 520px)", "min(calc(100vw - 1.5rem), 576px)"],
-  );
-  const detailOpacity = useTransform(
-    scrollYProgress,
-    [0, settlePoint, settlePoint + 0.08],
-    [0, 0, 1],
-  );
-  const detailY = useTransform(
-    scrollYProgress,
-    [0, settlePoint, settlePoint + 0.08],
-    reduceMotion ? [0, 0, 0] : [24, 24, 0],
-  );
-
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    if (latest < settlePoint) {
-      setActiveIndex((current) => (current === 0 ? current : 0));
-      return;
-    }
-
-    const normalized = (latest - settlePoint) / (1 - settlePoint);
-    const clamped = Math.min(0.999, Math.max(0, normalized));
-    const nextIndex = Math.min(
-      tourScreens.length - 1,
-      Math.floor(clamped * tourScreens.length),
-    );
-
-    setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
-  });
+function HeroCopy({ variant }: { variant: "mobile" | "desktop" }) {
+  const isDesktop = variant === "desktop";
 
   return (
-    <section
-      ref={sectionRef}
-      id="platforma"
-      className="relative lg:hidden"
-      style={{ height: `${(tourScreens.length + 1) * 96}svh` }}
-    >
-      <span
-        id="produkt"
-        aria-hidden="true"
-        className="absolute top-[96svh] h-px w-px"
-      />
-      <div className="sticky top-0 min-h-[100svh] overflow-hidden">
-        <div className="tap-hero-shell relative flex min-h-[100svh] items-start justify-center overflow-hidden px-3 pb-6 pt-[8.25rem]">
+    <>
+      <motion.div
+        variants={revealItem}
+        className={`hero-chip inline-flex items-center gap-2 rounded-full border border-accent/20 bg-white/75 px-3 py-1.5 text-xs font-bold text-accent-deep shadow-[0_10px_30px_rgba(15,23,42,0.08)] ${
+          isDesktop ? "backdrop-blur" : ""
+        }`}
+      >
+        <span className="h-1.5 w-1.5 rounded-full bg-accent-bright" />
+        Tap-it Fitness OS
+      </motion.div>
+
+      <motion.h1
+        variants={revealItem}
+        className={
+          isDesktop
+            ? "hero-title mt-6 max-w-6xl text-balance text-[2.9rem] font-black leading-[0.95] tracking-tight text-slate-950 sm:text-6xl lg:text-7xl xl:text-8xl"
+            : "hero-title mt-5 max-w-xl text-balance text-[2.35rem] font-black leading-[0.95] tracking-tight text-slate-950 min-[390px]:text-[2.55rem] sm:text-6xl"
+        }
+      >
+        <span className="block">Softvér pre fitká,</span>
+        <span className="block">ktoré nechcú krabicový systém.</span>
+      </motion.h1>
+
+      <motion.p
+        variants={revealItem}
+        className={
+          isDesktop
+            ? "hero-copy mt-6 max-w-2xl text-pretty text-base font-semibold leading-7 text-slate-600 sm:text-lg"
+            : "hero-copy mt-4 max-w-md text-pretty text-sm font-semibold leading-6 text-slate-600 sm:text-base"
+        }
+      >
+        Tap-it Fitness OS spája QR vstupy, členstvá, rezervácie, turnikety a appku
+        do jedného systému podľa tvojej prevádzky.
+      </motion.p>
+
+      <motion.div
+        variants={revealItem}
+        className={`pointer-events-auto flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row ${
+          isDesktop ? "mt-8" : "mt-5"
+        }`}
+      >
+        <a href="#kontakt" className="primary-button w-full sm:w-auto">
+          Dohodnúť audit
+          <ArrowRight aria-hidden="true" className="h-4 w-4" />
+        </a>
+        <a
+          href="#produkt"
+          onClick={(event) => scrollToAnchor(event, "#produkt")}
+          className="hero-secondary secondary-button w-full border-slate-950/10 bg-white/70 text-slate-950 hover:bg-white sm:w-auto"
+        >
+          Pozrieť produkt
+        </a>
+      </motion.div>
+    </>
+  );
+}
+
+function MobileHeroProductShowcase({
+  onOpen,
+}: {
+  onOpen: (index: number) => void;
+}) {
+  const heroScreen = tourScreens[0];
+
+  return (
+    <section id="platforma" className="relative overflow-hidden lg:hidden">
+      <div className="tap-hero-shell relative overflow-hidden">
+        <div className="relative flex min-h-[100svh] flex-col items-center px-3 pb-12 pt-[8.25rem]">
           <div aria-hidden="true" className="tap-hero-sky" />
           <HeroCloud
             src="/hero-clouds/cloud-left.png"
@@ -980,100 +919,82 @@ function MobileHeroProductShowcase() {
           <div aria-hidden="true" className="hero-grid opacity-60" />
 
           <motion.div
-            style={{ y: contentY, opacity: contentOpacity }}
             variants={revealContainer}
             initial="hidden"
             animate="visible"
-            className="pointer-events-none absolute inset-x-0 top-[6.5rem] z-20 mx-auto flex max-w-xl flex-col items-center px-4 text-center"
+            className="relative z-20 flex max-w-xl flex-col items-center text-center"
           >
-            <motion.div
-              variants={revealItem}
-              className="hero-chip inline-flex items-center gap-2 rounded-full border border-accent/20 bg-white/70 px-3 py-1.5 text-xs font-bold text-accent-deep shadow-[0_10px_30px_rgba(15,23,42,0.08)]"
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-accent-bright" />
-              Tap-it Fitness OS
-            </motion.div>
-            <motion.h1
-              variants={revealItem}
-              className="hero-title mt-5 max-w-xl text-balance text-[2.35rem] font-black leading-[0.95] tracking-tight text-slate-950 min-[390px]:text-[2.55rem] sm:text-6xl"
-            >
-              <span className="block">Softvér pre fitká,</span>
-              <span className="block">
-                ktoré nechcú krabicový systém.
-              </span>
-            </motion.h1>
-            <motion.p
-              variants={revealItem}
-              className="hero-copy mt-4 max-w-md text-pretty text-sm font-semibold leading-6 text-slate-600 sm:text-base"
-            >
-              Tap-it Fitness OS spája QR vstupy, členstvá, rezervácie,
-              turnikety a appku do jedného systému podľa tvojej prevádzky.
-            </motion.p>
-            <motion.div
-              variants={revealItem}
-              className="pointer-events-auto mt-5 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row"
-            >
-              <a href="#kontakt" className="primary-button w-full sm:w-auto">
-                Dohodnúť audit
-                <ArrowRight aria-hidden="true" className="h-4 w-4" />
-              </a>
-              <a
-                href="#produkt"
-                onClick={(event) => scrollToAnchor(event, "#produkt")}
-                className="hero-secondary secondary-button w-full border-slate-950/10 bg-white/70 text-slate-950 hover:bg-white sm:w-auto"
-              >
-                Pozrieť produkt
-              </a>
-            </motion.div>
+            <HeroCopy variant="mobile" />
           </motion.div>
 
-          <div className="relative z-10 flex w-full flex-col items-center">
-            <motion.div
-              style={{
-                y: frameY,
-                scale: frameScale,
-                width: frameWidth,
-              }}
-              className="screen-stage relative aspect-[16/10]"
-            >
-              <StackedTourBrowserFrame activeIndex={activeIndex} />
-            </motion.div>
+          <motion.button
+            type="button"
+            onClick={() => onOpen(0)}
+            whileTap={{ scale: 0.985 }}
+            aria-label={`Otvoriť detail: ${heroScreen.title}`}
+            className="relative z-10 mt-9 w-full max-w-md focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft"
+          >
+            <BrowserFrame
+              image={heroScreen.image}
+              alt={heroScreen.alt}
+              label="Tap-it admin"
+              priority
+              sizes="(min-width: 768px) 600px, 92vw"
+            />
+          </motion.button>
+        </div>
 
-            <motion.div
-              style={{ opacity: detailOpacity, y: detailY }}
-              className="mobile-tour-card mt-4 w-full max-w-xl rounded-3xl border border-white/55 bg-white/72 p-4 text-left shadow-[0_24px_70px_rgba(15,23,42,0.14)] backdrop-blur-xl"
-            >
-              <div className="flex items-start gap-3">
-                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-accent text-white shadow-brand">
-                  <ActiveIcon aria-hidden="true" className="h-5 w-5" />
-                </span>
-                <div>
-                  <p className="text-xs font-black uppercase tracking-[0.16em] text-accent">
-                    {activeScreen.eyebrow}
-                  </p>
-                  <h2 className="mt-1 text-xl font-black leading-tight text-slate-950">
-                    {activeScreen.title}
-                  </h2>
-                </div>
-              </div>
-              <p className="mt-3 text-sm font-semibold leading-6 text-slate-600">
-                {activeScreen.body}
-              </p>
-              <div className="mt-4 flex items-end justify-between border-t border-slate-950/10 pt-3">
-                <div>
-                  <p className="text-2xl font-black leading-none text-slate-950">
-                    {activeScreen.metric}
-                  </p>
-                  <p className="mt-1 text-xs font-bold text-slate-500">
-                    {activeScreen.metricLabel}
-                  </p>
-                </div>
-                <span className="rounded-full border border-accent/25 bg-accent/10 px-3 py-1 text-xs font-black text-accent">
-                  {String(activeIndex + 1).padStart(2, "0")} /{" "}
-                  {String(tourScreens.length).padStart(2, "0")}
-                </span>
-              </div>
-            </motion.div>
+        <div className="relative px-5 pb-28 pt-8">
+          <span id="produkt" aria-hidden="true" className="block h-px w-px" />
+          <p className="tour-tile-eyebrow mb-2 text-[0.7rem] font-bold uppercase tracking-[0.24em]">
+            Ďalšie obrazovky
+          </p>
+
+          <div className="flex flex-col">
+            {tourScreens.slice(1).map((screen, offset) => {
+              const index = offset + 1;
+              const layout =
+                mobileGalleryLayout[offset] ??
+                mobileGalleryLayout[offset % mobileGalleryLayout.length];
+
+              return (
+                <motion.button
+                  key={screen.title}
+                  type="button"
+                  onClick={() => onOpen(index)}
+                  whileTap={{ scale: 0.98 }}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-12%" }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                  aria-label={`Otvoriť detail: ${screen.title}`}
+                  style={{
+                    width: layout.width,
+                    alignSelf: layout.align,
+                    marginTop: layout.gap,
+                  }}
+                  className="group block text-left focus:outline-none"
+                >
+                  <span className="tour-tile-eyebrow mb-3 flex items-center gap-2 text-[0.68rem] font-bold uppercase tracking-[0.22em]">
+                    <span className="tabular-nums">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span className="h-px w-5 bg-current opacity-40" />
+                    {screen.eyebrow}
+                  </span>
+                  <div className="tour-tile-card relative overflow-hidden rounded-2xl p-1.5">
+                    <div className="overflow-hidden rounded-xl">
+                      <Image
+                        src={screen.image}
+                        alt={screen.alt}
+                        sizes="90vw"
+                        className="h-auto w-full select-none"
+                      />
+                    </div>
+                  </div>
+                </motion.button>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -1082,51 +1003,99 @@ function MobileHeroProductShowcase() {
 }
 
 function DesktopHeroProductShowcase({
-  sectionRef,
-  activeScreen,
-  activeIndex,
-  contentY,
-  contentOpacity,
-  frameY,
-  frameScale,
-  frameWidth,
-  frameOpacity,
-  screenFadeOpacity,
-  sectionGlowX,
-  sectionGlowOpacity,
-  bubbleOpacity,
-  bubbleDriftX,
-  bubbleDriftY,
+  onOpen,
 }: {
-  sectionRef: RefObject<HTMLElement | null>;
-  activeScreen: TourScreen;
-  activeIndex: number;
-  contentY: MotionValue<number>;
-  contentOpacity: MotionValue<number>;
-  frameY: MotionValue<number>;
-  frameScale: MotionValue<number>;
-  frameWidth: MotionValue<string>;
-  frameOpacity: MotionValue<number>;
-  screenFadeOpacity: MotionValue<number>;
-  sectionGlowX: MotionValue<string>;
-  sectionGlowOpacity: MotionValue<number>;
-  bubbleOpacity: MotionValue<number>;
-  bubbleDriftX: MotionValue<number>;
-  bubbleDriftY: MotionValue<number>;
+  onOpen: (index: number) => void;
 }) {
+  const reduceMotion = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [maxScroll, setMaxScroll] = useState(0);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+
+  useEffect(() => {
+    if (reduceMotion) return;
+
+    const measure = () => {
+      const track = trackRef.current;
+      if (!track) return;
+      const distance = track.scrollWidth - window.innerWidth;
+      setMaxScroll(distance > 0 ? distance : 0);
+    };
+
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [reduceMotion]);
+
+  // Choreography: the hero text sits over the big first frame, which peeks up
+  // from the bottom. Scrolling lifts the text out while the frame rises to fill
+  // its place; only after that does the horizontal gallery of the other screens
+  // scroll in.
+  const textOutEnd = 0.16;
+  const riseEnd = 0.26;
+  const contentY = useTransform(
+    scrollYProgress,
+    [0, textOutEnd],
+    reduceMotion ? [0, 0] : [0, -150],
+  );
+  const contentOpacity = useTransform(
+    scrollYProgress,
+    [0, textOutEnd * 0.55, textOutEnd],
+    [1, 0.35, 0],
+  );
+  const galleryY = useTransform(
+    scrollYProgress,
+    [0, riseEnd],
+    reduceMotion ? [0, 0] : [440, 0],
+  );
+  const galleryScale = useTransform(
+    scrollYProgress,
+    [0, riseEnd],
+    reduceMotion ? [1, 1] : [0.9, 1],
+  );
+  const galleryOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.04],
+    reduceMotion ? [1, 1] : [0.7, 1],
+  );
+  const trackX = useTransform(scrollYProgress, [riseEnd, 1], [0, -maxScroll]);
+  const hintOpacity = useTransform(
+    scrollYProgress,
+    [0, riseEnd, riseEnd + 0.04, 0.9, 1],
+    [0, 0, 1, 1, 0],
+  );
+  const sectionGlowX = useTransform(
+    scrollYProgress,
+    [0, 1],
+    reduceMotion ? ["50%", "50%"] : ["26%", "74%"],
+  );
+
   return (
     <section
       ref={sectionRef}
       id="platforma"
       className="relative hidden bg-base lg:block"
-      style={{ height: `${(tourScreens.length + 1) * 112}vh` }}
+      style={
+        reduceMotion
+          ? undefined
+          : { height: `${(tourScreens.length + 3) * 46}vh` }
+      }
     >
       <span
         id="produkt"
         aria-hidden="true"
-        className="absolute top-[112vh] h-px w-px"
+        className="absolute left-0 top-[100vh] h-px w-px"
       />
-      <div className="sticky top-0 min-h-[100svh] overflow-hidden">
+      <div
+        className={`min-h-[100svh] overflow-hidden ${
+          reduceMotion ? "" : "sticky top-0"
+        }`}
+      >
         <div className="tap-hero-shell relative flex min-h-[100svh] w-full items-center justify-center overflow-hidden">
           <div aria-hidden="true" className="tap-hero-sky" />
           <HeroCloud
@@ -1146,12 +1115,12 @@ function DesktopHeroProductShowcase({
             className="hero-cloud-low-right"
           />
           <div aria-hidden="true" className="hero-grid opacity-60" />
-          <div aria-hidden="true" className="product-field" />
           <motion.div
             aria-hidden="true"
             className="product-orbit"
-            style={{ left: sectionGlowX, opacity: sectionGlowOpacity }}
+            style={{ left: sectionGlowX }}
           />
+
           <motion.div
             style={{ y: contentY, opacity: contentOpacity }}
             variants={revealContainer}
@@ -1159,79 +1128,47 @@ function DesktopHeroProductShowcase({
             animate="visible"
             className="pointer-events-none absolute inset-x-0 top-[7rem] z-20 mx-auto flex max-w-5xl flex-col items-center px-8 text-center"
           >
-            <motion.div
-              variants={revealItem}
-              className="hero-chip inline-flex items-center gap-2 rounded-full border border-accent/20 bg-white/75 px-3 py-1.5 text-xs font-bold text-accent-deep shadow-[0_10px_30px_rgba(15,23,42,0.08)] backdrop-blur"
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-accent-bright" />
-              Tap-it Fitness OS
-            </motion.div>
-
-            <motion.h1
-              variants={revealItem}
-              className="hero-title mt-6 max-w-6xl text-balance text-[2.9rem] font-black leading-[0.95] tracking-tight text-slate-950 sm:text-6xl lg:text-7xl xl:text-8xl"
-            >
-              <span className="block">Softvér pre fitká,</span>
-              <span className="block">ktoré nechcú krabicový systém.</span>
-            </motion.h1>
-
-            <motion.p
-              variants={revealItem}
-              className="hero-copy mt-6 max-w-2xl text-pretty text-base font-semibold leading-7 text-slate-600 sm:text-lg"
-            >
-              Tap-it Fitness OS spája QR vstupy, členstvá, rezervácie,
-              turnikety a appku do jedného systému podľa tvojej prevádzky.
-            </motion.p>
-
-            <motion.div
-              variants={revealItem}
-              className="pointer-events-auto mt-8 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row"
-            >
-              <a href="#kontakt" className="primary-button w-full sm:w-auto">
-                Dohodnúť audit
-                <ArrowRight aria-hidden="true" className="h-4 w-4" />
-              </a>
-              <a
-                href="#produkt"
-                onClick={(event) => scrollToAnchor(event, "#produkt")}
-                className="hero-secondary secondary-button w-full border-slate-950/10 bg-white/70 text-slate-950 hover:bg-white sm:w-auto"
-              >
-                Pozrieť produkt
-              </a>
-            </motion.div>
+            <HeroCopy variant="desktop" />
           </motion.div>
 
           <motion.div
             style={{
-              y: frameY,
-              scale: frameScale,
-              width: frameWidth,
-              opacity: frameOpacity,
+              y: galleryY,
+              scale: galleryScale,
+              opacity: galleryOpacity,
             }}
-            className="screen-stage relative z-10 mx-auto aspect-[16/9]"
+            className="relative z-10 w-full"
           >
-            <motion.div
-              aria-hidden="true"
-              className="hero-screen-fade"
-              style={{ opacity: screenFadeOpacity }}
-            />
-            <motion.div
-              aria-hidden="true"
-              className="hero-proof-strip"
-              style={{ opacity: screenFadeOpacity }}
-            >
-              {["Migrácia", "Turnikety", "QR vstup", "Appka"].map((item) => (
-                <span key={item}>{item}</span>
-              ))}
-            </motion.div>
-            <StackedTourBrowserFrame activeIndex={activeIndex} />
-            <TourInfoBubble
-              activeScreen={activeScreen}
-              activeIndex={activeIndex}
-              bubbleOpacity={bubbleOpacity}
-              driftX={bubbleDriftX}
-              driftY={bubbleDriftY}
-            />
+            <div className={reduceMotion ? "w-full overflow-x-auto pb-6" : "w-full"}>
+              <motion.div
+                ref={trackRef}
+                style={{
+                  ...(reduceMotion ? {} : { x: trackX }),
+                  gap: "clamp(4.5rem, 8vw, 9rem)",
+                  paddingLeft: "calc(50vw - clamp(17rem, 23vw, 27rem))",
+                  paddingRight: "calc(50vw - clamp(7.5rem, 9.5vw, 11rem))",
+                }}
+                className="flex w-max items-center"
+              >
+                {tourScreens.map((screen, index) => (
+                  <GalleryTile
+                    key={screen.title}
+                    screen={screen}
+                    index={index}
+                    onOpen={onOpen}
+                  />
+                ))}
+              </motion.div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            aria-hidden="true"
+            style={reduceMotion ? { opacity: 1 } : { opacity: hintOpacity }}
+            className="tour-scroll-hint pointer-events-none absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 text-[0.7rem] font-bold uppercase tracking-[0.24em]"
+          >
+            Skroluj galériou
+            <ArrowRight className="h-3.5 w-3.5" />
           </motion.div>
         </div>
       </div>
@@ -1239,64 +1176,194 @@ function DesktopHeroProductShowcase({
   );
 }
 
-const bubblePositions = [
-  { top: "16%", left: "1%" },
-  { top: "84%", left: "99%" },
-  { top: "16%", left: "99%" },
-  { top: "84%", left: "1%" },
-];
-
-function TourInfoBubble({
-  activeScreen,
-  activeIndex,
-  bubbleOpacity,
-  driftX,
-  driftY,
+function GalleryTile({
+  screen,
+  index,
+  onOpen,
 }: {
-  activeScreen: TourScreen;
-  activeIndex: number;
-  bubbleOpacity: MotionValue<number>;
-  driftX: MotionValue<number>;
-  driftY: MotionValue<number>;
+  screen: TourScreen;
+  index: number;
+  onOpen: (index: number) => void;
 }) {
   const reduceMotion = useReducedMotion();
-  const Icon = activeScreen.icon;
-  const position = bubblePositions[activeIndex % bubblePositions.length];
+  const layout =
+    desktopGalleryLayout[index] ??
+    desktopGalleryLayout[index % desktopGalleryLayout.length];
+  const isHero = index === 0;
 
   return (
-    <motion.div
-      aria-hidden="true"
-      className="tour-bubble pointer-events-none absolute z-30 w-[clamp(11rem,15vw,14rem)]"
-      style={{ x: "-50%", y: "-50%", opacity: bubbleOpacity }}
-      animate={{ top: position.top, left: position.left }}
-      transition={
-        reduceMotion
-          ? { duration: 0 }
-          : { type: "spring", stiffness: 120, damping: 20 }
-      }
+    <div
+      className="shrink-0"
+      style={{
+        width: layout.width,
+        transform: `translateY(${layout.offsetY}px) rotate(${layout.rotate}deg)`,
+      }}
     >
-      <motion.div style={{ x: driftX, y: driftY }}>
-        <motion.div
-          key={activeIndex}
-          initial={reduceMotion ? false : { opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.32, ease: "easeOut" }}
-          className="rounded-3xl border border-white/60 bg-white/90 p-4 shadow-[0_24px_70px_rgba(15,23,42,0.2)] backdrop-blur-xl"
-        >
-          <div className="flex items-center gap-2.5">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-2xl bg-accent text-white shadow-brand">
-              <Icon aria-hidden="true" className="h-4 w-4" />
+      <motion.button
+        type="button"
+        onClick={() => onOpen(index)}
+        whileHover={reduceMotion ? undefined : { y: -10 }}
+        transition={{ type: "spring", stiffness: 220, damping: 22 }}
+        aria-label={`Otvoriť detail: ${screen.title}`}
+        className="group block w-full text-left focus:outline-none"
+      >
+        {isHero ? null : (
+          <span className="tour-tile-eyebrow mb-3 flex items-center gap-2 text-[0.7rem] font-bold uppercase tracking-[0.24em]">
+            <span className="tabular-nums">
+              {String(index + 1).padStart(2, "0")}
             </span>
-            <h3 className="text-sm font-black leading-tight text-slate-950">
-              {activeScreen.title}
-            </h3>
+            <span className="h-px w-6 bg-current opacity-40" />
+            {screen.eyebrow}
+          </span>
+        )}
+
+        {isHero ? (
+          <BrowserFrame
+            image={screen.image}
+            alt={screen.alt}
+            label="Tap-it admin"
+            priority
+            sizes="(min-width: 1280px) 900px, 46vw"
+          />
+        ) : (
+          <div className="tour-tile-card relative overflow-hidden rounded-3xl p-2">
+            <div className="overflow-hidden rounded-2xl">
+              <Image
+                src={screen.image}
+                alt={screen.alt}
+                sizes="(min-width: 1024px) 30vw, 90vw"
+                className="h-auto w-full select-none transition duration-500 group-hover:scale-[1.03]"
+              />
+            </div>
+            <span className="pointer-events-none absolute right-4 top-4 inline-flex items-center gap-1 rounded-full bg-base/70 px-3 py-1 text-[0.68rem] font-bold text-white opacity-0 backdrop-blur transition group-hover:opacity-100">
+              Zobraziť
+              <ArrowRight aria-hidden="true" className="h-3 w-3" />
+            </span>
           </div>
-          <p className="mt-3 text-xs font-semibold leading-5 text-slate-600">
-            {activeScreen.blurb}
-          </p>
+        )}
+      </motion.button>
+    </div>
+  );
+}
+
+function TourDetailOverlay({
+  activeIndex,
+  onClose,
+  onPrev,
+  onNext,
+}: {
+  activeIndex: number | null;
+  onClose: () => void;
+  onPrev: () => void;
+  onNext: () => void;
+}) {
+  const reduceMotion = useReducedMotion();
+  const isOpen = activeIndex !== null;
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+      else if (event.key === "ArrowLeft") onPrev();
+      else if (event.key === "ArrowRight") onNext();
+    };
+
+    document.addEventListener("keydown", onKey);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isOpen, onClose, onPrev, onNext]);
+
+  const screen = activeIndex === null ? null : tourScreens[activeIndex];
+
+  return (
+    <AnimatePresence>
+      {isOpen && screen ? (
+        <motion.div
+          className="tour-detail fixed inset-0 z-[70] flex items-center justify-center px-4 py-16 sm:px-8"
+          initial={reduceMotion ? { opacity: 1 } : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={reduceMotion ? { opacity: 0 } : { opacity: 0 }}
+          transition={{ duration: 0.26, ease: "easeOut" }}
+          role="dialog"
+          aria-modal="true"
+          aria-label={screen.title}
+          onClick={onClose}
+        >
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Zavrieť"
+            className="tour-detail-close absolute right-5 top-5 grid h-12 w-12 place-items-center rounded-full transition sm:right-8 sm:top-8"
+          >
+            <X aria-hidden="true" className="h-5 w-5" />
+          </button>
+
+          <motion.div
+            key={activeIndex}
+            onClick={(event) => event.stopPropagation()}
+            initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="grid w-full max-w-6xl items-center gap-10 lg:grid-cols-[1.12fr_1fr] lg:gap-16"
+          >
+            <div className="order-2 lg:order-1">
+              <BrowserFrame
+                image={screen.image}
+                alt={screen.alt}
+                label="Tap-it admin"
+                sizes="(min-width: 1024px) 640px, 92vw"
+              />
+            </div>
+
+            <div className="order-1 lg:order-2">
+              <p className="tour-detail-eyebrow text-xs font-bold uppercase tracking-[0.32em]">
+                Tap-it admin — {String(activeIndex + 1).padStart(2, "0")} /{" "}
+                {String(tourScreens.length).padStart(2, "0")}
+              </p>
+              <h2 className="tour-detail-title mt-5 font-display text-4xl font-semibold tracking-tight sm:text-5xl">
+                {screen.title}
+              </h2>
+              <p className="tour-detail-body mt-5 max-w-md text-base leading-7 sm:text-lg">
+                {screen.body}
+              </p>
+
+              <div className="tour-detail-rule mt-8 h-px w-full" />
+
+              <div className="mt-6 flex items-center gap-8">
+                <button
+                  type="button"
+                  onClick={onPrev}
+                  className="tour-detail-nav group inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.2em] transition"
+                >
+                  <ArrowLeft
+                    aria-hidden="true"
+                    className="h-4 w-4 transition group-hover:-translate-x-1"
+                  />
+                  Späť
+                </button>
+                <button
+                  type="button"
+                  onClick={onNext}
+                  className="tour-detail-nav group inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.2em] transition"
+                >
+                  Ďalej
+                  <ArrowRight
+                    aria-hidden="true"
+                    className="h-4 w-4 transition group-hover:translate-x-1"
+                  />
+                </button>
+              </div>
+            </div>
+          </motion.div>
         </motion.div>
-      </motion.div>
-    </motion.div>
+      ) : null}
+    </AnimatePresence>
   );
 }
 
@@ -1361,71 +1428,6 @@ function StaticProductTour() {
         </div>
       </div>
     </section>
-  );
-}
-
-function StackedTourBrowserFrame({ activeIndex }: { activeIndex: number }) {
-  const firstImage = tourScreens[0].image;
-  const [previousIndex, setPreviousIndex] = useState<number | null>(null);
-  const lastActiveIndex = useRef(activeIndex);
-
-  useEffect(() => {
-    if (activeIndex === lastActiveIndex.current) {
-      return;
-    }
-
-    setPreviousIndex(lastActiveIndex.current);
-    lastActiveIndex.current = activeIndex;
-
-    const timeout = window.setTimeout(() => {
-      setPreviousIndex(null);
-    }, 360);
-
-    return () => window.clearTimeout(timeout);
-  }, [activeIndex]);
-
-  return (
-    <figure
-      className="app-window absolute inset-0 overflow-hidden rounded-3xl border border-white/10 bg-raised p-2 shadow-[0_44px_150px_rgba(0,0,0,0.72)]"
-    >
-      <div className="flex h-10 items-center justify-between rounded-2xl border border-white/5 bg-base/[0.8] px-3">
-        <div className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-accent" />
-          <span className="h-2.5 w-2.5 rounded-full bg-warning" />
-          <span className="h-2.5 w-2.5 rounded-full bg-success" />
-        </div>
-        <span className="truncate px-4 text-xs font-bold text-slate-500">
-          Tap-it admin
-        </span>
-        <span className="hidden rounded-full bg-accent-faint px-2.5 py-1 text-[10px] font-bold text-accent-soft sm:inline-flex">
-          tap-it.sk
-        </span>
-      </div>
-      <div
-        className="relative mt-2 overflow-hidden rounded-2xl border border-white/5 bg-base"
-        style={{ aspectRatio: `${firstImage.width} / ${firstImage.height}` }}
-      >
-        {tourScreens.map((screen, index) => {
-          const isActive = index === activeIndex;
-          const isPrevious = index === previousIndex;
-
-          return (
-            <Image
-              key={screen.title}
-              src={screen.image}
-              alt={screen.alt}
-              fill
-              priority={index === 0}
-              sizes="(min-width: 1280px) 1100px, 90vw"
-              className={`select-none object-cover transition-opacity duration-300 ease-out ${
-                isActive || isPrevious ? "opacity-100" : "opacity-0"
-              }`}
-              style={{ zIndex: isActive ? 20 : isPrevious ? 10 : 0 }}
-            />
-          );
-        })}
-      </div>
-    </figure>
   );
 }
 
@@ -1509,28 +1511,27 @@ function ValueSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-80px" }}
-          className="mt-12 grid gap-8 md:grid-cols-2 md:gap-6 xl:grid-cols-4 xl:gap-4"
+          className="mt-14 grid gap-x-8 gap-y-11 sm:grid-cols-2 xl:grid-cols-4"
         >
           {valueCards.map((card) => {
             const Icon = card.icon;
 
             return (
-              <div key={card.title} className="h-full">
-                <motion.article
-                  variants={revealItem}
-                  className="group h-full rounded-3xl border border-white/10 bg-surface p-6 transition hover:border-accent/40 hover:bg-raised"
-                >
-                  <span className="grid h-12 w-12 place-items-center rounded-2xl bg-accent-faint text-accent-soft transition group-hover:bg-accent group-hover:text-white">
-                    <Icon aria-hidden="true" className="h-6 w-6" />
-                  </span>
-                  <h3 className="mt-8 text-xl font-black tracking-tight text-white">
-                    {card.title}
-                  </h3>
-                  <p className="mt-3 text-sm leading-7 text-slate-400">
-                    {card.text}
-                  </p>
-                </motion.article>
-              </div>
+              <motion.article
+                key={card.title}
+                variants={revealItem}
+                className="group border-t border-white/10 pt-7"
+              >
+                <span className="grid h-12 w-12 place-items-center rounded-2xl bg-accent-faint text-accent-soft transition group-hover:bg-accent group-hover:text-white">
+                  <Icon aria-hidden="true" className="h-6 w-6" />
+                </span>
+                <h3 className="mt-6 text-xl font-black tracking-tight text-white">
+                  {card.title}
+                </h3>
+                <p className="mt-3 text-sm leading-7 text-slate-400">
+                  {card.text}
+                </p>
+              </motion.article>
             );
           })}
         </motion.div>
@@ -1567,99 +1568,74 @@ function BoxVsTapitSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-80px" }}
-          className="relative grid overflow-hidden rounded-[2rem] border border-white/15 bg-base/[0.96] shadow-float lg:grid-cols-2"
+          className="grid overflow-hidden rounded-[2rem] border border-white/10 lg:grid-cols-2"
         >
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.05] via-transparent to-accent-deep/25"
-          />
           {comparisonColumns.map((column, index) => {
             const Icon = column.icon;
             const isTapit = index === 1;
 
             return (
-              <div key={column.title} className="min-h-full">
-                <motion.article
-                  variants={revealItem}
-                  className={`relative min-h-full p-6 sm:p-8 lg:p-10 ${
-                    isTapit
-                      ? "bg-gradient-to-br from-accent-deep/60 via-accent-deep/40 to-base/[0.88]"
-                      : "border-b border-white/15 bg-gradient-to-br from-surface/80 via-base/[0.72] to-base/[0.92] lg:border-b-0 lg:border-r"
-                  }`}
-                >
-                  {isTapit ? (
-                    <div
-                      aria-hidden="true"
-                      className="absolute inset-y-8 left-0 hidden w-px bg-gradient-to-b from-transparent via-accent-soft/80 to-transparent lg:block"
-                    />
-                  ) : null}
-                  <div className="relative flex min-h-full flex-col">
-                    <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-                      <div>
-                        <span className="inline-flex rounded-full border border-white/15 bg-white/[0.07] px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-white/70">
-                          {column.badge}
-                        </span>
-                        <h3 className="mt-5 text-4xl font-black tracking-tight text-white/95 sm:text-5xl">
-                          {column.title}
-                        </h3>
-                      </div>
+              <motion.article
+                key={column.title}
+                variants={revealItem}
+                className={`flex flex-col p-7 sm:p-9 lg:p-10 ${
+                  isTapit
+                    ? "bg-accent-deep/15"
+                    : "border-b border-white/10 lg:border-b-0 lg:border-r"
+                }`}
+              >
+                <div className="flex items-start justify-between gap-5">
+                  <div>
+                    <span className="inline-flex rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-white/65">
+                      {column.badge}
+                    </span>
+                    <h3 className="mt-5 text-3xl font-black tracking-tight text-white sm:text-4xl">
+                      {column.title}
+                    </h3>
+                  </div>
+                  <span
+                    className={`grid h-14 w-14 shrink-0 place-items-center rounded-2xl ${
+                      isTapit
+                        ? "bg-accent text-white shadow-brand"
+                        : "bg-white/[0.06] text-white/70"
+                    }`}
+                  >
+                    <Icon aria-hidden="true" className="h-6 w-6" />
+                  </span>
+                </div>
+
+                <p className="mt-5 max-w-xl text-base leading-8 text-white/70">
+                  {column.text}
+                </p>
+
+                <div className="mt-7 divide-y divide-white/10 border-t border-white/10">
+                  {column.points.map((point) => (
+                    <div key={point} className="flex items-start gap-3 py-3.5">
                       <span
-                        className={`grid h-14 w-14 shrink-0 place-items-center rounded-2xl ${
+                        className={`mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full ${
                           isTapit
-                            ? "bg-accent text-white shadow-brand"
-                            : "border border-white/15 bg-white/[0.08] text-white/75"
+                            ? "bg-accent text-white"
+                            : "bg-white/[0.08] text-white/70"
                         }`}
                       >
-                        <Icon aria-hidden="true" className="h-6 w-6" />
+                        <Check aria-hidden="true" className="h-3.5 w-3.5" />
                       </span>
-                    </div>
-
-                    <p className="mt-5 max-w-xl text-base font-semibold leading-8 !text-white/80">
-                      {column.text}
-                    </p>
-
-                    <div className="mt-8 grid gap-3">
-                      {column.points.map((point, pointIndex) => (
-                        <div
-                          key={point}
-                          className="flex items-start gap-4 rounded-2xl border border-white/15 bg-white/[0.07] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
-                        >
-                          <span
-                            className={`mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full ${
-                              isTapit
-                                ? "bg-accent text-white"
-                                : "border border-white/15 bg-white/[0.08] text-white/70"
-                            }`}
-                          >
-                            <Check aria-hidden="true" className="h-3.5 w-3.5" />
-                          </span>
-                          <p className="text-sm font-black leading-6 text-white/90">
-                            {point}
-                          </p>
-                          <span className="ml-auto pt-1 text-xs font-black text-white/30">
-                            {String(pointIndex + 1).padStart(2, "0")}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div
-                      className={`mt-8 rounded-3xl border p-5 ${
-                        isTapit
-                          ? "border-accent/40 bg-accent/20"
-                          : "border-white/15 bg-white/[0.05]"
-                      }`}
-                    >
-                      <p className="text-xs font-black uppercase tracking-[0.14em] text-white/50">
-                        Pointa
-                      </p>
-                      <p className="mt-2 text-base font-black leading-7 text-white/90">
-                        {column.outcome}
+                      <p className="text-sm font-semibold leading-6 text-white/85">
+                        {point}
                       </p>
                     </div>
-                  </div>
-                </motion.article>
-              </div>
+                  ))}
+                </div>
+
+                <div className="mt-7 border-t border-white/10 pt-5">
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-white/45">
+                    Pointa
+                  </p>
+                  <p className="mt-2 text-base font-bold leading-7 text-white/90">
+                    {column.outcome}
+                  </p>
+                </div>
+              </motion.article>
             );
           })}
         </motion.div>
@@ -1699,16 +1675,12 @@ function AuditSection() {
               </motion.p>
               <motion.div
                 variants={revealItem}
-                className="relative mt-8 overflow-hidden rounded-3xl border border-accent/30 bg-accent-faint/45 p-5 shadow-[0_24px_80px_rgba(62,99,221,0.12)]"
+                className="mt-8 rounded-r-2xl border-l-2 border-accent bg-accent-faint/25 py-5 pl-5 pr-4"
               >
-                <span
-                  aria-hidden="true"
-                  className="absolute inset-x-0 top-0 h-px bg-accent-bright"
-                />
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-accent-soft">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-accent-soft">
                   Výstup auditu
                 </p>
-                <p className="mt-3 text-lg font-black leading-7 text-white">
+                <p className="mt-3 text-lg font-bold leading-7 text-white">
                   Mapa modulov, priorít, rizík a pilotného rozsahu pre prvé
                   nasadenie.
                 </p>
@@ -1722,28 +1694,27 @@ function AuditSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-80px" }}
-          className="grid gap-7 sm:grid-cols-2"
+          className="grid gap-x-8 gap-y-9 sm:grid-cols-2"
         >
           {auditSteps.map((step) => {
             const Icon = step.icon;
 
             return (
-              <div key={step.title} className="h-full">
-                <motion.article
-                  variants={revealItem}
-                  className="h-full rounded-3xl border border-white/10 bg-surface p-5 transition hover:border-accent/35 hover:bg-raised"
-                >
-                  <span className="grid h-11 w-11 place-items-center rounded-2xl bg-accent-faint text-accent-soft">
-                    <Icon aria-hidden="true" className="h-5 w-5" />
-                  </span>
-                  <h3 className="mt-6 text-xl font-black tracking-tight text-white">
-                    {step.title}
-                  </h3>
-                  <p className="mt-3 text-sm font-semibold leading-6 text-slate-400">
-                    {step.text}
-                  </p>
-                </motion.article>
-              </div>
+              <motion.article
+                key={step.title}
+                variants={revealItem}
+                className="group border-t border-white/10 pt-6"
+              >
+                <span className="grid h-11 w-11 place-items-center rounded-2xl bg-accent-faint text-accent-soft transition group-hover:bg-accent group-hover:text-white">
+                  <Icon aria-hidden="true" className="h-5 w-5" />
+                </span>
+                <h3 className="mt-5 text-xl font-black tracking-tight text-white">
+                  {step.title}
+                </h3>
+                <p className="mt-3 text-sm font-semibold leading-6 text-slate-400">
+                  {step.text}
+                </p>
+              </motion.article>
             );
           })}
         </motion.div>
@@ -1783,56 +1754,46 @@ function MigrationHardwareSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-80px" }}
-          className="relative mt-12 overflow-hidden rounded-[2rem] border border-white/15 bg-base/[0.96] p-4 shadow-float sm:p-6 lg:p-8"
+          className="mt-14"
         >
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.04] via-transparent to-accent-deep/30"
-          />
-
-          <div className="relative grid gap-6 lg:grid-cols-[1fr_auto_1fr_auto_1fr] lg:items-stretch lg:gap-4">
+          <div className="grid gap-8 lg:grid-cols-[1fr_auto_1fr_auto_1fr] lg:items-start lg:gap-4">
             {migrationSteps.map((step, index) => {
               const Icon = step.icon;
+              const isTapit = index === 1;
 
               return (
                 <div key={step.title} className="contents">
-                  <div className="min-h-full">
-                    <motion.article
-                      variants={revealItem}
-                      className={`h-full rounded-3xl border p-5 ${
-                        index === 1
-                          ? "border-accent/40 bg-accent/20"
-                          : "border-white/15 bg-white/[0.06]"
+                  <motion.article
+                    variants={revealItem}
+                    className={`pt-6 ${
+                      isTapit
+                        ? "border-t-2 border-accent"
+                        : "border-t border-white/10"
+                    }`}
+                  >
+                    <span
+                      className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl ${
+                        isTapit
+                          ? "bg-accent text-white shadow-brand"
+                          : "bg-white/[0.06] text-white/75"
                       }`}
                     >
-                      <div className="flex items-start justify-between gap-4">
-                        <span
-                          className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl ${
-                            index === 1
-                              ? "bg-accent text-white shadow-brand"
-                              : "border border-white/15 bg-white/[0.08] text-white/75"
-                          }`}
-                        >
-                          <Icon aria-hidden="true" className="h-5 w-5" />
-                        </span>
-                        <span className="pt-1 text-xs font-black text-white/30">
-                          {String(index + 1).padStart(2, "0")}
-                        </span>
-                      </div>
-                      <h3 className="mt-6 text-2xl font-black tracking-tight !text-white">
-                        {step.title}
-                      </h3>
-                      <p className="mt-3 text-sm font-semibold leading-6 !text-white/70">
-                        {step.text}
-                      </p>
-                    </motion.article>
-                  </div>
+                      <Icon aria-hidden="true" className="h-5 w-5" />
+                    </span>
+                    <h3 className="mt-5 text-2xl font-black tracking-tight text-white">
+                      {step.title}
+                    </h3>
+                    <p className="mt-3 text-sm font-semibold leading-6 text-white/70">
+                      {step.text}
+                    </p>
+                  </motion.article>
 
                   {index < migrationSteps.length - 1 ? (
-                    <div className="hidden items-center justify-center lg:flex">
-                      <span className="grid h-11 w-11 place-items-center rounded-full border border-white/15 bg-white/[0.06] text-white/50">
-                        <ArrowRight aria-hidden="true" className="h-4 w-4" />
-                      </span>
+                    <div className="hidden items-center justify-center pt-6 lg:flex">
+                      <ArrowRight
+                        aria-hidden="true"
+                        className="h-5 w-5 text-white/25"
+                      />
                     </div>
                   ) : null}
                 </div>
@@ -1840,71 +1801,58 @@ function MigrationHardwareSection() {
             })}
           </div>
 
-          <div className="relative mt-6 grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-4">
-            <div className="h-full">
-              <motion.div
-                variants={revealItem}
-                className="h-full rounded-3xl border border-white/15 bg-white/[0.05] p-5"
-              >
-                <h3 className="text-2xl font-black tracking-tight !text-white">
-                  Hardvér na kľúč.
-                </h3>
-                <p className="mt-3 text-sm font-semibold leading-6 !text-white/70">
-                  Turniket alebo skener nie je doplnok na koniec. Je to súčasť
-                  vstupného procesu, ktorý musí sedieť členovi aj recepcii.
-                </p>
-                <div className="mt-6 grid gap-3">
-                  {hardwareItems.map((item) => {
-                    const Icon = item.icon;
+          <div className="mt-14 grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+            <motion.div variants={revealItem}>
+              <h3 className="text-2xl font-black tracking-tight text-white">
+                Hardvér na kľúč.
+              </h3>
+              <p className="mt-3 text-sm font-semibold leading-6 text-white/70">
+                Turniket alebo skener nie je doplnok na koniec. Je to súčasť
+                vstupného procesu, ktorý musí sedieť členovi aj recepcii.
+              </p>
+              <div className="mt-6 divide-y divide-white/10 border-t border-white/10">
+                {hardwareItems.map((item) => {
+                  const Icon = item.icon;
 
-                    return (
-                      <div
-                        key={item.title}
-                        className="flex gap-4 rounded-2xl border border-white/10 bg-base/[0.55] p-4"
-                      >
-                        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent-faint text-accent-soft">
-                          <Icon aria-hidden="true" className="h-5 w-5" />
-                        </span>
-                        <div>
-                          <p className="text-sm font-black !text-white/90">
-                            {item.title}
-                          </p>
-                          <p className="mt-1 text-xs font-semibold leading-5 !text-white/60">
-                            {item.text}
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </motion.div>
-            </div>
-
-            <div className="h-full">
-              <motion.div
-                variants={revealItem}
-                className="h-full rounded-3xl border border-accent/30 bg-accent-deep/30 p-5"
-              >
-                <h3 className="text-2xl font-black tracking-tight !text-white">
-                  Pred ostrým prepnutím musí byť jasno.
-                </h3>
-                <div className="mt-6 grid gap-3">
-                  {cutoverChecks.map((item) => (
-                    <div
-                      key={item}
-                      className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4"
-                    >
-                      <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-accent text-white">
-                        <Check aria-hidden="true" className="h-4 w-4" />
+                  return (
+                    <div key={item.title} className="flex gap-4 py-4">
+                      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent-faint text-accent-soft">
+                        <Icon aria-hidden="true" className="h-5 w-5" />
                       </span>
-                      <p className="text-sm font-black leading-6 !text-white/80">
-                        {item}
-                      </p>
+                      <div>
+                        <p className="text-sm font-bold text-white/90">
+                          {item.title}
+                        </p>
+                        <p className="mt-1 text-xs font-semibold leading-5 text-white/60">
+                          {item.text}
+                        </p>
+                      </div>
                     </div>
-                  ))}
-                </div>
-              </motion.div>
-            </div>
+                  );
+                })}
+              </div>
+            </motion.div>
+
+            <motion.div
+              variants={revealItem}
+              className="lg:border-l lg:border-white/10 lg:pl-16"
+            >
+              <h3 className="text-2xl font-black tracking-tight text-white">
+                Pred ostrým prepnutím musí byť jasno.
+              </h3>
+              <div className="mt-6 divide-y divide-white/10 border-t border-white/10">
+                {cutoverChecks.map((item) => (
+                  <div key={item} className="flex items-start gap-3 py-4">
+                    <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-accent text-white">
+                      <Check aria-hidden="true" className="h-4 w-4" />
+                    </span>
+                    <p className="text-sm font-semibold leading-6 text-white/80">
+                      {item}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
           </div>
         </motion.div>
       </div>
@@ -1946,19 +1894,19 @@ function OperationsSection() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-80px" }}
-            className="rounded-3xl border border-white/10 bg-surface p-3 shadow-card"
+            className="rounded-3xl border border-white/10 bg-white/[0.02] px-6"
           >
-            <div className="grid gap-3">
+            <div className="divide-y divide-white/10">
               {operations.map((item, index) => (
                 <motion.div
                   key={item}
                   variants={revealItem}
-                  className="grid gap-4 rounded-2xl border border-white/5 bg-base/[0.65] p-5 sm:grid-cols-[3rem_1fr] sm:items-center"
+                  className="grid gap-4 py-5 sm:grid-cols-[3rem_1fr] sm:items-center"
                 >
-                  <span className="grid h-12 w-12 place-items-center rounded-2xl bg-accent-faint text-sm font-black text-accent-soft">
+                  <span className="grid h-11 w-11 place-items-center rounded-2xl bg-accent-faint text-sm font-black text-accent-soft">
                     {String(index + 1).padStart(2, "0")}
                   </span>
-                  <p className="text-base font-bold leading-7 text-white">
+                  <p className="text-base font-semibold leading-7 text-white">
                     {item}
                   </p>
                 </motion.div>
@@ -2008,31 +1956,30 @@ function PilotSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-80px" }}
-          className="mt-12 grid gap-8 md:grid-cols-2 md:gap-6 xl:grid-cols-4 xl:gap-4"
+          className="mt-14 grid gap-x-8 gap-y-11 sm:grid-cols-2 xl:grid-cols-4"
         >
           {pilotWeeks.map((item, index) => (
-            <div key={item.week} className="h-full">
-              <motion.article
-                variants={revealItem}
-                className="relative h-full overflow-hidden rounded-3xl border border-white/10 bg-surface p-6 shadow-card"
+            <motion.article
+              key={item.week}
+              variants={revealItem}
+              className="relative border-t border-white/10 pt-7"
+            >
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute right-0 top-6 font-display text-6xl font-semibold leading-none text-white/[0.05]"
               >
-                <div
-                  aria-hidden="true"
-                  className="absolute right-5 top-5 font-display text-6xl font-semibold leading-none text-white/[0.04]"
-                >
-                  {String(index + 1).padStart(2, "0")}
-                </div>
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-accent-soft">
-                  {item.week}
-                </p>
-                <h3 className="mt-5 text-2xl font-black tracking-tight text-white">
-                  {item.title}
-                </h3>
-                <p className="mt-4 text-sm font-semibold leading-6 text-slate-400">
-                  {item.text}
-                </p>
-              </motion.article>
-            </div>
+                {String(index + 1).padStart(2, "0")}
+              </div>
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-accent-soft">
+                {item.week}
+              </p>
+              <h3 className="mt-4 text-2xl font-black tracking-tight text-white">
+                {item.title}
+              </h3>
+              <p className="mt-4 text-sm font-semibold leading-6 text-slate-400">
+                {item.text}
+              </p>
+            </motion.article>
           ))}
         </motion.div>
       </div>
@@ -2049,62 +1996,55 @@ function ProofSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-80px" }}
-          className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-5"
+          className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16"
         >
-          <div className="h-full">
-            <motion.article
-              variants={revealItem}
-              className="h-full rounded-[2rem] border border-white/10 bg-surface p-6 shadow-card sm:p-8 lg:p-10"
-            >
-              <p className="section-kicker">Čo už máme hotové</p>
-              <h2 className="mt-4 text-4xl font-black leading-none tracking-tight text-white sm:text-5xl">
-                Reálne obrazovky, nie sľub na papieri.
-              </h2>
-              <p className="mt-5 max-w-2xl text-base leading-7 text-slate-400">
-                Tap-it je pilotný produkt a hlavná prípadová štúdia nášho tímu.
-                Preto ukazujeme skutočný admin aj skutočnú mobilnú appku
-                namiesto vymyslených referencií.
-              </p>
-              <div className="mt-8 grid gap-3">
-                {proofItems.map((item) => (
-                  <div key={item} className="flex items-start gap-3">
-                    <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-accent text-white">
-                      <Check aria-hidden="true" className="h-4 w-4" />
-                    </span>
-                    <span className="text-sm font-bold leading-6 text-slate-300">
-                      {item}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </motion.article>
-          </div>
-
-          <div className="h-full">
-            <motion.article
-              variants={revealItem}
-              className="h-full rounded-[2rem] border border-white/10 bg-base/[0.72] p-6 sm:p-8 lg:p-10"
-            >
-              <p className="section-kicker">Čo testujeme ďalej</p>
-              <h3 className="mt-4 text-3xl font-black leading-none tracking-tight text-white sm:text-4xl">
-                Plán bez divadla.
-              </h3>
-              <p className="mt-5 text-base leading-7 text-slate-400">
-                Nechceme sľubovať všetko naraz. Testujeme veci, ktoré rozhodujú
-                o tom, či systém prežije bežný deň v reálnom gyme.
-              </p>
-              <div className="mt-8 grid gap-3">
-                {nextItems.map((item) => (
-                  <div
-                    key={item}
-                    className="rounded-2xl border border-white/5 bg-surface p-4 text-sm font-bold leading-6 text-slate-300"
-                  >
+          <motion.div variants={revealItem}>
+            <p className="section-kicker">Čo už máme hotové</p>
+            <h2 className="mt-4 text-4xl font-black leading-none tracking-tight text-white sm:text-5xl">
+              Reálne obrazovky, nie sľub na papieri.
+            </h2>
+            <p className="mt-5 max-w-2xl text-base leading-7 text-slate-400">
+              Tap-it je pilotný produkt a hlavná prípadová štúdia nášho tímu.
+              Preto ukazujeme skutočný admin aj skutočnú mobilnú appku
+              namiesto vymyslených referencií.
+            </p>
+            <div className="mt-8 divide-y divide-white/10 border-t border-white/10">
+              {proofItems.map((item) => (
+                <div key={item} className="flex items-start gap-3 py-3.5">
+                  <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-accent text-white">
+                    <Check aria-hidden="true" className="h-4 w-4" />
+                  </span>
+                  <span className="text-sm font-semibold leading-6 text-slate-300">
                     {item}
-                  </div>
-                ))}
-              </div>
-            </motion.article>
-          </div>
+                  </span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div
+            variants={revealItem}
+            className="lg:border-l lg:border-white/10 lg:pl-16"
+          >
+            <p className="section-kicker">Čo testujeme ďalej</p>
+            <h3 className="mt-4 text-3xl font-black leading-none tracking-tight text-white sm:text-4xl">
+              Plán bez divadla.
+            </h3>
+            <p className="mt-5 text-base leading-7 text-slate-400">
+              Nechceme sľubovať všetko naraz. Testujeme veci, ktoré rozhodujú
+              o tom, či systém prežije bežný deň v reálnom gyme.
+            </p>
+            <div className="mt-8 divide-y divide-white/10 border-t border-white/10">
+              {nextItems.map((item) => (
+                <div
+                  key={item}
+                  className="py-4 text-sm font-semibold leading-6 text-slate-300"
+                >
+                  {item}
+                </div>
+              ))}
+            </div>
+          </motion.div>
         </motion.div>
       </div>
     </section>
@@ -2112,308 +2052,149 @@ function ProofSection() {
 }
 
 function MobilePreviewSection() {
-  const reduceMotion = useReducedMotion();
-
-  if (reduceMotion) {
-    return <StaticMobileAppGallery />;
-  }
-
-  return <ParallaxMobileAppSection />;
+  return <AppRoadmapSection />;
 }
 
-const appPhonePoses = [
-  {
-    phoneX: "24vw",
-    copyX: "-23vw",
-    rotateY: -18,
-    rotateX: 4,
-    rotateZ: 3,
-    y: -12,
-  },
-  {
-    phoneX: "-24vw",
-    copyX: "23vw",
-    rotateY: 18,
-    rotateX: 3,
-    rotateZ: -4,
-    y: 10,
-  },
-  {
-    phoneX: "19vw",
-    copyX: "-24vw",
-    rotateY: -12,
-    rotateX: -2,
-    rotateZ: 5,
-    y: -18,
-  },
-  {
-    phoneX: "-20vw",
-    copyX: "24vw",
-    rotateY: 15,
-    rotateX: 5,
-    rotateZ: -2,
-    y: 2,
-  },
-];
-
-function ParallaxMobileAppSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
-  });
-  const glowX = useTransform(scrollYProgress, [0, 1], ["18%", "82%"]);
-  const glowY = useTransform(scrollYProgress, [0, 1], ["26%", "72%"]);
-  const ringRotate = useTransform(scrollYProgress, [0, 1], [0, 28]);
-  const pose = appPhonePoses[activeIndex % appPhonePoses.length];
-
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    const clamped = Math.min(0.999, Math.max(0, latest));
-    const nextIndex = Math.min(
-      appScreens.length - 1,
-      Math.floor(clamped * appScreens.length),
-    );
-
-    setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
-  });
-
-  return (
-    <section
-      ref={sectionRef}
-      id="appka"
-      className="app-showcase-section relative bg-surface"
-      style={{ height: `${appScreens.length * 84}svh` }}
-    >
-      <div className="sticky top-0 h-[100svh] overflow-hidden">
-        <motion.div
-          aria-hidden="true"
-          className="app-parallax-glow"
-          style={{ left: glowX, top: glowY }}
-        />
-        <motion.div
-          aria-hidden="true"
-          className="app-parallax-ring"
-          style={{ rotate: ringRotate }}
-        />
-
-        <div className="relative mx-auto hidden h-full max-w-7xl items-center justify-center px-6 lg:flex">
-          <div className="absolute left-1/2 top-1/2 w-[clamp(16rem,20vw,21.5rem)] -translate-x-1/2 -translate-y-1/2">
-            <motion.div
-              animate={{
-                x: pose.phoneX,
-                y: pose.y,
-                rotateX: pose.rotateX,
-                rotateY: pose.rotateY,
-                rotateZ: pose.rotateZ,
-              }}
-              transition={{ type: "spring", stiffness: 92, damping: 22 }}
-              className="member-phone-tilt"
-            >
-              <AppPhoneMockup activeIndex={activeIndex} />
-            </motion.div>
-          </div>
-
-          <div className="absolute left-1/2 top-1/2 w-[min(38vw,34rem)] -translate-x-1/2 -translate-y-1/2">
-            <motion.div
-              animate={{ x: pose.copyX, y: pose.y * -0.35 }}
-              transition={{ type: "spring", stiffness: 96, damping: 24 }}
-            >
-              <AppScreenCopy activeIndex={activeIndex} />
-            </motion.div>
-          </div>
-        </div>
-
-        <div className="relative flex h-full flex-col justify-center px-4 pb-6 pt-20 lg:hidden">
-          <motion.div
-            animate={{
-              y: activeIndex % 2 === 0 ? -4 : 4,
-              rotateZ: activeIndex % 2 === 0 ? 2 : -2,
-            }}
-            transition={{ type: "spring", stiffness: 105, damping: 20 }}
-            className="mx-auto w-[min(54vw,24svh,13.75rem)]"
-          >
-            <AppPhoneMockup activeIndex={activeIndex} />
-          </motion.div>
-          <div className="mx-auto mt-5 w-full max-w-md">
-            <AppScreenCopy activeIndex={activeIndex} compact />
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function AppScreenCopy({
-  activeIndex,
-  compact = false,
-}: {
-  activeIndex: number;
-  compact?: boolean;
-}) {
-  const reduceMotion = useReducedMotion();
-  const screen = appScreens[activeIndex];
-  const Icon = screen.icon;
-
-  return (
-    <article className="rounded-[1.75rem] border border-white/10 bg-base/[0.72] p-5 shadow-float backdrop-blur-2xl sm:p-6 lg:p-8">
-      <div className={compact ? "hidden" : "mb-7"}>
-        <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-bold text-slate-300">
-          <Smartphone aria-hidden="true" className="h-4 w-4 text-accent-soft" />
-          Mobilná aplikácia
-        </div>
-        <h2 className="mt-5 text-4xl font-black leading-none tracking-tight text-white xl:text-5xl">
-          Člen vidí presne to, čo potrebuje.
-        </h2>
-        <p className="mt-4 max-w-md text-sm leading-6 text-slate-400">
-          Od prvého prihlásenia po VOP: appka rieši vstup, rezervácie, platby
-          aj podporu v jednom postupe.
-        </p>
-      </div>
-
-      <motion.div
-        key={screen.label}
-        initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.34, ease: "easeOut" }}
-      >
-        <div className="flex items-start gap-3">
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-accent text-white shadow-brand">
-            <Icon aria-hidden="true" className="h-5 w-5" />
-          </span>
-          <div>
-            <p className="text-xs font-bold text-accent-soft">
-              {screen.label}
-            </p>
-            <h3
-              className={`font-black leading-tight tracking-tight text-white ${
-                compact ? "text-2xl" : "text-3xl"
-              }`}
-            >
-              {screen.title}
-            </h3>
-          </div>
-        </div>
-        <p
-          className={`mt-4 font-semibold text-slate-400 ${
-            compact ? "text-sm leading-6" : "text-base leading-7"
-          }`}
-        >
-          {screen.body}
-        </p>
-        <div className="mt-5 grid gap-3">
-          {screen.features.map((feature) => (
-            <div key={feature} className="flex items-start gap-3">
-              <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-accent-faint text-accent-soft">
-                <Check aria-hidden="true" className="h-4 w-4" />
-              </span>
-              <span className="text-sm font-semibold leading-6 text-slate-300">
-                {feature}
-              </span>
-            </div>
-          ))}
-        </div>
-      </motion.div>
-    </article>
-  );
-}
-
-function AppPhoneMockup({ activeIndex }: { activeIndex: number }) {
-  const [previousIndex, setPreviousIndex] = useState<number | null>(null);
-  const lastActiveIndex = useRef(activeIndex);
-
-  useEffect(() => {
-    if (activeIndex === lastActiveIndex.current) {
-      return;
-    }
-
-    setPreviousIndex(lastActiveIndex.current);
-    lastActiveIndex.current = activeIndex;
-
-    const timeout = window.setTimeout(() => {
-      setPreviousIndex(null);
-    }, 380);
-
-    return () => window.clearTimeout(timeout);
-  }, [activeIndex]);
-
-  return (
-    <figure className="member-phone-frame">
-      <div aria-hidden="true" className="member-phone-speaker" />
-      <div className="member-phone-screen">
-        {appScreens.map((screen, index) => {
-          const isActive = index === activeIndex;
-          const isPrevious = index === previousIndex;
-
-          return (
-            <Image
-              key={screen.label}
-              src={screen.image}
-              alt={isActive ? screen.alt : ""}
-              aria-hidden={!isActive}
-              fill
-              priority={index === 0}
-              sizes="(min-width: 1024px) 390px, 62vw"
-              className={`select-none object-cover transition-opacity duration-300 ease-out ${
-                isActive || isPrevious ? "opacity-100" : "opacity-0"
-              }`}
-              style={{ zIndex: isActive ? 20 : isPrevious ? 10 : 0 }}
-            />
-          );
-        })}
-      </div>
-    </figure>
-  );
-}
-
-function StaticMobileAppGallery() {
+function AppRoadmapSection() {
   return (
     <section
       id="appka"
       className="app-showcase-section bg-surface px-4 py-20 sm:px-6 lg:py-28"
     >
-      <div className="mx-auto max-w-7xl">
-        <div className="max-w-3xl">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-base/[0.7] px-3 py-1.5 text-xs font-bold text-slate-300">
+      <div className="mx-auto max-w-6xl">
+        <motion.div
+          variants={revealContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          className="max-w-3xl"
+        >
+          <motion.div
+            variants={revealItem}
+            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-base/[0.7] px-3 py-1.5 text-xs font-bold text-slate-300"
+          >
             <Smartphone aria-hidden="true" className="h-4 w-4 text-accent-soft" />
             Mobilná aplikácia
-          </div>
-          <h2 className="mt-5 text-4xl font-black leading-none tracking-tight text-white sm:text-5xl lg:text-6xl">
-            Člen vidí presne to, čo potrebuje.
-          </h2>
-          <p className="mt-5 max-w-xl text-base leading-7 text-slate-400">
-            Reálne obrazovky aplikácie Tap-it sú zoradené podľa času uloženia
-            screenshotov.
-          </p>
-        </div>
+          </motion.div>
+          <motion.h2
+            variants={revealItem}
+            className="mt-5 text-4xl font-black leading-none tracking-tight text-white sm:text-5xl lg:text-6xl"
+          >
+            Celá cesta člena, obrazovka po obrazovke.
+          </motion.h2>
+          <motion.p
+            variants={revealItem}
+            className="mt-5 max-w-xl text-base leading-7 text-slate-400"
+          >
+            Roadmapa mobilnej aplikácie Tap-it — od prvého spustenia cez
+            rezervácie a QR vstup až po podporu a dokumenty, v poradí, v akom
+            ich člen zažije.
+          </motion.p>
+        </motion.div>
 
-        <div className="mt-12 grid gap-8 md:grid-cols-2 xl:grid-cols-3">
-          {appScreens.map((screen, index) => (
-            <article
-              key={screen.label}
-              className="rounded-[1.75rem] border border-white/10 bg-base/[0.62] p-4 shadow-card"
-            >
-              <div className="mx-auto w-[min(70vw,13.5rem)]">
-                <StaticAppPhoneShot screen={screen} priority={index === 0} />
-              </div>
-              <div className="mt-5">
-                <p className="text-xs font-bold text-accent-soft">
-                  {screen.label}
-                </p>
-                <h3 className="mt-1 text-2xl font-black leading-tight text-white">
-                  {screen.title}
-                </h3>
-                <p className="mt-3 text-sm font-semibold leading-6 text-slate-400">
-                  {screen.body}
-                </p>
-              </div>
-            </article>
-          ))}
+        <div className="roadmap relative mt-16 lg:mt-20">
+          <span aria-hidden="true" className="roadmap-spine" />
+          <div className="flex flex-col gap-16 sm:gap-20 lg:gap-0">
+            {appScreens.map((screen, index) => (
+              <RoadmapStop
+                key={screen.label}
+                screen={screen}
+                index={index}
+                total={appScreens.length}
+                priority={index === 0}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>
   );
 }
+
+function RoadmapStop({
+  screen,
+  index,
+  total,
+  priority,
+}: {
+  screen: AppScreen;
+  index: number;
+  total: number;
+  priority: boolean;
+}) {
+  const reduceMotion = useReducedMotion();
+  const phoneLeft = index % 2 === 0;
+  const number = String(index + 1).padStart(2, "0");
+  const totalLabel = String(total).padStart(2, "0");
+
+  return (
+    <div className="roadmap-stop relative grid grid-cols-1 items-center gap-x-12 gap-y-6 pl-12 sm:gap-y-7 lg:grid-cols-2 lg:gap-x-24 lg:py-14 lg:pl-0">
+      <span aria-hidden="true" className="roadmap-node" />
+
+      <motion.div
+        initial={reduceMotion ? false : { opacity: 0, y: 26 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-70px" }}
+        transition={{ duration: 0.55, ease: "easeOut" }}
+        className={`order-2 flex justify-center ${
+          phoneLeft
+            ? "lg:order-1 lg:justify-end"
+            : "lg:order-2 lg:justify-start"
+        }`}
+      >
+        <div
+          data-side={phoneLeft ? "left" : "right"}
+          className="roadmap-phone w-[min(56vw,24svh,14rem)] lg:w-[clamp(16rem,20vw,21.5rem)]"
+        >
+          <StaticAppPhoneShot screen={screen} priority={priority} />
+        </div>
+      </motion.div>
+
+      <motion.div
+        initial={reduceMotion ? false : { opacity: 0, y: 26 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-70px" }}
+        transition={{ duration: 0.55, ease: "easeOut", delay: 0.05 }}
+        className={`order-1 ${
+          phoneLeft ? "lg:order-2" : "lg:order-1 lg:text-right"
+        }`}
+      >
+        <div className={`lg:max-w-md ${phoneLeft ? "" : "lg:ml-auto"}`}>
+          <p className="text-xs font-bold uppercase tracking-[0.22em] text-accent-soft">
+            <span className="tabular-nums text-white">{number}</span>
+            <span className="mx-1.5 text-slate-500">/</span>
+            <span className="tabular-nums text-slate-500">{totalLabel}</span>
+            <span className="ml-3">{screen.label}</span>
+          </p>
+          <h3 className="mt-3 text-2xl font-black leading-tight tracking-tight text-white sm:text-3xl">
+            {screen.title}
+          </h3>
+          <p className="mt-3 text-sm font-semibold leading-6 text-slate-400 sm:text-base sm:leading-7">
+            {screen.body}
+          </p>
+          <ul className="mt-5 grid gap-2.5">
+            {screen.features.map((feature) => (
+              <li
+                key={feature}
+                className={`flex items-start gap-3 ${
+                  phoneLeft ? "" : "lg:flex-row-reverse lg:text-right"
+                }`}
+              >
+                <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-accent-faint text-accent-soft">
+                  <Check aria-hidden="true" className="h-3.5 w-3.5" />
+                </span>
+                <span className="text-sm font-semibold leading-6 text-slate-300">
+                  {feature}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
 
 function StaticAppPhoneShot({
   screen,
@@ -2470,16 +2251,12 @@ function SeoAnswersSection() {
               </motion.p>
               <motion.div
                 variants={revealItem}
-                className="relative mt-8 overflow-hidden rounded-3xl border border-accent/30 bg-accent-faint/45 p-5 shadow-[0_24px_80px_rgba(62,99,221,0.12)]"
+                className="mt-8 rounded-r-2xl border-l-2 border-accent bg-accent-faint/25 py-5 pl-5 pr-4"
               >
-                <span
-                  aria-hidden="true"
-                  className="absolute inset-x-0 top-0 h-px bg-accent-bright"
-                />
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-accent-soft">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-accent-soft">
                   Pre rýchlu odpoveď
                 </p>
-                <p className="mt-3 text-lg font-black leading-7 text-white">
+                <p className="mt-3 text-lg font-bold leading-7 text-white">
                   Tap-it je systém pre fitká, ktoré riešia QR vstup,
                   členstvá, rezervácie, hardvér a migráciu dát naraz.
                 </p>
