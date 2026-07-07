@@ -779,16 +779,16 @@ function Navigation({
 // "hero" browser frame; the rest are smaller shots dropped at varied heights so
 // the track reads like an editorial collage as it scrolls sideways.
 const desktopGalleryLayout = [
-  { width: "clamp(34rem, 46vw, 54rem)", offsetY: 0, rotate: 0 },
-  { width: "clamp(15rem, 19vw, 22rem)", offsetY: -84, rotate: -1.5 },
-  { width: "clamp(17rem, 23vw, 27rem)", offsetY: 66, rotate: 1.2 },
-  { width: "clamp(14rem, 17vw, 20rem)", offsetY: -36, rotate: 2 },
-  { width: "clamp(18rem, 25vw, 29rem)", offsetY: 48, rotate: -1 },
-  { width: "clamp(15rem, 19vw, 22rem)", offsetY: -92, rotate: 1.6 },
-  { width: "clamp(16rem, 21vw, 24rem)", offsetY: 30, rotate: -2 },
-  { width: "clamp(14rem, 17vw, 20rem)", offsetY: -52, rotate: 1 },
-  { width: "clamp(17rem, 23vw, 26rem)", offsetY: 72, rotate: -1.4 },
-  { width: "clamp(15rem, 19vw, 22rem)", offsetY: -22, rotate: 2 },
+  { width: "clamp(46rem, 62vw, 74rem)", offsetY: 0, rotate: 0 },
+  { width: "clamp(23rem, 29vw, 34rem)", offsetY: -84, rotate: -1.5 },
+  { width: "clamp(27rem, 35vw, 41rem)", offsetY: 66, rotate: 1.2 },
+  { width: "clamp(21rem, 27vw, 31rem)", offsetY: -36, rotate: 2 },
+  { width: "clamp(28rem, 37vw, 43rem)", offsetY: 48, rotate: -1 },
+  { width: "clamp(23rem, 29vw, 34rem)", offsetY: -92, rotate: 1.6 },
+  { width: "clamp(24rem, 31vw, 36rem)", offsetY: 30, rotate: -2 },
+  { width: "clamp(21rem, 27vw, 31rem)", offsetY: -52, rotate: 1 },
+  { width: "clamp(27rem, 35vw, 40rem)", offsetY: 72, rotate: -1.4 },
+  { width: "clamp(23rem, 29vw, 34rem)", offsetY: -22, rotate: 2 },
 ];
 
 // Scattered vertical layout for the mobile gallery (screens after the hero).
@@ -1145,8 +1145,8 @@ function DesktopHeroProductShowcase({
                 style={{
                   ...(reduceMotion ? {} : { x: trackX }),
                   gap: "clamp(4.5rem, 8vw, 9rem)",
-                  paddingLeft: "calc(50vw - clamp(17rem, 23vw, 27rem))",
-                  paddingRight: "calc(50vw - clamp(7.5rem, 9.5vw, 11rem))",
+                  paddingLeft: "calc(50vw - clamp(23rem, 31vw, 37rem))",
+                  paddingRight: "calc(50vw - clamp(11.5rem, 14.5vw, 17rem))",
                 }}
                 className="flex w-max items-center"
               >
@@ -1310,14 +1310,14 @@ function TourDetailOverlay({
             initial={reduceMotion ? false : { opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="grid w-full max-w-6xl items-center gap-10 lg:grid-cols-[1.12fr_1fr] lg:gap-16"
+            className="grid w-full max-w-7xl items-center gap-10 lg:grid-cols-[1.55fr_1fr] lg:gap-16"
           >
             <div className="order-2 lg:order-1">
               <BrowserFrame
                 image={screen.image}
                 alt={screen.alt}
                 label="Tap-it admin"
-                sizes="(min-width: 1024px) 640px, 92vw"
+                sizes="(min-width: 1024px) 820px, 92vw"
               />
             </div>
 
@@ -2059,7 +2059,7 @@ function AppRoadmapSection() {
   return (
     <section
       id="appka"
-      className="app-showcase-section bg-surface px-4 py-20 sm:px-6 lg:py-28"
+      className="app-showcase-section bg-surface px-5 py-20 sm:px-6 lg:py-28"
     >
       <div className="mx-auto max-w-6xl">
         <motion.div
@@ -2128,7 +2128,7 @@ function RoadmapStop({
   const totalLabel = String(total).padStart(2, "0");
 
   return (
-    <div className="roadmap-stop relative grid grid-cols-1 items-center gap-x-12 gap-y-6 pl-12 sm:gap-y-7 lg:grid-cols-2 lg:gap-x-24 lg:py-14 lg:pl-0">
+    <div className="roadmap-stop relative grid grid-cols-1 items-center gap-x-12 gap-y-6 pl-12 sm:gap-y-7 lg:grid-cols-2 lg:gap-x-56 lg:py-14 lg:pl-0">
       <span aria-hidden="true" className="roadmap-node" />
 
       <motion.div
@@ -2155,7 +2155,7 @@ function RoadmapStop({
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-70px" }}
         transition={{ duration: 0.55, ease: "easeOut", delay: 0.05 }}
-        className={`order-1 ${
+        className={`order-1 pr-4 lg:pr-0 ${
           phoneLeft ? "lg:order-2" : "lg:order-1 lg:text-right"
         }`}
       >
