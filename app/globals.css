@@ -97,11 +97,13 @@ textarea {
 
 .theme-light section:not(#platforma) .bg-base\/\[0\.65\],
 .theme-light section:not(#platforma) .bg-base\/\[0\.7\],
+.theme-light section:not(#platforma) .bg-base\/\[0\.72\],
 .theme-light section:not(#platforma) .bg-base\/\[0\.8\] {
   background-color: rgba(241, 246, 253, 0.82);
 }
 
-.theme-light section:not(#platforma) .bg-accent-faint {
+.theme-light section:not(#platforma) .bg-accent-faint,
+.theme-light section:not(#platforma) .bg-accent-faint\/25 {
   background-color: rgba(239, 36, 40, 0.1);
 }
 
@@ -121,6 +123,11 @@ textarea {
 .theme-light section:not(#platforma) .border-white\/5,
 .theme-light section:not(#platforma) .border-white\/10 {
   border-color: rgba(15, 23, 42, 0.08);
+}
+
+.theme-light section:not(#platforma) .border-white\/25,
+.theme-light section:not(#platforma) .hover\:border-white\/25:hover {
+  border-color: rgba(15, 23, 42, 0.16);
 }
 
 .theme-light section:not(#platforma) .text-white {
@@ -567,6 +574,26 @@ textarea {
     );
 }
 
+.theme-light .tap-hero-shell::after {
+  background:
+    radial-gradient(
+      ellipse 72% 82% at 12% 100%,
+      rgba(239, 36, 40, 0.08),
+      transparent 68%
+    ),
+    radial-gradient(
+      ellipse 70% 76% at 88% 96%,
+      rgba(62, 99, 221, 0.1),
+      transparent 70%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(219, 235, 255, 0),
+      rgba(224, 235, 250, 0.4) 48%,
+      rgba(247, 249, 253, 0.96)
+    );
+}
+
 @media (max-width: 1023px) {
   .theme-dark .tap-hero-shell {
     background:
@@ -890,6 +917,46 @@ textarea {
     );
 }
 
+.theme-light .app-showcase-section::before {
+  background:
+    radial-gradient(
+      ellipse 54% 74% at 14% 0%,
+      rgba(239, 36, 40, 0.08),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 62% 74% at 88% 0%,
+      rgba(62, 99, 221, 0.1),
+      transparent 72%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(244, 248, 253, 0.94),
+      rgba(244, 248, 253, 0.5) 46%,
+      rgba(255, 255, 255, 0)
+    );
+}
+
+.theme-light .app-showcase-section::after {
+  background:
+    radial-gradient(
+      ellipse 52% 72% at 14% 100%,
+      rgba(239, 36, 40, 0.08),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 62% 70% at 86% 100%,
+      rgba(62, 99, 221, 0.1),
+      transparent 72%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0),
+      rgba(248, 250, 254, 0.6) 58%,
+      rgba(255, 255, 255, 0.96)
+    );
+}
+
 .app-showcase-section > .sticky {
   z-index: 1;
 }
@@ -941,6 +1008,31 @@ textarea {
 .contact-transition-section > * {
   position: relative;
   z-index: 1;
+}
+
+.theme-light .contact-transition-section {
+  background:
+    radial-gradient(
+      ellipse 70% 34% at 50% 0%,
+      rgba(62, 99, 221, 0.08),
+      transparent 74%
+    ),
+    linear-gradient(180deg, #eef4fc 0%, #f5f8fd 40%, #ffffff 100%);
+}
+
+.theme-light .contact-transition-section::before {
+  background:
+    radial-gradient(
+      ellipse 54% 78% at 16% 0%,
+      rgba(239, 36, 40, 0.08),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 58% 78% at 86% 0%,
+      rgba(62, 99, 221, 0.1),
+      transparent 74%
+    ),
+    linear-gradient(180deg, rgba(238, 244, 252, 0.9), rgba(255, 255, 255, 0));
 }
 
 .member-phone-frame {
@@ -1290,16 +1382,81 @@ textarea {
   background: radial-gradient(circle, rgba(239, 36, 40, 0.24), transparent 64%);
 }
 
+/* Middle experience band — light mode.
+   Kept as a distinct, cooler/deeper tinted panel so it still contrasts
+   against the near-white sections above and below it (mirrors the way it
+   reads as a darker cinematic band in dark mode). */
+.theme-light .experience-band {
+  background:
+    radial-gradient(
+      ellipse 72% 22% at 50% -4%,
+      rgba(62, 99, 221, 0.2),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 42% 28% at 86% 28%,
+      rgba(239, 36, 40, 0.12),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 48% 28% at 16% 78%,
+      rgba(62, 99, 221, 0.14),
+      transparent 72%
+    ),
+    linear-gradient(180deg, #dae5f6 0%, #e4ecf9 30%, #dde8f8 70%, #e9eefb 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -1px 0 rgba(15, 23, 42, 0.06);
+}
+
+.theme-light .experience-band::before {
+  background:
+    linear-gradient(90deg, rgba(15, 23, 42, 0.05) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
+}
+
+.theme-light .experience-band::after {
+  background:
+    radial-gradient(
+      ellipse 64% 58% at 12% 42%,
+      rgba(62, 99, 221, 0.14),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 62% 60% at 88% 38%,
+      rgba(239, 36, 40, 0.12),
+      transparent 70%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(248, 250, 254, 0),
+      rgba(248, 250, 254, 0.7) 58%,
+      rgba(248, 250, 254, 0)
+    );
+}
+
+.theme-light .experience-band-grid {
+  background: radial-gradient(
+    circle at center,
+    rgba(15, 23, 42, 0.08) 1px,
+    transparent 1px
+  );
+}
+
+.theme-light .experience-band-glow {
+  opacity: 0.32;
+}
+
 .theme-light .experience-band section:not(#platforma) {
-  color: #e5e7eb;
+  color: #172033;
 }
 
 .theme-light .experience-band section:not(#platforma) .bg-surface {
-  background-color: rgba(14, 15, 21, 0.78);
+  background-color: rgba(255, 255, 255, 0.82);
 }
 
 .theme-light .experience-band section:not(#platforma) .bg-raised {
-  background-color: rgba(20, 22, 31, 0.84);
+  background-color: #ffffff;
 }
 
 .theme-light .experience-band section:not(#platforma) .bg-base,
@@ -1308,31 +1465,66 @@ textarea {
 .theme-light .experience-band section:not(#platforma) .bg-base\/\[0\.7\],
 .theme-light .experience-band section:not(#platforma) .bg-base\/\[0\.72\],
 .theme-light .experience-band section:not(#platforma) .bg-base\/\[0\.96\] {
-  background-color: rgba(9, 9, 13, 0.78);
+  background-color: rgba(244, 248, 253, 0.85);
 }
 
-.theme-light .experience-band section:not(#platforma) .text-white {
-  color: #f8fafc;
+.theme-light .experience-band section:not(#platforma) .bg-white\/\[0\.02\],
+.theme-light .experience-band section:not(#platforma) .bg-white\/\[0\.05\],
+.theme-light .experience-band section:not(#platforma) .bg-white\/\[0\.06\],
+.theme-light .experience-band section:not(#platforma) .bg-white\/\[0\.08\] {
+  background-color: rgba(255, 255, 255, 0.72);
 }
 
-.theme-light .experience-band section:not(#platforma) .text-slate-300 {
-  color: #cbd5e1;
+.theme-light .experience-band section:not(#platforma) .bg-accent-faint,
+.theme-light .experience-band section:not(#platforma) .bg-accent-faint\/25 {
+  background-color: rgba(239, 36, 40, 0.1);
 }
 
-.theme-light .experience-band section:not(#platforma) .text-slate-400,
-.theme-light .experience-band section:not(#platforma) .text-slate-500 {
-  color: #94a3b8;
+.theme-light .experience-band section:not(#platforma) .bg-accent-deep\/15 {
+  background-color: rgba(62, 99, 221, 0.12);
 }
 
 .theme-light .experience-band section:not(#platforma) .text-accent-soft,
 .theme-light .experience-band section:not(#platforma) .section-kicker {
-  color: #ff6b70;
+  color: #c2161b;
+}
+
+.theme-light .experience-band section:not(#platforma) .text-white,
+.theme-light .experience-band section:not(#platforma) .text-white\/90,
+.theme-light .experience-band section:not(#platforma) .text-white\/85,
+.theme-light .experience-band section:not(#platforma) .text-white\/80,
+.theme-light .experience-band section:not(#platforma) .text-white\/75,
+.theme-light .experience-band section:not(#platforma) .text-white\/70 {
+  color: #0f172a;
+}
+
+.theme-light .experience-band section:not(#platforma) .text-slate-300,
+.theme-light .experience-band section:not(#platforma) .text-white\/65,
+.theme-light .experience-band section:not(#platforma) .text-white\/60 {
+  color: #475569;
+}
+
+.theme-light .experience-band section:not(#platforma) .text-slate-400,
+.theme-light .experience-band section:not(#platforma) .text-slate-500,
+.theme-light .experience-band section:not(#platforma) .text-white\/45 {
+  color: #64748b;
+}
+
+.theme-light .experience-band section:not(#platforma) .text-white\/25,
+.theme-light .experience-band section:not(#platforma) .text-white\/\[0\.05\] {
+  color: rgba(15, 23, 42, 0.28);
 }
 
 .theme-light .experience-band section:not(#platforma) .border-white\/5,
 .theme-light .experience-band section:not(#platforma) .border-white\/10,
-.theme-light .experience-band section:not(#platforma) .border-white\/15 {
-  border-color: rgba(255, 255, 255, 0.12);
+.theme-light .experience-band section:not(#platforma) .border-white\/15,
+.theme-light .experience-band section:not(#platforma) .divide-white\/10 > * {
+  border-color: rgba(15, 23, 42, 0.1);
+}
+
+.theme-light .experience-band section:not(#platforma) .shadow-card,
+.theme-light .experience-band section:not(#platforma) .shadow-float {
+  box-shadow: 0 28px 90px rgba(15, 23, 42, 0.12);
 }
 
 @media (max-width: 767px) {
