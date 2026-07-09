@@ -449,9 +449,9 @@ const operations = [
 const comparisonColumns = [
   {
     title: "Krabicový systém",
-    badge: "Proces sa ohýba softvéru",
-    text: "Dostaneš veľa funkcií naraz, ale prevádzka sa často musí prispôsobiť tomu, ako je balík postavený.",
-    outcome: "Výsledok: tím začne systém obchádzať hneď pri prvých výnimkách.",
+    badge: "Proces sa prispôsobuje softvéru",
+    text: "Balík prináša veľa funkcií naraz, no prevádzka sa musí prispôsobiť tomu, ako je poskladaný.",
+    outcome: "Výsledok: tím začne systém obchádzať už pri prvých výnimkách.",
     icon: Activity,
     points: [
       "Fixné balíky a hranice funkcií",
@@ -463,7 +463,7 @@ const comparisonColumns = [
   {
     title: "Tap-it OS",
     badge: "Softvér sa skladá podľa gymu",
-    text: "Začíname auditom prevádzky, dát a vstupu. Potom skladáme prechod, hardvér a pilot podľa reality gymu.",
+    text: "Začíname auditom prevádzky, dát a vstupu. Následne navrhneme prechod, hardvér a pilotnú fázu presne podľa potrieb gymu.",
     outcome: "Výsledok: prvý prechod rieši dáta, vstup, hardvér aj členovskú appku.",
     icon: BadgeCheck,
     points: [
@@ -586,17 +586,17 @@ const cutoverChecks = [
 ];
 
 const proofItems = [
-  "Admin prehľad so vstupmi, členstvami a scan logmi",
-  "Správa členov, rolí a verifikácie nových účtov",
+  "Administrátorský prehľad vstupov, členstiev a scan logov",
+  "Správa členov, rolí a overovania nových účtov",
   "Rezervácie priestorov, trénerov a skupinových termínov",
-  "Mobilná appka s QR kartou, oznamami, profilom a podporou",
+  "Mobilná appka s QR kartou, oznamami, profilom a zákazníckou podporou",
 ];
 
 const nextItems = [
   "Detailnejšia analytika návštevnosti a trendov členstiev",
   "Platobné scenáre pre rôzne typy služieb a výnimiek",
   "Výpadkové režimy pre recepciu a kontrolovaný vstup",
-  "Lepšie vstupné kroky pre nový gym a nový tím",
+  "Rýchlejší onboarding nového gymu a tímu",
 ];
 
 type ThemeMode = "light" | "dark";
@@ -718,6 +718,13 @@ function Navigation({
         </div>
 
         <div className="flex items-center gap-2">
+          <a
+            href="#kontakt"
+            onClick={(event) => handleNavClick(event, "#kontakt")}
+            className="hidden h-10 items-center justify-center rounded-full bg-accent px-5 text-sm font-bold text-white shadow-brand transition hover:bg-accent-bright focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft active:translate-y-px md:inline-flex"
+          >
+            Dohodnúť audit
+          </a>
           <button
             type="button"
             className={`grid h-10 w-10 place-items-center rounded-xl border transition ${iconButtonTone}`}
@@ -2001,12 +2008,12 @@ function ProofSection() {
           <motion.div variants={revealItem}>
             <p className="section-kicker">Čo už máme hotové</p>
             <h2 className="mt-4 text-4xl font-black leading-none tracking-tight text-white sm:text-5xl">
-              Reálne obrazovky, nie sľub na papieri.
+              Reálne obrazovky, nie prezentácia.
             </h2>
             <p className="mt-5 max-w-2xl text-base leading-7 text-slate-400">
-              Tap-it je pilotný produkt a hlavná prípadová štúdia nášho tímu.
-              Preto ukazujeme skutočný admin aj skutočnú mobilnú appku
-              namiesto vymyslených referencií.
+              Tap-it je náš pilotný produkt a zároveň hlavná prípadová štúdia.
+              Preto ukazujeme funkčný administrátorský systém aj mobilnú
+              appku – nie fiktívne referencie.
             </p>
             <div className="mt-8 divide-y divide-white/10 border-t border-white/10">
               {proofItems.map((item) => (
@@ -2028,11 +2035,12 @@ function ProofSection() {
           >
             <p className="section-kicker">Čo testujeme ďalej</p>
             <h3 className="mt-4 text-3xl font-black leading-none tracking-tight text-white sm:text-4xl">
-              Plán bez divadla.
+              Cielený plán, nie sľuby.
             </h3>
             <p className="mt-5 text-base leading-7 text-slate-400">
-              Nechceme sľubovať všetko naraz. Testujeme veci, ktoré rozhodujú
-              o tom, či systém prežije bežný deň v reálnom gyme.
+              Nesľubujeme všetko naraz. Testujeme presne tie oblasti, ktoré
+              rozhodujú o tom, či systém zvládne bežnú prevádzku reálneho
+              gymu.
             </p>
             <div className="mt-8 divide-y divide-white/10 border-t border-white/10">
               {nextItems.map((item) => (
@@ -2544,11 +2552,15 @@ function FullFooter({ year }: { year: number }) {
     {
       name: "Filip Paučo",
       role: "Co-founder / produkt",
+      motto: "Produkt musí sedieť na to, ako gym reálne funguje.",
+      linkedin: "https://www.linkedin.com/in/filip-pau%C4%8Do/",
       image: filipFounder,
     },
     {
       name: "Patrik Repkovský",
       role: "Co-founder / technológia",
+      motto: "Systém musí prežiť bežný deň, nie len demo.",
+      linkedin: "https://www.linkedin.com/in/patrik-repkovsk%C3%BD/",
       image: patrikFounder,
     },
   ];
@@ -2626,26 +2638,7 @@ function FullFooter({ year }: { year: number }) {
           </FooterColumn>
 
           <FooterColumn title="Founderi">
-            <div className="flex -space-x-3">
-              {founders.map((founder) => (
-                <div
-                  key={founder.name}
-                  className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-[#050506] bg-raised"
-                  title={founder.name}
-                >
-                  <Image
-                    src={founder.image}
-                    alt={founder.name}
-                    fill
-                    sizes="48px"
-                    className="object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-            <p className="max-w-[13rem] text-sm font-semibold leading-6 text-slate-500">
-              Tap-it stavajú Filip Paučo a Patrik Repkovský.
-            </p>
+            <FoundersSwitcher founders={founders} />
           </FooterColumn>
         </div>
 
@@ -2664,6 +2657,132 @@ function FullFooter({ year }: { year: number }) {
         </div>
       </div>
     </footer>
+  );
+}
+
+type Founder = {
+  name: string;
+  role: string;
+  motto: string;
+  linkedin: string;
+  image: StaticImageData;
+};
+
+function FoundersSwitcher({ founders }: { founders: Founder[] }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [displayed, setDisplayed] = useState(founders[0]);
+
+  const handlePreview = (index: number) => {
+    if (index === activeIndex || isAnimating) return;
+    setIsAnimating(true);
+
+    setTimeout(() => {
+      setDisplayed(founders[index]);
+      setActiveIndex(index);
+      setTimeout(() => setIsAnimating(false), 400);
+    }, 200);
+  };
+
+  return (
+    <div>
+      <p
+        className={`text-sm font-semibold leading-6 text-slate-300 transition-all duration-300 ease-out ${
+          isAnimating ? "scale-[0.98] opacity-0 blur-sm" : "scale-100 opacity-100 blur-none"
+        }`}
+      >
+        “{displayed.motto}”
+      </p>
+      <p
+        className={`mt-2 text-[0.65rem] font-black uppercase tracking-[0.18em] text-accent-soft transition-all duration-[400ms] ease-out ${
+          isAnimating ? "translate-y-1 opacity-0" : "translate-y-0 opacity-100"
+        }`}
+      >
+        {displayed.role}
+      </p>
+
+      <div className="mt-4 flex items-center gap-2">
+        {founders.map((founder, index) => {
+          const isActive = activeIndex === index;
+          const showName = isActive || (hoveredIndex === index && !isActive);
+
+          const pillClassName = `flex items-center rounded-full transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+            isActive ? "bg-accent shadow-brand" : "bg-transparent hover:bg-white/10"
+          } ${showName ? "py-1 pl-1 pr-3" : "p-0.5"}`;
+
+          const pillContent = (
+            <>
+              <span className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full border border-white/10 bg-raised">
+                <Image
+                  src={founder.image}
+                  alt={founder.name}
+                  fill
+                  sizes="32px"
+                  className="object-cover"
+                />
+              </span>
+              <span
+                className={`grid overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+                  showName ? "ml-2 grid-cols-[1fr] opacity-100" : "ml-0 grid-cols-[0fr] opacity-0"
+                }`}
+              >
+                <span className="flex items-center gap-1 whitespace-nowrap">
+                  <span
+                    className={`text-xs font-bold ${
+                      isActive ? "text-white" : "text-slate-300"
+                    }`}
+                  >
+                    {founder.name.split(" ")[0]}
+                  </span>
+                  {isActive && founder.linkedin ? (
+                    <Linkedin
+                      aria-hidden="true"
+                      className="h-3 w-3 shrink-0 text-white/70"
+                    />
+                  ) : null}
+                </span>
+              </span>
+            </>
+          );
+
+          // Always the same <a>, so the pill's color/shape can transition
+          // smoothly instead of snapping — swapping between <a> and
+          // <button> per state would force React to remount the node.
+          // Tap on the already-active founder opens LinkedIn (modifier/
+          // middle clicks navigate immediately, same as any link); tap on
+          // an inactive one just previews them. No hover dependency, so
+          // it holds up on touch devices too.
+          return (
+            <a
+              key={founder.name}
+              href={founder.linkedin || undefined}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(event) => {
+                if (isActive || !founder.linkedin) {
+                  if (!founder.linkedin) event.preventDefault();
+                  return;
+                }
+                if (event.metaKey || event.ctrlKey || event.shiftKey) return;
+                event.preventDefault();
+                handlePreview(index);
+              }}
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
+              aria-label={
+                isActive
+                  ? `LinkedIn profil – ${founder.name}`
+                  : `Zobraziť ${founder.name}`
+              }
+              className={pillClassName}
+            >
+              {pillContent}
+            </a>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
