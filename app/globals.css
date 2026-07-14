@@ -1644,6 +1644,15 @@ textarea {
   -webkit-text-stroke: 1px rgba(194, 22, 27, 0.16);
 }
 
+/* Portrait phones: run the watermark vertically and size it against
+   viewport height so it spans the whole screen. */
+@media (max-width: 767px) {
+  .notfound-watermark {
+    writing-mode: vertical-rl;
+    font-size: clamp(7rem, 27vh, 16rem);
+  }
+}
+
 @media (max-width: 767px) {
   .experience-band-glow {
     width: 72vw;
