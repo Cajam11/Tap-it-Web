@@ -1527,6 +1527,123 @@ textarea {
   box-shadow: 0 28px 90px rgba(15, 23, 42, 0.12);
 }
 
+/* 404 ---------------------------------------------------------------------- */
+
+/* The dock reserves the landscape footprint (19.2/9) of a .member-phone-frame
+   lying on its side; the portrait frame is centred inside and rotated, so
+   layout never sees the rotation. It is also a size container so the numeral
+   on the screen can scale with the dock via cqw. */
+.notfound-phone-dock {
+  position: relative;
+  width: min(100%, 600px);
+  aspect-ratio: 19.2 / 9;
+  container-type: inline-size;
+}
+
+/* Portrait width = landscape width * 9/19.2, so the rotated frame exactly
+   fills the dock. */
+.notfound-phone {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(100% * 9 / 19.2);
+  transform: translate(-50%, -50%) rotate(-90deg);
+}
+
+/* Sits under the screen glare (z-40) and speaker (z-45) so the numeral reads
+   as rendered on the display, not pasted over the device. */
+.notfound-screen-content {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(
+    ellipse 60% 44% at 50% 50%,
+    rgba(239, 36, 40, 0.14),
+    transparent 70%
+  );
+}
+
+.notfound-screen-code {
+  font-size: clamp(3rem, 24vw, 9.5rem);
+  font-size: clamp(3rem, 26cqw, 9.5rem);
+  text-shadow:
+    0 0 18px rgba(236, 234, 226, 0.35),
+    0 0 60px rgba(239, 36, 40, 0.25);
+}
+
+/* Same wash as the dark-mode hero shell: white bloom top, red glow left, blue
+   glow right, navy base — settling into page base at the bottom. */
+.notfound-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse 58% 42% at 50% 0%,
+      rgba(255, 255, 255, 0.08),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 58% 50% at 6% 40%,
+      rgba(239, 36, 40, 0.16),
+      transparent 74%
+    ),
+    radial-gradient(
+      ellipse 56% 46% at 94% 26%,
+      rgba(62, 99, 221, 0.22),
+      transparent 72%
+    ),
+    linear-gradient(180deg, #101524, #0b1020 55%, #09090d);
+}
+
+/* Light variant mirrors the light hero: blue-white bloom, faint red/blue
+   glows, settling to white. The phone screen itself stays dark via the
+   existing .theme-light .member-phone-screen rule. */
+.theme-light .notfound-bg {
+  background:
+    radial-gradient(
+      ellipse 58% 42% at 50% 0%,
+      rgba(219, 235, 255, 0.75),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 58% 50% at 6% 40%,
+      rgba(239, 36, 40, 0.07),
+      transparent 74%
+    ),
+    radial-gradient(
+      ellipse 56% 46% at 94% 26%,
+      rgba(62, 99, 221, 0.09),
+      transparent 72%
+    ),
+    linear-gradient(180deg, #eef6ff, #f7f9fd 55%, #ffffff);
+}
+
+/* Oversized brand watermark behind the whole composition; accent-soft stroke
+   with a whisper of fill so it reads as etched into the background. */
+.notfound-watermark {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  font-size: clamp(7.5rem, 26vw, 24rem);
+  color: rgba(255, 179, 181, 0.025);
+  -webkit-text-stroke: 1px rgba(255, 179, 181, 0.1);
+}
+
+/* Pinkish-red etch so the watermark stays visible on the light wash. */
+.theme-light .notfound-watermark {
+  color: rgba(194, 22, 27, 0.03);
+  -webkit-text-stroke: 1px rgba(194, 22, 27, 0.16);
+}
+
 @media (max-width: 767px) {
   .experience-band-glow {
     width: 72vw;
