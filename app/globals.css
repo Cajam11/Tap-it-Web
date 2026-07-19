@@ -67,7 +67,10 @@ textarea {
   @apply text-accent-soft;
 }
 
-.theme-light.bg-base {
+/* The theme class lives on <html> (set pre-paint by the bootstrap script), so
+   the page shell is matched via body and the page-level <main>. */
+.theme-light body,
+.theme-light main.bg-base {
   color: #172033;
   background:
     radial-gradient(

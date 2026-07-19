@@ -1,11 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import { ArrowLeft, Moon, Sun } from "lucide-react";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
-
-type ThemeMode = "light" | "dark";
+import { useThemeMode } from "./use-theme";
 
 const revealContainer: Variants = {
   hidden: {},
@@ -14,7 +12,7 @@ const revealContainer: Variants = {
 
 export default function NotFoundContent() {
   const reduceMotion = useReducedMotion();
-  const [theme, setTheme] = useState<ThemeMode>("dark");
+  const { theme, toggleTheme } = useThemeMode();
   const isDark = theme === "dark";
 
   const revealItem: Variants = {
@@ -28,7 +26,7 @@ export default function NotFoundContent() {
 
   return (
     <main
-      className={`theme-${theme} relative flex min-h-screen flex-col overflow-x-clip bg-base text-slate-100`}
+      className="relative flex min-h-screen flex-col overflow-x-clip bg-base text-slate-100"
     >
       <div aria-hidden="true" className="grain-overlay" />
       <div aria-hidden="true" className="notfound-bg" />
@@ -50,7 +48,7 @@ export default function NotFoundContent() {
           <motion.button
             variants={revealItem}
             type="button"
-            onClick={() => setTheme(isDark ? "light" : "dark")}
+            onClick={toggleTheme}
             aria-label={
               isDark ? "Prepnúť na svetlý režim" : "Prepnúť na tmavý režim"
             }

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Manrope } from "next/font/google";
 import "./globals.css";
+import { themeBootstrapScript } from "./use-theme";
 import {
   seoKeywords,
   siteDescription,
@@ -81,7 +82,11 @@ export default function RootLayout({
     <html
       lang="sk"
       className={`${fraunces.variable} ${manrope.variable} scroll-smooth`}
+      suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBootstrapScript }} />
+      </head>
       <body className="bg-base font-sans text-slate-100 antialiased">
         {children}
         <script

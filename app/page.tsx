@@ -1,6 +1,7 @@
 "use client";
 
 import Image, { type StaticImageData } from "next/image";
+import { useThemeMode, type ThemeMode } from "./use-theme";
 import {
   Activity,
   ArrowLeft,
@@ -19,6 +20,7 @@ import {
   MapPin,
   Menu,
   Moon,
+  MousePointerClick,
   Phone,
   ScanLine,
   Smartphone,
@@ -599,21 +601,15 @@ const nextItems = [
   "Rýchlejší onboarding nového gymu a tímu",
 ];
 
-type ThemeMode = "light" | "dark";
 type ContactSubmitStatus = "idle" | "submitting" | "success" | "error";
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [theme, setTheme] = useState<ThemeMode>("dark");
+  const { theme, toggleTheme } = useThemeMode();
   const year = useMemo(() => new Date().getFullYear(), []);
-  const toggleTheme = () => {
-    setTheme((current) => (current === "light" ? "dark" : "light"));
-  };
 
   return (
-    <main
-      className={`min-h-screen overflow-x-clip bg-base text-slate-100 theme-${theme}`}
-    >
+    <main className="min-h-screen overflow-x-clip bg-base text-slate-100">
       <div aria-hidden="true" className="grain-overlay" />
       <Navigation
         menuOpen={menuOpen}
@@ -1172,10 +1168,16 @@ function DesktopHeroProductShowcase({
           <motion.div
             aria-hidden="true"
             style={reduceMotion ? { opacity: 1 } : { opacity: hintOpacity }}
-            className="tour-scroll-hint pointer-events-none absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 text-[0.7rem] font-bold uppercase tracking-[0.24em]"
+            className="tour-scroll-hint pointer-events-none absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center gap-1.5 text-[0.7rem] font-bold uppercase tracking-[0.24em]"
           >
-            Skroluj galériou
-            <ArrowRight className="h-3.5 w-3.5" />
+            <span className="flex items-center gap-2 text-[0.62rem] opacity-70">
+              <MousePointerClick className="h-3.5 w-3.5" />
+              Klikni na obrázok pre viac informácií
+            </span>
+            <span className="flex items-center gap-2">
+              Skroluj galériou
+              <ArrowRight className="h-3.5 w-3.5" />
+            </span>
           </motion.div>
         </div>
       </div>
