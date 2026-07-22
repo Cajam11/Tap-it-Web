@@ -853,7 +853,7 @@ function HeroCopy({ variant }: { variant: "mobile" | "desktop" }) {
         variants={revealItem}
         className={
           isDesktop
-            ? "hero-title mt-6 max-w-6xl text-balance text-[2.9rem] font-black leading-[0.95] tracking-tight text-slate-950 sm:text-6xl lg:text-7xl xl:text-8xl"
+            ? "hero-title mt-6 max-w-6xl text-balance text-[2.9rem] font-black leading-[0.95] tracking-tight text-slate-950 sm:text-6xl lg:text-[clamp(4.5rem,6.9vw,8rem)] 2xl:max-w-[90rem]"
             : "hero-title mt-5 max-w-xl text-balance text-[2.35rem] font-black leading-[0.95] tracking-tight text-slate-950 min-[390px]:text-[2.55rem] sm:text-6xl"
         }
       >
@@ -865,7 +865,7 @@ function HeroCopy({ variant }: { variant: "mobile" | "desktop" }) {
         variants={revealItem}
         className={
           isDesktop
-            ? "hero-copy mt-6 max-w-2xl text-pretty text-base font-semibold leading-7 text-slate-600 sm:text-lg"
+            ? "hero-copy mt-6 max-w-2xl text-pretty text-base font-semibold leading-7 text-slate-600 sm:text-lg 2xl:mt-8 2xl:max-w-3xl 2xl:text-xl 2xl:leading-8"
             : "hero-copy mt-4 max-w-md text-pretty text-sm font-semibold leading-6 text-slate-600 sm:text-base"
         }
       >
@@ -1129,7 +1129,7 @@ function DesktopHeroProductShowcase({
             variants={revealContainer}
             initial="hidden"
             animate="visible"
-            className="pointer-events-none absolute inset-x-0 top-[7rem] z-20 mx-auto flex max-w-5xl flex-col items-center px-8 text-center"
+            className="pointer-events-none absolute inset-x-0 top-[7rem] z-20 mx-auto flex max-w-5xl flex-col items-center px-8 text-center 2xl:max-w-[90rem]"
           >
             <HeroCopy variant="desktop" />
           </motion.div>
@@ -1319,52 +1319,52 @@ function TourDetailOverlay({
             initial={reduceMotion ? false : { opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="grid w-full max-w-7xl items-center gap-10 lg:grid-cols-[1.55fr_1fr] lg:gap-16"
+            className="grid w-full max-w-7xl items-center gap-10 lg:grid-cols-[1.55fr_1fr] lg:gap-16 2xl:max-w-[2000px] 2xl:gap-24"
           >
             <div className="order-2 lg:order-1">
               <BrowserFrame
                 image={screen.image}
                 alt={screen.alt}
                 label="Tap-it admin"
-                sizes="(min-width: 1024px) 820px, 92vw"
+                sizes="(min-width: 1536px) 1200px, (min-width: 1024px) 820px, 92vw"
               />
             </div>
 
             <div className="order-1 lg:order-2">
-              <p className="tour-detail-eyebrow text-xs font-bold uppercase tracking-[0.32em]">
+              <p className="tour-detail-eyebrow text-xs font-bold uppercase tracking-[0.32em] 2xl:text-sm">
                 Tap-it admin — {String(activeIndex + 1).padStart(2, "0")} /{" "}
                 {String(tourScreens.length).padStart(2, "0")}
               </p>
-              <h2 className="tour-detail-title mt-5 font-display text-4xl font-semibold tracking-tight sm:text-5xl">
+              <h2 className="tour-detail-title mt-5 font-display text-4xl font-semibold tracking-tight sm:text-5xl 2xl:mt-6 2xl:text-7xl">
                 {screen.title}
               </h2>
-              <p className="tour-detail-body mt-5 max-w-md text-base leading-7 sm:text-lg">
+              <p className="tour-detail-body mt-5 max-w-md text-base leading-7 sm:text-lg 2xl:mt-7 2xl:max-w-xl 2xl:text-2xl 2xl:leading-9">
                 {screen.body}
               </p>
 
-              <div className="tour-detail-rule mt-8 h-px w-full" />
+              <div className="tour-detail-rule mt-8 h-px w-full 2xl:mt-10" />
 
-              <div className="mt-6 flex items-center gap-8">
+              <div className="mt-6 flex items-center gap-8 2xl:mt-8">
                 <button
                   type="button"
                   onClick={onPrev}
-                  className="tour-detail-nav group inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.2em] transition"
+                  className="tour-detail-nav group inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.2em] transition 2xl:text-base"
                 >
                   <ArrowLeft
                     aria-hidden="true"
-                    className="h-4 w-4 transition group-hover:-translate-x-1"
+                    className="h-4 w-4 transition group-hover:-translate-x-1 2xl:h-5 2xl:w-5"
                   />
                   Späť
                 </button>
                 <button
                   type="button"
                   onClick={onNext}
-                  className="tour-detail-nav group inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.2em] transition"
+                  className="tour-detail-nav group inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.2em] transition 2xl:text-base"
                 >
                   Ďalej
                   <ArrowRight
                     aria-hidden="true"
-                    className="h-4 w-4 transition group-hover:translate-x-1"
+                    className="h-4 w-4 transition group-hover:translate-x-1 2xl:h-5 2xl:w-5"
                   />
                 </button>
               </div>
