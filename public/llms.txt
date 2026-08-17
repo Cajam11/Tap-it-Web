@@ -8,7 +8,15 @@ Tap-it Fitness OS je softvér pre fitká a fitness centrá. Rieši QR vstupy, č
 
 ## Pre koho je produkt
 
-Produkt je určený pre majiteľov fitness centier a gymov, ktorí nechcú krabicový softvér a potrebujú systém prispôsobený recepcii, členom, vstupu, hardvéru a existujúcim dátam.
+Produkt je určený pre majiteľov fitness centier a gymov, ktorí nechcú krabicový softvér a potrebujú systém prispôsobený recepcii, členom, vstupu, hardvéru a existujúcim dátam. Zvládne aj bezobslužné a nonstop (24/7) fitká, kde vstup stojí celý na pravidlách systému a turnikete.
+
+## Bezplatný audit prevádzky
+
+Spolupráca sa začína bezplatným prevádzkovým auditom. Audit mapuje vstupy, členstvá, dáta, hardvér, recepčné postupy, rezervácie a výpadkové scenáre. Jeho výstupom je mapa modulov, priorít, rizík a pilotného rozsahu pre prvé nasadenie.
+
+## Ako sa určuje cena
+
+Tap-it nemá verejný cenník s balíkmi, pretože ide o softvér skladaný podľa konkrétnej prevádzky, nie o krabicové predplatné. Cenu určuje počet vstupov a turniketov, počet členov, potrebný hardvér, zložitosť migrácie dát a množstvo výnimiek v prevádzke. Postup je: bezplatný audit → rozsah → cena.
 
 ## Dôležité témy
 
@@ -21,8 +29,10 @@ Produkt je určený pre majiteľov fitness centier a gymov, ktorí nechcú krabi
 - správa členstiev
 - mobilná appka pre fitko
 - migrácia fitness systému
+- bezobslužné a nonstop fitko
 
 ## Kontakt
 
 Web: https://www.tap-it.sk
 E-mail: info@tap-it.sk
+Prvý krok: bezplatný audit prevádzky cez kontaktný formulár na https://www.tap-it.sk/#kontakt

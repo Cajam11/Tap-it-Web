@@ -3,7 +3,6 @@ import { Fraunces, Manrope } from "next/font/google";
 import "./globals.css";
 import { themeBootstrapScript } from "./use-theme";
 import {
-  seoKeywords,
   siteDescription,
   siteName,
   siteTitle,
@@ -31,8 +30,9 @@ export const metadata: Metadata = {
     template: `%s | ${siteName}`,
   },
   description: siteDescription,
+  // No `keywords` meta: Google has ignored it since 2009. The keyword list
+  // still earns its keep in the JSON-LD `knowsAbout` graph and in llms.txt.
   applicationName: "Tap-it Fitness OS",
-  keywords: seoKeywords,
   authors: [{ name: "Tap-it" }],
   creator: "Tap-it",
   publisher: "Tap-it",

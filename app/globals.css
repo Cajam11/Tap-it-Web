@@ -650,6 +650,42 @@ textarea {
     drop-shadow(0 24px 44px rgba(0, 0, 0, 0.24));
 }
 
+/* Hero copy reveal. Deliberately CSS rather than framer-motion variants: the
+   above-the-fold headline, paragraph and CTA then reach crawlers and link
+   preview bots without an inline `opacity:0` in the prerendered HTML, so they
+   read the copy even if hydration never runs. */
+.hero-reveal {
+  animation: hero-reveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-reveal-1 {
+  animation-delay: 0.05s;
+}
+
+.hero-reveal-2 {
+  animation-delay: 0.15s;
+}
+
+.hero-reveal-3 {
+  animation-delay: 0.25s;
+}
+
+.hero-reveal-4 {
+  animation-delay: 0.35s;
+}
+
+@keyframes hero-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .theme-dark .hero-title {
   color: #f8fafc;
 }
@@ -1682,5 +1718,11 @@ textarea {
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.001ms !important;
+  }
+
+  /* The staggered hero reveal fills backwards, so without clearing the delay
+     the copy would still sit at opacity 0 for up to 350ms. */
+  .hero-reveal {
+    animation-delay: 0s !important;
   }
 }

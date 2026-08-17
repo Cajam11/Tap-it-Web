@@ -30,4 +30,14 @@ export const fitnessFaqItems = [
     answer:
       "Začíname auditom a pilotným rozsahom. Typický prvý rámec rozdeľujeme na audit a export, prípravu adminu a importu, appku s hardvérom a potom školenie s ostrým prepnutím. Presný termín závisí od dát, hardvéru a rozsahu výnimiek.",
   },
+  {
+    question: "Koľko stojí prevádzkový audit a ako sa určuje cena systému?",
+    answer:
+      "Prevádzkový audit je bezplatný. Cenu systému nedávame ako balík z cenníka, pretože rozsah sa gym od gymu líši. Vplýva na ňu počet vstupov a turniketov, počet členov, potrebný hardvér, zložitosť migrácie dát a množstvo výnimiek v prevádzke. Postup je preto opačný ako pri krabicovom softvéri: z bezplatného auditu vyjde rozsah a až z rozsahu vyjde cena.",
+  },
+  {
+    question: "Funguje Tap-it aj v bezobslužnom alebo nonstop fitku?",
+    answer:
+      "Áno. Pri prevádzke bez stálej recepcie stojí vstup celý na pravidlách systému: QR token člena, kontrola platného členstva, otvorenie turniketu, scan log a záložný postup pri výpadku internetu alebo hardvéru. Ten istý systém zvládne aj hybridný režim, keď je recepcia obsadená len časť dňa.",
+  },
 ];

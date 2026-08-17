@@ -43,6 +43,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type ElementType,
   type FormEvent,
   type MouseEvent as ReactMouseEvent,
   type ReactNode,
@@ -433,7 +434,7 @@ const valueCards = [
   },
   {
     title: "Prechod pred veľkým záväzkom",
-    text: "Začíname auditom dát, hardvéru a najdôležitejšieho vstupného postupu, nie verejnou tabuľkou s balíkmi.",
+    text: "Začíname bezplatným auditom dát, hardvéru a najdôležitejšieho vstupného postupu, nie verejnou tabuľkou s balíkmi.",
     icon: Activity,
   },
 ];
@@ -465,7 +466,7 @@ const comparisonColumns = [
   {
     title: "Tap-it OS",
     badge: "Softvér sa skladá podľa gymu",
-    text: "Začíname auditom prevádzky, dát a vstupu. Následne navrhneme prechod, hardvér a pilotnú fázu presne podľa potrieb gymu.",
+    text: "Začíname bezplatným auditom prevádzky, dát a vstupu. Následne navrhneme prechod, hardvér a pilotnú fázu presne podľa potrieb gymu.",
     outcome: "Výsledok: prvý prechod rieši dáta, vstup, hardvér aj členovskú appku.",
     icon: BadgeCheck,
     points: [
@@ -719,7 +720,7 @@ function Navigation({
             onClick={(event) => handleNavClick(event, "#kontakt")}
             className="hidden h-10 items-center justify-center rounded-full bg-accent px-5 text-sm font-bold text-white shadow-brand transition hover:bg-accent-bright focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft active:translate-y-px md:inline-flex"
           >
-            Dohodnúť audit
+            Bezplatný audit
           </a>
           <button
             type="button"
@@ -770,7 +771,7 @@ function Navigation({
             onClick={() => setMenuOpen(false)}
             className="mt-1 rounded-xl bg-accent px-4 py-3 text-center text-sm font-bold text-white transition hover:bg-accent-bright"
           >
-            Dohodnúť audit
+            Bezplatný audit
           </a>
         </div>
       ) : null}
@@ -837,50 +838,61 @@ function HeroProductShowcase() {
 function HeroCopy({ variant }: { variant: "mobile" | "desktop" }) {
   const isDesktop = variant === "desktop";
 
+  // Both hero trees sit in the served HTML at once (each is display:none at the
+  // other's breakpoint), so only the mobile tree — the one Googlebot lays out
+  // under mobile-first indexing — carries the real <h1>. The desktop copy is
+  // still announced as a level-1 heading through ARIA, so assistive tech on
+  // wide screens loses nothing while the document parses with exactly one <h1>.
+  const HeroHeading: ElementType = isDesktop ? "div" : "h1";
+  const headingRole = isDesktop
+    ? ({ role: "heading", "aria-level": 1 } as const)
+    : null;
+
+  // The reveal runs as a CSS animation instead of framer-motion variants: the
+  // prerendered HTML then ships the above-the-fold copy without an inline
+  // `opacity:0`, so crawlers and link-preview bots read it whether or not
+  // hydration ever runs.
   return (
     <>
-      <motion.div
-        variants={revealItem}
-        className={`hero-chip inline-flex items-center gap-2 rounded-full border border-accent/20 bg-white/75 px-3 py-1.5 text-xs font-bold text-accent-deep shadow-[0_10px_30px_rgba(15,23,42,0.08)] ${
+      <div
+        className={`hero-chip hero-reveal hero-reveal-1 inline-flex items-center gap-2 rounded-full border border-accent/20 bg-white/75 px-3 py-1.5 text-xs font-bold text-accent-deep shadow-[0_10px_30px_rgba(15,23,42,0.08)] ${
           isDesktop ? "backdrop-blur" : ""
         }`}
       >
         <span className="h-1.5 w-1.5 rounded-full bg-accent-bright" />
         Tap-it Fitness OS
-      </motion.div>
+      </div>
 
-      <motion.h1
-        variants={revealItem}
+      <HeroHeading
+        {...headingRole}
         className={
           isDesktop
-            ? "hero-title mt-6 max-w-6xl text-balance text-[2.9rem] font-black leading-[0.95] tracking-tight text-slate-950 sm:text-6xl lg:text-[clamp(4.5rem,6.9vw,8rem)] 2xl:max-w-[90rem]"
-            : "hero-title mt-5 max-w-xl text-balance text-[2.35rem] font-black leading-[0.95] tracking-tight text-slate-950 min-[390px]:text-[2.55rem] sm:text-6xl"
+            ? "hero-title hero-reveal hero-reveal-2 mt-6 max-w-6xl text-balance text-[2.9rem] font-black leading-[0.95] tracking-tight text-slate-950 sm:text-6xl lg:text-[clamp(4.5rem,6.9vw,8rem)] 2xl:max-w-[90rem]"
+            : "hero-title hero-reveal hero-reveal-2 mt-5 max-w-xl text-balance text-[2.35rem] font-black leading-[0.95] tracking-tight text-slate-950 min-[390px]:text-[2.55rem] sm:text-6xl"
         }
       >
         <span className="block">Softvér pre fitká,</span>
         <span className="block">ktoré nechcú krabicový systém.</span>
-      </motion.h1>
+      </HeroHeading>
 
-      <motion.p
-        variants={revealItem}
+      <p
         className={
           isDesktop
-            ? "hero-copy mt-6 max-w-2xl text-pretty text-base font-semibold leading-7 text-slate-600 sm:text-lg 2xl:mt-8 2xl:max-w-3xl 2xl:text-xl 2xl:leading-8"
-            : "hero-copy mt-4 max-w-md text-pretty text-sm font-semibold leading-6 text-slate-600 sm:text-base"
+            ? "hero-copy hero-reveal hero-reveal-3 mt-6 max-w-2xl text-pretty text-base font-semibold leading-7 text-slate-600 sm:text-lg 2xl:mt-8 2xl:max-w-3xl 2xl:text-xl 2xl:leading-8"
+            : "hero-copy hero-reveal hero-reveal-3 mt-4 max-w-md text-pretty text-sm font-semibold leading-6 text-slate-600 sm:text-base"
         }
       >
         Tap-it Fitness OS spája QR vstupy, členstvá, rezervácie, turnikety a appku
         do jedného systému podľa tvojej prevádzky.
-      </motion.p>
+      </p>
 
-      <motion.div
-        variants={revealItem}
-        className={`pointer-events-auto flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row ${
+      <div
+        className={`hero-reveal hero-reveal-4 pointer-events-auto flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row ${
           isDesktop ? "mt-8" : "mt-5"
         }`}
       >
         <a href="#kontakt" className="primary-button w-full sm:w-auto">
-          Dohodnúť audit
+          Bezplatný audit prevádzky
           <ArrowRight aria-hidden="true" className="h-4 w-4" />
         </a>
         <a
@@ -890,7 +902,7 @@ function HeroCopy({ variant }: { variant: "mobile" | "desktop" }) {
         >
           Pozrieť produkt
         </a>
-      </motion.div>
+      </div>
     </>
   );
 }
@@ -921,14 +933,9 @@ function MobileHeroProductShowcase({
           />
           <div aria-hidden="true" className="hero-grid opacity-60" />
 
-          <motion.div
-            variants={revealContainer}
-            initial="hidden"
-            animate="visible"
-            className="relative z-20 flex max-w-xl flex-col items-center text-center"
-          >
+          <div className="relative z-20 flex max-w-xl flex-col items-center text-center">
             <HeroCopy variant="mobile" />
-          </motion.div>
+          </div>
 
           <motion.button
             type="button"
@@ -1126,9 +1133,6 @@ function DesktopHeroProductShowcase({
 
           <motion.div
             style={{ y: contentY, opacity: contentOpacity }}
-            variants={revealContainer}
-            initial="hidden"
-            animate="visible"
             className="pointer-events-none absolute inset-x-0 top-[7rem] z-20 mx-auto flex max-w-5xl flex-col items-center px-8 text-center 2xl:max-w-[90rem]"
           >
             <HeroCopy variant="desktop" />
@@ -1666,7 +1670,7 @@ function AuditSection() {
               viewport={{ once: true, margin: "-80px" }}
             >
               <motion.p variants={revealItem} className="section-kicker">
-                Prevádzkový audit
+                Bezplatný prevádzkový audit
               </motion.p>
               <motion.h2
                 variants={revealItem}
@@ -1678,9 +1682,18 @@ function AuditSection() {
                 variants={revealItem}
                 className="mt-5 max-w-xl text-base leading-7 text-slate-300"
               >
-                Audit nie je formalita pred cenovou ponukou. Je to mapa, ktorá
-                rozhodne, čo má ísť do pilotu a čo by bolo len drahé
-                rozptýlenie.
+                Audit je bezplatný a nie je to formalita pred cenovou ponukou.
+                Je to mapa, ktorá rozhodne, čo má ísť do pilotu a čo by bolo len
+                drahé rozptýlenie.
+              </motion.p>
+              <motion.p
+                variants={revealItem}
+                className="mt-4 max-w-xl text-base leading-7 text-slate-400"
+              >
+                Preto nemáme verejný cenník s balíkmi. Cenu určuje počet vstupov
+                a turniketov, počet členov, potrebný hardvér, zložitosť migrácie
+                dát a množstvo výnimiek v prevádzke. Z bezplatného auditu vyjde
+                rozsah a až z rozsahu vyjde cena.
               </motion.p>
               <motion.div
                 variants={revealItem}
@@ -2374,11 +2387,13 @@ function ContactSection() {
               </h2>
               <p className="mt-5 max-w-lg text-base leading-7 text-slate-400">
                 Napíš, z čoho dnes prechádzaš, aký hardvér riešiš a čo nesmie
-                počas prepnutia spadnúť. Ozveme sa s návrhom auditu.
+                počas prepnutia spadnúť. Ozveme sa s návrhom bezplatného auditu
+                prevádzky.
               </p>
 
               <div className="mt-8 grid gap-3">
                 {[
+                  "Audit prevádzky je bezplatný, aj s výstupom",
                   "Kompletný prechod z aktuálneho riešenia",
                   "Turnikety, QR skenery a záložný postup recepcie",
                   "Bez newslettera. Len odpoveď k Tap-it prechodu",
@@ -2405,7 +2420,7 @@ function ContactSection() {
                 </p>
                 <p className="mt-3 max-w-md text-sm leading-7 text-slate-400">
                   Správa je odoslaná na Tap-it e-mail. Ozveme sa s návrhom
-                  auditu alebo ďalším krokom.
+                  bezplatného auditu alebo ďalším krokom.
                 </p>
               </div>
             ) : (

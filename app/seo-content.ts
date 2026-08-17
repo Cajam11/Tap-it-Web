@@ -10,7 +10,7 @@ export const siteTitle =
   "Softvér pre fitká | Tap-it Fitness OS, QR vstupy a členstvá";
 
 export const siteDescription =
-  "Tap-it Fitness OS je softvér pre fitká a fitness centrá: QR vstupy, členstvá, rezervácie, migrácia z existujúceho systému, turnikety, skenery, admin panel a mobilná appka.";
+  "Bezplatný audit prevádzky. Tap-it Fitness OS je softvér pre fitká a fitness centrá: QR vstupy, členstvá, rezervácie, turnikety, migrácia z existujúceho systému, admin panel a mobilná appka.";
 
 export const seoKeywords = [
   "softvér pre fitká",
@@ -65,6 +65,19 @@ export const structuredData = {
       },
       knowsAbout: seoKeywords,
       makesOffer: [
+        {
+          "@type": "Offer",
+          name: "Bezplatný prevádzkový audit fitness centra",
+          description:
+            "Audit vstupov, členstiev, dát, hardvéru a recepčných postupov, z ktorého vyjde rozsah nasadenia. Audit je bezplatný.",
+          price: "0",
+          priceCurrency: "EUR",
+          itemOffered: {
+            "@type": "Service",
+            name: "Prevádzkový audit fitness centra",
+            serviceType: "Gym operations audit",
+          },
+        },
         {
           "@type": "Offer",
           itemOffered: {

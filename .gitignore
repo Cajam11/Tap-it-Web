@@ -33,3 +33,6 @@ Thumbs.db
 artifacts/
 .next-dev.log
 .next-dev.err
+
+# Local research notes
+tap-it-seo-analysis-and-recommendations.md
