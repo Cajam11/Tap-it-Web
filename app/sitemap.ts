@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { siteUrl } from "./seo-content";
+import { allPageSeo } from "./site-pages";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // Evaluated at build time, so a deploy always ships a truthful lastModified
@@ -14,5 +15,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 1,
     },
+    ...allPageSeo.map((page) => ({
+      url: `${siteUrl}${page.path}`,
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    })),
   ];
 }
