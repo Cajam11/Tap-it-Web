@@ -33,16 +33,30 @@ export function PageHero({
   lead,
   breadcrumb,
   points,
+  media,
 }: {
   kicker: string;
   title: ReactNode;
   lead: string;
   breadcrumb: string;
   points?: readonly string[];
+  /**
+   * Optional artwork for the right-hand column. With it the hero becomes a
+   * two-column split at `lg`; without it the layout is unchanged, so the three
+   * text-only sub-page heroes keep their full-width measure.
+   */
+  media?: ReactNode;
 }) {
   return (
     <section className="px-4 pb-16 pt-28 sm:px-6 sm:pt-32 lg:pb-20 lg:pt-40">
-      <div className="mx-auto max-w-7xl">
+      <div
+        className={
+          media
+            ? "mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-[minmax(0,31rem)_minmax(0,1fr)] lg:gap-16"
+            : "mx-auto max-w-7xl"
+        }
+      >
+        <div className="min-w-0">
         <nav aria-label="Omrvinková navigácia">
           <ol className="hero-reveal hero-reveal-1 flex flex-wrap items-center gap-1 text-xs font-bold text-slate-500">
             <li>
@@ -68,7 +82,11 @@ export function PageHero({
         </p>
 
         {points ? (
-          <ul className="hero-reveal hero-reveal-3 mt-8 grid max-w-3xl gap-2 sm:grid-cols-2">
+          <ul
+            className={`hero-reveal hero-reveal-3 mt-8 grid max-w-3xl gap-2 ${
+              media ? "" : "sm:grid-cols-2"
+            }`}
+          >
             {points.map((point) => (
               <li
                 key={point}
@@ -93,6 +111,11 @@ export function PageHero({
             Pozrieť platformu
           </Link>
         </div>
+        </div>
+
+        {media ? (
+          <div className="hero-reveal hero-reveal-4 min-w-0">{media}</div>
+        ) : null}
       </div>
     </section>
   );

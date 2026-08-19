@@ -66,7 +66,6 @@ import { ContactSection } from "./components/contact-section";
 import { revealContainer, revealItem } from "./components/motion-variants";
 import { SiteFooter } from "./components/site-footer";
 import { SiteNavigation } from "./components/site-navigation";
-import { scrollToAnchor } from "./components/site-links";
 
 type TourScreen = {
   title: string;
@@ -698,13 +697,12 @@ function HeroCopy({ variant }: { variant: "mobile" | "desktop" }) {
           Bezplatný audit prevádzky
           <ArrowRight aria-hidden="true" className="h-4 w-4" />
         </a>
-        <a
-          href="#produkt"
-          onClick={(event) => scrollToAnchor(event, "#produkt")}
+        <Link
+          href="/produkt"
           className="hero-secondary secondary-button w-full border-slate-950/10 bg-white/70 text-slate-950 hover:bg-white sm:w-auto"
         >
           Pozrieť produkt
-        </a>
+        </Link>
       </div>
     </>
   );
@@ -2033,17 +2031,19 @@ function StaticAppPhoneShot({
   priority?: boolean;
 }) {
   return (
-    <figure className="member-phone-frame">
-      <div aria-hidden="true" className="member-phone-speaker" />
-      <div className="member-phone-screen">
-        <Image
-          src={screen.image}
-          alt={screen.alt}
-          fill
-          priority={priority}
-          sizes="(min-width: 1280px) 240px, (min-width: 768px) 34vw, 74vw"
-          className="select-none object-cover"
-        />
+    <figure className="phone-shot">
+      <div className="member-phone-frame member-phone-frame--fluid">
+        <div aria-hidden="true" className="member-phone-speaker" />
+        <div className="member-phone-screen">
+          <Image
+            src={screen.image}
+            alt={screen.alt}
+            fill
+            priority={priority}
+            sizes="(min-width: 1280px) 240px, (min-width: 768px) 34vw, 74vw"
+            className="select-none object-cover"
+          />
+        </div>
       </div>
     </figure>
   );
