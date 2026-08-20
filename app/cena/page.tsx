@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import {
   Activity,
+  ArrowRight,
   CalendarClock,
   CreditCard,
   DoorOpen,
@@ -15,17 +16,43 @@ import {
   CardGrid,
   CheckList,
   FaqSection,
+  HeroSheet,
   NumberedSteps,
   PageHero,
   PageSection,
   Prose,
   RelatedPages,
+  SheetRow,
   SubPage,
 } from "../components/page-chrome";
 import { pageMetadata, pageStructuredData } from "../seo-content";
 import { cenaSeo } from "../site-pages";
 
 export const metadata: Metadata = pageMetadata(cenaSeo);
+
+/**
+ * The hero sheet: the quote this page would produce, with the amount column
+ * deliberately unfilled. The three lines are fixed and can be named today; the
+ * numbers next to them cannot be, and pretending otherwise is the thing the
+ * whole page argues against.
+ */
+const budgetLines = [
+  {
+    title: "Jednorazová implementácia",
+    note: "Migrácia dát, konfigurácia vstupných pravidiel, napojenie hardvéru, školenie tímu.",
+    value: "z rozsahu",
+  },
+  {
+    title: "Mesačný poplatok",
+    note: "Beh systému, aktualizácie a podpora.",
+    value: "podľa škály",
+  },
+  {
+    title: "Vstupný hardvér",
+    note: "Turnikety a skenery kupuješ priamo ty.",
+    value: "zostáva tvoj",
+  },
+];
 
 const priceDrivers = [
   {
@@ -135,6 +162,46 @@ export default function CenaPage() {
           "Hardvér kupuješ priamo ty a zostáva tvoj",
           "Výška vychádza z rozsahu, nie z tarifu",
         ]}
+        mediaSize="sheet"
+        media={
+          <HeroSheet
+            label="Rozpočet nasadenia"
+            meta="návrh"
+            caption="Položky vieme pomenovať hneď. Čísla k nim doplní bezplatný audit prevádzky."
+            footer={
+              <>
+                <span className="text-sm font-black tracking-tight text-white">
+                  Spolu
+                </span>
+                <span className="flex items-center gap-2 font-display text-lg italic text-accent-soft">
+                  vyjde z auditu
+                  <ArrowRight aria-hidden="true" className="h-4 w-4" />
+                </span>
+              </>
+            }
+          >
+            {budgetLines.map((line, index) => (
+              <SheetRow key={line.title}>
+                <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                  <span className="flex min-w-0 items-baseline gap-3">
+                    <span className="font-display text-sm font-semibold tabular-nums text-slate-400">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span className="text-sm font-black tracking-tight text-white">
+                      {line.title}
+                    </span>
+                  </span>
+                  <span className="ml-auto font-display text-base italic text-accent-soft">
+                    {line.value}
+                  </span>
+                </div>
+                <p className="mt-1.5 pl-7 text-xs font-semibold leading-6 text-slate-400">
+                  {line.note}
+                </p>
+              </SheetRow>
+            ))}
+          </HeroSheet>
+        }
       />
 
       <PageSection

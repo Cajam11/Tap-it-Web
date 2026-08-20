@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import {
   Activity,
   Bell,
+  Check,
   Clock,
   CreditCard,
   DoorOpen,
   ScanLine,
+  X,
 } from "lucide-react";
 
 import { JsonLd } from "../components/json-ld";
@@ -13,17 +15,49 @@ import {
   CardGrid,
   CheckList,
   FaqSection,
+  HeroSheet,
   NumberedSteps,
   PageHero,
   PageSection,
   Prose,
   RelatedPages,
+  SheetRow,
+  SheetTag,
   SubPage,
 } from "../components/page-chrome";
 import { pageMetadata, pageStructuredData } from "../seo-content";
 import { bezobsluzneSeo } from "../site-pages";
 
 export const metadata: Metadata = pageMetadata(bezobsluzneSeo);
+
+/**
+ * The hero sheet: a modelled night, not a record of one. No gym is live yet, so
+ * the log is labelled as a model — what it shows is the mechanism, including
+ * the refusal, which is the entry nobody else puts on a marketing page.
+ */
+const nightLog: {
+  time: string;
+  event: string;
+  state: string;
+  note?: string;
+}[] = [
+  {
+    time: "02:41",
+    event: "QR token overený, členstvo platné",
+    state: "Vstup",
+  },
+  {
+    time: "03:12",
+    event: "Členstvo exspirovalo o 4 dni skôr",
+    state: "Zamietnuté",
+    note: "Dôvod aj postup obnovy odoslaný do appky člena.",
+  },
+  {
+    time: "04:58",
+    event: "QR token overený, členstvo platné",
+    state: "Vstup",
+  },
+];
 
 const entryChain = [
   {
@@ -101,6 +135,54 @@ export default function BezobsluzneFitkoPage() {
           "Výpadkové scenáre riešené pri návrhu",
           "Hybridný režim s recepciou časť dňa",
         ]}
+        mediaSize="sheet"
+        media={
+          <HeroSheet
+            label="Scan log"
+            meta="modelová noc"
+            caption="Nikto pri dverách nestál. Rozhodlo pravidlo, člen dostal dôvod a ráno je celá noc dohľadateľná v admin paneli."
+            footer={
+              <>
+                <span className="text-sm font-black tracking-tight text-white">
+                  Ráno v admin paneli
+                </span>
+                <span className="font-display text-base italic text-accent-soft">
+                  2 vstupy · 1 zamietnutie
+                </span>
+              </>
+            }
+          >
+            {nightLog.map((entry) => {
+              const allowed = entry.state === "Vstup";
+
+              return (
+                <SheetRow key={entry.time}>
+                  <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+                    <span className="flex min-w-0 items-baseline gap-3">
+                      <span className="font-display text-sm font-semibold tabular-nums text-slate-400">
+                        {entry.time}
+                      </span>
+                      <span className="text-sm font-black tracking-tight text-white">
+                        {entry.event}
+                      </span>
+                    </span>
+                    <SheetTag
+                      icon={allowed ? Check : X}
+                      tone={allowed ? "muted" : "accent"}
+                    >
+                      {entry.state}
+                    </SheetTag>
+                  </div>
+                  {entry.note ? (
+                    <p className="mt-1.5 pl-12 text-xs font-semibold leading-6 text-slate-400">
+                      {entry.note}
+                    </p>
+                  ) : null}
+                </SheetRow>
+              );
+            })}
+          </HeroSheet>
+        }
       />
 
       <PageSection

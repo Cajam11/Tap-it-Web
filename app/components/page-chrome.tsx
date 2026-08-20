@@ -34,6 +34,7 @@ export function PageHero({
   breadcrumb,
   points,
   media,
+  mediaSize = "wide",
 }: {
   kicker: string;
   title: ReactNode;
@@ -42,17 +43,27 @@ export function PageHero({
   points?: readonly string[];
   /**
    * Optional artwork for the right-hand column. With it the hero becomes a
-   * two-column split at `lg`; without it the layout is unchanged, so the three
-   * text-only sub-page heroes keep their full-width measure.
+   * two-column split at `lg`; without it the layout is unchanged.
    */
   media?: ReactNode;
+  /**
+   * How much of the split the artwork takes. `"wide"` is for a screenshot that
+   * has to stay legible; `"sheet"` leaves the headline more measure, because a
+   * ruled document reads fine at half that width and a five-line H1 does not.
+   */
+  mediaSize?: "wide" | "sheet";
 }) {
+  const mediaColumns =
+    mediaSize === "sheet"
+      ? "lg:grid-cols-[minmax(0,36rem)_minmax(0,1fr)]"
+      : "lg:grid-cols-[minmax(0,31rem)_minmax(0,1fr)]";
+
   return (
     <section className="px-4 pb-16 pt-28 sm:px-6 sm:pt-32 lg:pb-20 lg:pt-40">
       <div
         className={
           media
-            ? "mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-[minmax(0,31rem)_minmax(0,1fr)] lg:gap-16"
+            ? `mx-auto grid max-w-7xl items-center gap-14 lg:gap-16 ${mediaColumns}`
             : "mx-auto max-w-7xl"
         }
       >
@@ -118,6 +129,92 @@ export function PageHero({
         ) : null}
       </div>
     </section>
+  );
+}
+
+/**
+ * Hero artwork for the sub-pages that have no screenshot to stand on. Each one
+ * draws the piece of paperwork its subject actually produces — a quote sheet, a
+ * data-mapping sheet, a scan log — so the right-hand column carries the page's
+ * argument instead of decoration. Ruled rows rather than cards, because that is
+ * the shape those documents already have.
+ */
+export function HeroSheet({
+  label,
+  meta,
+  children,
+  footer,
+  caption,
+}: {
+  label: string;
+  meta: string;
+  children: ReactNode;
+  footer?: ReactNode;
+  caption: string;
+}) {
+  return (
+    <figure className="mx-auto w-full max-w-lg lg:max-w-none">
+      <div className="overflow-hidden rounded-3xl border border-white/10 bg-surface shadow-float">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-white/10 bg-base px-5 py-4 sm:px-6">
+          <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-300">
+            {label}
+          </p>
+          <p className="text-xs font-bold tracking-tight text-slate-400">
+            {meta}
+          </p>
+        </div>
+
+        <div>{children}</div>
+
+        {footer ? (
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-white/10 bg-base px-5 py-4 sm:px-6">
+            {footer}
+          </div>
+        ) : null}
+      </div>
+      <figcaption className="mt-4 max-w-md text-sm font-semibold leading-6 text-slate-400">
+        {caption}
+      </figcaption>
+    </figure>
+  );
+}
+
+/** One ruled line of a `HeroSheet`. The header bar supplies the first rule. */
+export function SheetRow({ children }: { children: ReactNode }) {
+  return (
+    <div className="border-t border-white/10 px-5 py-4 first:border-t-0 sm:px-6">
+      {children}
+    </div>
+  );
+}
+
+/**
+ * Status marker at the end of a sheet row. Accent is reserved for the rows that
+ * are the page's actual point — the unresolved data, the refused entry — so the
+ * eye lands there rather than on the rows that are already fine.
+ */
+export function SheetTag({
+  icon: Icon,
+  tone = "muted",
+  children,
+}: {
+  icon: LucideIcon;
+  tone?: "muted" | "accent";
+  children: ReactNode;
+}) {
+  return (
+    <span
+      // `ml-auto`: a tag is always the trailing item of a wrapping row, so it
+      // stays right-aligned instead of dropping to the left of the next line.
+      className={`ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-bold ${
+        tone === "accent"
+          ? "border-accent/30 bg-accent-faint text-accent-soft"
+          : "border-white/10 text-slate-300"
+      }`}
+    >
+      <Icon aria-hidden="true" className="h-3.5 w-3.5" />
+      {children}
+    </span>
   );
 }
 

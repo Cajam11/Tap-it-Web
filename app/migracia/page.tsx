@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import {
+  ArrowRight,
   BadgeCheck,
   CalendarDays,
+  Check,
   CreditCard,
   DoorOpen,
   MapPin,
   ScanLine,
+  TriangleAlert,
   Users,
 } from "lucide-react";
 
@@ -14,17 +17,48 @@ import {
   CardGrid,
   CheckList,
   FaqSection,
+  HeroSheet,
   NumberedSteps,
   PageHero,
   PageSection,
   Prose,
   RelatedPages,
+  SheetRow,
+  SheetTag,
   SubPage,
 } from "../components/page-chrome";
 import { pageMetadata, pageStructuredData } from "../seo-content";
 import { migraciaSeo } from "../site-pages";
 
 export const metadata: Metadata = pageMetadata(migraciaSeo);
+
+/**
+ * The hero sheet: where the data actually lives before a prechod, mapped to
+ * where it has to land. The last two rows are the page's point — they are the
+ * ones no export produces, and the ones that decide whether the switch holds.
+ */
+const dataMapping = [
+  {
+    from: "Export zo starého systému",
+    to: "Členovia a role",
+    state: "Sedí",
+  },
+  {
+    from: "Tabuľka na recepcii",
+    to: "Členstvá a expirácie",
+    state: "Sedí",
+  },
+  {
+    from: "Bločky a ústne dohody",
+    to: "Nevyčerpané vstupy",
+    state: "Dohľadať",
+  },
+  {
+    from: "Zošit vedľa monitora",
+    to: "Výnimky pri vstupe",
+    state: "Na audit",
+  },
+] as const;
 
 const mappedData = [
   {
@@ -123,6 +157,55 @@ export default function MigraciaPage() {
           "Recepcia je zaškolená skôr, než sa prepína",
           "Záložný postup je dohodnutý dopredu",
         ]}
+        mediaSize="sheet"
+        media={
+          <HeroSheet
+            label="Mapovanie dát"
+            meta="pred prepnutím"
+            caption="Zvyšné dva riadky sú dôvod, prečo prechody padajú. Riešia sa pred importom, nie po ňom."
+            footer={
+              <>
+                <span className="text-sm font-black tracking-tight text-white">
+                  Pripravené na import
+                </span>
+                <span className="font-display text-base italic text-accent-soft">
+                  2 zo 4 riadkov
+                </span>
+              </>
+            }
+          >
+            {dataMapping.map((row) => {
+              const resolved = row.state === "Sedí";
+
+              return (
+                <SheetRow key={row.to}>
+                  <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+                    <span className="min-w-0">
+                      <span className="block text-xs font-semibold leading-5 text-slate-400">
+                        {row.from}
+                      </span>
+                      <span className="mt-1 flex items-center gap-2">
+                        <ArrowRight
+                          aria-hidden="true"
+                          className="h-3.5 w-3.5 shrink-0 text-accent-soft"
+                        />
+                        <span className="text-sm font-black tracking-tight text-white">
+                          {row.to}
+                        </span>
+                      </span>
+                    </span>
+                    <SheetTag
+                      icon={resolved ? Check : TriangleAlert}
+                      tone={resolved ? "muted" : "accent"}
+                    >
+                      {row.state}
+                    </SheetTag>
+                  </div>
+                </SheetRow>
+              );
+            })}
+          </HeroSheet>
+        }
       />
 
       <PageSection
