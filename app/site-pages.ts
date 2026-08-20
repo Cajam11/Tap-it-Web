@@ -1,3 +1,4 @@
+import { legalEffectiveIso } from "./legal-content";
 import type { PageSeo } from "./seo-content";
 
 /**
@@ -152,9 +153,61 @@ export const bezobsluzneSeo: PageSeo = {
   ],
 };
 
+/**
+ * Právne dokumenty. Nemajú `service` ani `faq`: nič nepredávajú, takže z grafu
+ * im stačí WebPage s dátumom účinnosti a omrvinkou.
+ */
+
+export const obchodnePodmienkySeo: PageSeo = {
+  path: "/obchodne-podmienky",
+  title: "Všeobecné obchodné podmienky",
+  ogTitle: "Všeobecné obchodné podmienky | Tap-it",
+  description:
+    "Všeobecné obchodné podmienky Tap-it: rozsah služieb, bezplatný audit, cena a platobné podmienky, hardvér, licencia, ochrana údajov, zodpovednosť, trvanie a ukončenie spolupráce.",
+  breadcrumb: "Obchodné podmienky",
+  updated: legalEffectiveIso,
+};
+
+export const ochranaUdajovSeo: PageSeo = {
+  path: "/ochrana-osobnych-udajov",
+  title: "Ochrana osobných údajov",
+  ogTitle: "Ochrana osobných údajov | Tap-it",
+  description:
+    "Ako Tap-it spracúva osobné údaje: aké údaje zbierame z kontaktného formulára a komunikácie, na akom právnom základe, ako dlho ich uchovávame, komu ich sprístupňujeme a aké máš práva podľa GDPR.",
+  breadcrumb: "Ochrana údajov",
+  updated: legalEffectiveIso,
+};
+
+export const prevadzkovyPoriadokSeo: PageSeo = {
+  path: "/prevadzkovy-poriadok",
+  title: "Prevádzkový poriadok",
+  ogTitle: "Prevádzkový poriadok služby | Tap-it Fitness OS",
+  description:
+    "Pravidlá prevádzky Tap-it Fitness OS: dostupnosť a plánovaná údržba, podpora a reakčné časy, klasifikácia incidentov, zálohovanie a obnova, výpadkové scenáre vo fitku a povinnosti klienta.",
+  breadcrumb: "Prevádzkový poriadok",
+  updated: legalEffectiveIso,
+};
+
+export const cookiesSeo: PageSeo = {
+  path: "/cookies",
+  title: "Cookies",
+  ogTitle: "Zásady používania cookies | Tap-it",
+  description:
+    "Web tap-it.sk ukladá dve funkčné cookies — zapamätanie svetlého alebo tmavého režimu a odkliknutie informačnej lišty. Žiadna analytika, žiadne reklamné ani profilovacie cookies.",
+  breadcrumb: "Cookies",
+  updated: legalEffectiveIso,
+};
+
 export const allPageSeo: readonly PageSeo[] = [
   produktSeo,
   migraciaSeo,
   cenaSeo,
   bezobsluzneSeo,
+];
+
+export const legalPageSeo: readonly PageSeo[] = [
+  obchodnePodmienkySeo,
+  ochranaUdajovSeo,
+  prevadzkovyPoriadokSeo,
+  cookiesSeo,
 ];

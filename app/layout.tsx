@@ -9,6 +9,7 @@ import {
   siteTitle,
   siteUrl,
 } from "./seo-content";
+import { CookieBanner } from "./components/cookie-banner";
 import { JsonLd } from "./components/json-ld";
 
 const fraunces = Fraunces({
@@ -88,6 +89,7 @@ export default function RootLayout({
       </head>
       <body className="bg-base font-sans text-slate-100 antialiased">
         {children}
+        <CookieBanner />
         <JsonLd data={globalStructuredData} />
       </body>
     </html>

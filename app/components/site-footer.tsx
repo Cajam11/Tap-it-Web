@@ -1,6 +1,5 @@
 "use client";
 
-import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import {
   Facebook,
@@ -10,18 +9,19 @@ import {
   MapPin,
   Phone,
   Twitter,
+  User,
 } from "lucide-react";
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
 
-import filipFounder from "../../founders/Filip_Paučo.jpg";
-import patrikFounder from "../../founders/Patrik_Repkovský.jpg";
+import { legalPageLinks } from "../legal-content";
 import { footerNavItems, footerPageItems, useSectionLinks } from "./site-links";
 
-const infoLinks = [
-  "Všeobecné obchodné podmienky",
-  "Ochrana osobných údajov",
-  "Prevádzkový poriadok",
-  "Cookies",
+const founders = [
+  { name: "Filip", linkedin: "https://www.linkedin.com/in/filip-pau%C4%8Do/" },
+  {
+    name: "Patrik",
+    linkedin: "https://www.linkedin.com/in/patrik-repkovsk%C3%BD/",
+  },
 ];
 
 const socialLinks = [
@@ -29,23 +29,6 @@ const socialLinks = [
   { label: "Instagram", icon: Instagram },
   { label: "X", icon: Twitter },
   { label: "LinkedIn", icon: Linkedin },
-];
-
-const founders = [
-  {
-    name: "Filip Paučo",
-    role: "Co-founder / produkt",
-    motto: "Produkt musí sedieť na to, ako gym reálne funguje.",
-    linkedin: "https://www.linkedin.com/in/filip-pau%C4%8Do/",
-    image: filipFounder,
-  },
-  {
-    name: "Patrik Repkovský",
-    role: "Co-founder / technológia",
-    motto: "Systém musí prežiť bežný deň, nie len demo.",
-    linkedin: "https://www.linkedin.com/in/patrik-repkovsk%C3%BD/",
-    image: patrikFounder,
-  },
 ];
 
 export function SiteFooter() {
@@ -57,7 +40,7 @@ export function SiteFooter() {
   return (
     <footer className="site-footer border-t border-white/5 bg-[#050506] px-4 py-16 sm:px-6 lg:py-20">
       <div className="mx-auto max-w-7xl">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-[1.2fr_0.85fr_0.8fr_0.85fr_0.9fr_1fr]">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-[1.25fr_0.85fr_0.8fr_0.9fr_0.9fr_0.65fr]">
           <div>
             <div className="flex items-center gap-3">
               <span className="grid h-11 w-11 place-items-center rounded-xl bg-accent text-sm font-black text-white shadow-brand">
@@ -136,20 +119,29 @@ export function SiteFooter() {
           </FooterColumn>
 
           <FooterColumn title="Informácie">
-            {infoLinks.map((item) => (
-              <Link
-                key={item}
-                href={hrefFor("#kontakt")}
-                onClick={(event) => onAnchorClick(event, "#kontakt")}
-                className="footer-link"
-              >
-                {item}
+            {legalPageLinks.map((page) => (
+              <Link key={page.href} href={page.href} className="footer-link">
+                {page.title}
               </Link>
             ))}
           </FooterColumn>
 
           <FooterColumn title="Founderi">
-            <FoundersSwitcher founders={founders} />
+            {founders.map((founder) => (
+              <a
+                key={founder.name}
+                href={founder.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`LinkedIn profil – ${founder.name}`}
+                className="group flex items-center gap-3 text-slate-500 transition hover:text-white"
+              >
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-slate-400 transition group-hover:border-accent/45 group-hover:bg-accent/10 group-hover:text-white">
+                  <User aria-hidden="true" className="h-4 w-4" />
+                </span>
+                {founder.name}
+              </a>
+            ))}
           </FooterColumn>
         </div>
 
@@ -168,132 +160,6 @@ export function SiteFooter() {
         </div>
       </div>
     </footer>
-  );
-}
-
-type Founder = {
-  name: string;
-  role: string;
-  motto: string;
-  linkedin: string;
-  image: StaticImageData;
-};
-
-function FoundersSwitcher({ founders }: { founders: Founder[] }) {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [displayed, setDisplayed] = useState(founders[0]);
-
-  const handlePreview = (index: number) => {
-    if (index === activeIndex || isAnimating) return;
-    setIsAnimating(true);
-
-    setTimeout(() => {
-      setDisplayed(founders[index]);
-      setActiveIndex(index);
-      setTimeout(() => setIsAnimating(false), 400);
-    }, 200);
-  };
-
-  return (
-    <div>
-      <p
-        className={`text-sm font-semibold leading-6 text-slate-300 transition-all duration-300 ease-out ${
-          isAnimating ? "scale-[0.98] opacity-0 blur-sm" : "scale-100 opacity-100 blur-none"
-        }`}
-      >
-        “{displayed.motto}”
-      </p>
-      <p
-        className={`mt-2 text-[0.65rem] font-black uppercase tracking-[0.18em] text-accent-soft transition-all duration-[400ms] ease-out ${
-          isAnimating ? "translate-y-1 opacity-0" : "translate-y-0 opacity-100"
-        }`}
-      >
-        {displayed.role}
-      </p>
-
-      <div className="mt-4 flex items-center gap-2">
-        {founders.map((founder, index) => {
-          const isActive = activeIndex === index;
-          const showName = isActive || (hoveredIndex === index && !isActive);
-
-          const pillClassName = `flex items-center rounded-full transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${
-            isActive ? "bg-accent shadow-brand" : "bg-transparent hover:bg-white/10"
-          } ${showName ? "py-1 pl-1 pr-3" : "p-0.5"}`;
-
-          const pillContent = (
-            <>
-              <span className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full border border-white/10 bg-raised">
-                <Image
-                  src={founder.image}
-                  alt={founder.name}
-                  fill
-                  sizes="32px"
-                  className="object-cover"
-                />
-              </span>
-              <span
-                className={`grid overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${
-                  showName ? "ml-2 grid-cols-[1fr] opacity-100" : "ml-0 grid-cols-[0fr] opacity-0"
-                }`}
-              >
-                <span className="flex items-center gap-1 whitespace-nowrap">
-                  <span
-                    className={`text-xs font-bold ${
-                      isActive ? "text-white" : "text-slate-300"
-                    }`}
-                  >
-                    {founder.name.split(" ")[0]}
-                  </span>
-                  {isActive && founder.linkedin ? (
-                    <Linkedin
-                      aria-hidden="true"
-                      className="h-3 w-3 shrink-0 text-white/70"
-                    />
-                  ) : null}
-                </span>
-              </span>
-            </>
-          );
-
-          // Always the same <a>, so the pill's color/shape can transition
-          // smoothly instead of snapping — swapping between <a> and
-          // <button> per state would force React to remount the node.
-          // Tap on the already-active founder opens LinkedIn (modifier/
-          // middle clicks navigate immediately, same as any link); tap on
-          // an inactive one just previews them. No hover dependency, so
-          // it holds up on touch devices too.
-          return (
-            <a
-              key={founder.name}
-              href={founder.linkedin || undefined}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(event) => {
-                if (isActive || !founder.linkedin) {
-                  if (!founder.linkedin) event.preventDefault();
-                  return;
-                }
-                if (event.metaKey || event.ctrlKey || event.shiftKey) return;
-                event.preventDefault();
-                handlePreview(index);
-              }}
-              onMouseEnter={() => setHoveredIndex(index)}
-              onMouseLeave={() => setHoveredIndex(null)}
-              aria-label={
-                isActive
-                  ? `LinkedIn profil – ${founder.name}`
-                  : `Zobraziť ${founder.name}`
-              }
-              className={pillClassName}
-            >
-              {pillContent}
-            </a>
-          );
-        })}
-      </div>
-    </div>
   );
 }
 

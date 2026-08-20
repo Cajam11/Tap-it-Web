@@ -9,10 +9,17 @@ Tap-it Fitness OS je softvér pre fitká a fitness centrá. Rieši QR vstupy, č
 ## Stránky
 
 - https://www.tap-it.sk/ — úvod, platforma, prehľad Fitness OS
-- https://www.tap-it.sk/produkt — reálne obrazovky admin panelu a mobilnej appky, founderi
+- https://www.tap-it.sk/produkt — reálne obrazovky admin panelu a mobilnej appky, prečo zatiaľ nie sú referencie
 - https://www.tap-it.sk/migracia — prechod z iného systému, migrácia dát, kontrolný zoznam pred prepnutím
 - https://www.tap-it.sk/cena — čo určuje cenu, prečo nie je cenník s balíkmi, postup audit → rozsah → cena
 - https://www.tap-it.sk/bezobsluzne-fitko — bezobslužné a nonstop (24/7) fitká, vstupný reťazec, výpadkové scenáre
+
+## Právne dokumenty
+
+- https://www.tap-it.sk/obchodne-podmienky — všeobecné obchodné podmienky: rozsah služieb, cena a platby, hardvér, licencia, zodpovednosť, ukončenie
+- https://www.tap-it.sk/ochrana-osobnych-udajov — spracúvanie osobných údajov podľa GDPR, práva dotknutých osôb, príjemcovia, doby uchovávania
+- https://www.tap-it.sk/prevadzkovy-poriadok — prevádzka služby: dostupnosť, plánovaná údržba, podpora a reakčné časy, incidenty P1–P3, zálohovanie a obnova, výpadkové scenáre
+- https://www.tap-it.sk/cookies — web ukladá dve funkčné cookies (voľba svetlého alebo tmavého režimu a odkliknutie informačnej lišty), žiadna analytika ani reklamné cookies; lišta je len informačná, nie súhlasná brána
 
 ## Pre koho je produkt
 

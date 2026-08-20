@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "check:legal": "node scripts/check-legal.mjs",
     "start": "next start",
     "lint": "next lint"
   },

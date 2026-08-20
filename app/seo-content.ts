@@ -184,6 +184,8 @@ export type PageSeo = {
   description: string;
   /** Breadcrumb label — short, not the full title. */
   breadcrumb: string;
+  /** ISO date of the current wording — právne dokumenty ju vypisujú aj v grafe. */
+  updated?: string;
   faq?: readonly FaqItem[];
   /** Optional schema.org Service described by the page. */
   service?: { name: string; serviceType: string };
@@ -223,6 +225,9 @@ export function pageStructuredData(seo: PageSeo) {
       inLanguage: "sk-SK",
       isPartOf: { "@id": `${siteUrl}/#website` },
       breadcrumb: { "@id": `${pageUrl}#breadcrumb` },
+      ...(seo.updated
+        ? { datePublished: seo.updated, dateModified: seo.updated }
+        : {}),
     },
     {
       "@type": "BreadcrumbList",
