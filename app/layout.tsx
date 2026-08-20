@@ -3,12 +3,13 @@ import { Fraunces, Manrope } from "next/font/google";
 import "./globals.css";
 import { themeBootstrapScript } from "./use-theme";
 import {
+  globalStructuredData,
   siteDescription,
   siteName,
   siteTitle,
   siteUrl,
-  structuredData,
 } from "./seo-content";
+import { JsonLd } from "./components/json-ld";
 
 const fraunces = Fraunces({
   subsets: ["latin", "latin-ext"],
@@ -71,8 +72,6 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-const jsonLd = JSON.stringify(structuredData).replace(/</g, "\\u003c");
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -89,10 +88,7 @@ export default function RootLayout({
       </head>
       <body className="bg-base font-sans text-slate-100 antialiased">
         {children}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: jsonLd }}
-        />
+        <JsonLd data={globalStructuredData} />
       </body>
     </html>
   );

@@ -1149,6 +1149,64 @@ textarea {
   mix-blend-mode: screen;
 }
 
+/* Element-relative phone frame.
+   The base frame derives its bezel, corner radius and notch from viewport
+   clamps tuned for the ~19rem homepage device, so at the 8rem hero overlay and
+   the ~10-15rem gallery sizes the bezel lands at 4.3% of the phone's width and
+   the corners at 19% — visibly heavier than a real device (~3.2% and ~15%).
+   Restating them in cqw against `.phone-shot` keeps one set of ratios correct
+   at every size. Browsers without container queries drop these declarations and
+   fall back to the clamps above.
+
+   Not used by the 404 phone: its `404` numeral is already sized in cqw against
+   `.notfound-phone-dock`, and nesting another container would rebase it. */
+.phone-shot {
+  container-type: inline-size;
+}
+
+.member-phone-frame--fluid {
+  padding: 3.2cqw;
+  border-radius: 15cqw;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    inset 0 0 9cqw rgba(255, 255, 255, 0.06),
+    0 11cqw 36cqw rgba(0, 0, 0, 0.55);
+}
+
+.member-phone-frame--fluid .member-phone-screen {
+  border-radius: 11.5cqw;
+}
+
+.member-phone-frame--fluid .member-phone-speaker {
+  top: 5.9cqw;
+  width: 31%;
+  height: 9.2cqw;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 4cqw 11cqw rgba(0, 0, 0, 0.48);
+}
+
+.member-phone-frame--fluid::before {
+  top: 20%;
+  right: -1.3cqw;
+  width: 1cqw;
+  height: 13%;
+}
+
+.member-phone-frame--fluid::after {
+  top: 27%;
+  left: -1.3cqw;
+  width: 1cqw;
+  height: 19%;
+}
+
+.theme-light .member-phone-frame--fluid {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.62),
+    inset 0 0 9cqw rgba(255, 255, 255, 0.44),
+    0 11cqw 36cqw rgba(15, 23, 42, 0.22);
+}
+
 .member-phone-speaker {
   position: absolute;
   top: clamp(0.78rem, 2vw, 1.04rem);

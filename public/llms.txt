@@ -6,6 +6,14 @@ Tap-it je slovenský webový a softvérový tím, ktorý navrhuje webové strán
 
 Tap-it Fitness OS je softvér pre fitká a fitness centrá. Rieši QR vstupy, členstvá, rezervácie, migráciu z existujúceho systému, turnikety, QR skenery, admin panel a mobilnú aplikáciu pre členov.
 
+## Stránky
+
+- https://www.tap-it.sk/ — úvod, platforma, prehľad Fitness OS
+- https://www.tap-it.sk/produkt — reálne obrazovky admin panelu a mobilnej appky, founderi
+- https://www.tap-it.sk/migracia — prechod z iného systému, migrácia dát, kontrolný zoznam pred prepnutím
+- https://www.tap-it.sk/cena — čo určuje cenu, prečo nie je cenník s balíkmi, postup audit → rozsah → cena
+- https://www.tap-it.sk/bezobsluzne-fitko — bezobslužné a nonstop (24/7) fitká, vstupný reťazec, výpadkové scenáre
+
 ## Pre koho je produkt
 
 Produkt je určený pre majiteľov fitness centier a gymov, ktorí nechcú krabicový softvér a potrebujú systém prispôsobený recepcii, členom, vstupu, hardvéru a existujúcim dátam. Zvládne aj bezobslužné a nonstop (24/7) fitká, kde vstup stojí celý na pravidlách systému a turnikete.
@@ -16,7 +24,21 @@ Spolupráca sa začína bezplatným prevádzkovým auditom. Audit mapuje vstupy,
 
 ## Ako sa určuje cena
 
-Tap-it nemá verejný cenník s balíkmi, pretože ide o softvér skladaný podľa konkrétnej prevádzky, nie o krabicové predplatné. Cenu určuje počet vstupov a turniketov, počet členov, potrebný hardvér, zložitosť migrácie dát a množstvo výnimiek v prevádzke. Postup je: bezplatný audit → rozsah → cena.
+Cena má dve časti: jednorazovú implementáciu (migrácia a čistenie dát, konfigurácia vstupných pravidiel a rolí, napojenie hardvéru, príprava adminu a appky, školenie tímu) a mesačný poplatok za prevádzku systému (beh, aktualizácie, podpora), ktorého výška sa odvíja od škály fitka. Vstupný hardvér — turnikety a QR skenery — si kupuje gym priamo, Tap-it ho pomáha vybrať a špecifikovať, takže zariadenia zostávajú majetkom gymu a nie sú viazané na dodávateľa.
+
+Tap-it nemá verejný cenník s balíkmi, pretože ide o softvér skladaný podľa konkrétnej prevádzky, nie o hotový balík s tarifmi. Mesačný poplatok teda existuje aj u Tap-it — rozdiel je v tom, že jeho výška vychádza z dohodnutého rozsahu a veľkosti prevádzky, nie z tarifu, do ktorého sa treba vojsť. Na výslednú cenu vplýva počet vstupov a turniketov, veľkosť prevádzky, typy členstiev a ich pravidlá, zložitosť migrácie dát a množstvo výnimiek v prevádzke. Postup je: bezplatný audit → rozsah → cena.
+
+## Prechod z iného systému
+
+Migrácia sa rieši ako samostatná časť projektu, nie ako import na konci. Mapujú sa členovia a role, členstvá a expirácie, nevyčerpané jednorazové vstupy, rezervácie presahujúce deň prepnutia, vstupné pravidlá a nezdokumentované výnimky. Pred ostrým prepnutím ide čistenie dát, test QR vstupu a turniketu, školenie recepcie a skúšobný deň.
+
+## Bezobslužné a nonstop fitká
+
+V prevádzke bez stálej recepcie stojí vstup na reťazci: QR token člena → kontrola platného členstva → otvorenie turniketu na jeden priechod → zápis do scan logu. Výpadkové scenáre (internet, hardvér, chyba platby, vstup mimo pravidiel) musia byť rozhodnuté pred spustením, pretože na mieste nie je nikto, kto by výnimku vyriešil. Podporovaný je aj hybridný režim s recepciou len časť dňa.
+
+## Referencie
+
+Tap-it je pred prvým ostrým nasadením, takže zatiaľ nezverejňuje klientske referencie ani prípadové štúdie. Namiesto nich ukazuje reálne obrazovky bežiaceho systému na https://www.tap-it.sk/produkt.
 
 ## Dôležité témy
 
