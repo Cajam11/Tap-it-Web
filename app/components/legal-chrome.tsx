@@ -3,6 +3,7 @@ import { ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { legalEntity } from "../legal-content";
+import { LegalToc } from "./legal-toc";
 
 /**
  * Rozloženie pre právne dokumenty. Rovnako ako `page-chrome` je to server
@@ -95,6 +96,8 @@ export function LegalHero({
 /**
  * Dokument s obsahom vľavo a článkami vpravo. Obsah je obyčajný zoznam kotiev,
  * takže funguje bez JavaScriptu; `scroll-mt-28` drží nadpis pod fixnou navigáciou.
+ * Zvýraznenie práve čítaného článku rieši `LegalToc` — jediná klientská časť
+ * inak statickej stránky.
  */
 export function LegalDocument({
   articles,
@@ -106,29 +109,9 @@ export function LegalDocument({
   return (
     <section className="px-4 pb-16 sm:px-6 lg:pb-24">
       <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[minmax(0,16rem)_minmax(0,1fr)] lg:gap-12">
-        <nav
-          aria-label="Obsah dokumentu"
-          className="lg:sticky lg:top-24 lg:max-h-[calc(100vh-8rem)] lg:self-start lg:overflow-y-auto lg:pr-2"
-        >
-          <h2 className="text-xs font-black uppercase tracking-[0.16em] text-slate-300">
-            Obsah
-          </h2>
-          <ol className="mt-5 grid gap-2.5">
-            {articles.map((article, index) => (
-              <li key={article.id}>
-                <a
-                  href={`#${article.id}`}
-                  className="flex gap-3 text-sm font-semibold leading-6 text-slate-500 transition hover:text-white"
-                >
-                  <span className="font-display tabular-nums text-slate-500">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <span className="min-w-0">{article.title}</span>
-                </a>
-              </li>
-            ))}
-          </ol>
-        </nav>
+        <LegalToc
+          items={articles.map(({ id, title }) => ({ id, title }))}
+        />
 
         <div className="min-w-0 rounded-3xl border border-white/10 bg-surface p-5 shadow-card sm:p-9 lg:p-10">
           {intro ? <div className="mb-10 sm:mb-12">{intro}</div> : null}
