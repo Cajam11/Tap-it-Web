@@ -76,7 +76,7 @@ export const legalPageLinks = [
   {
     href: "/cookies",
     title: "Cookies",
-    text: "Jediná cookie, ktorú web ukladá, a prečo tu nie je cookie lišta.",
+    text: "Čo web ukladá, čo sa deje po súhlase a ako ho kedykoľvek odvolať.",
   },
 ] as const;
 
