@@ -19,7 +19,7 @@ Tap-it Fitness OS je softvér pre fitká a fitness centrá. Rieši QR vstupy, č
 - https://www.tap-it.sk/obchodne-podmienky — všeobecné obchodné podmienky: rozsah služieb, cena a platby, hardvér, licencia, zodpovednosť, ukončenie
 - https://www.tap-it.sk/ochrana-osobnych-udajov — spracúvanie osobných údajov podľa GDPR, práva dotknutých osôb, príjemcovia, doby uchovávania
 - https://www.tap-it.sk/prevadzkovy-poriadok — prevádzka služby: dostupnosť, plánovaná údržba, podpora a reakčné časy, incidenty P1–P3, zálohovanie a obnova, výpadkové scenáre
-- https://www.tap-it.sk/cookies — web ukladá dve funkčné cookies (voľba svetlého alebo tmavého režimu a odkliknutie informačnej lišty), žiadna analytika ani reklamné cookies; lišta je len informačná, nie súhlasná brána
+- https://www.tap-it.sk/cookies — web ukladá najviac dve cookies (rozhodnutie o cookies a, až po súhlase, voľbu svetlého alebo tmavého režimu), žiadna analytika ani reklamné cookies; lišta je skutočná súhlasná brána s rovnocenným odmietnutím a súhlas sa dá kedykoľvek odvolať
 
 ## Pre koho je produkt
 

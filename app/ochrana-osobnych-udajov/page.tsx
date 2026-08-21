@@ -235,11 +235,11 @@ const articles: readonly LegalArticle[] = [
       {
         text: (
           <>
-            Web ukladá dve funkčné cookies — voľbu svetlého alebo tmavého
-            režimu a to, že si videl lištu s informáciou o cookies.
-            Nepoužívame analytické, marketingové ani profilovacie cookies.
-            Podrobnosti sú na stránke{" "}
-            <LegalLink href="/cookies">Cookies</LegalLink>.
+            Web ukladá najviac dve cookies — tvoje rozhodnutie o cookies a, až
+            po súhlase, voľbu svetlého alebo tmavého režimu. Súhlas vieš
+            kedykoľvek odvolať cez koliesko v pravom dolnom rohu. Nepoužívame
+            analytické, marketingové ani profilovacie cookies. Podrobnosti sú na
+            stránke <LegalLink href="/cookies">Cookies</LegalLink>.
           </>
         ),
       },

@@ -1624,6 +1624,39 @@ textarea {
   box-shadow: 0 28px 90px rgba(15, 23, 42, 0.12);
 }
 
+/* Koliesko na znovuotvorenie lišty o cookies.
+   Farby má vlastné, nie cez tokeny: `bg-surface` je v svetlom režime priehľadná
+   biela, na ktorej by sa tlačidlo v pravom dolnom rohu stratilo. */
+.cookie-wheel {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #ffb3b5;
+  background: rgba(20, 22, 31, 0.94);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 16px 44px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(18px);
+}
+
+.cookie-wheel:hover {
+  border-color: rgba(239, 36, 40, 0.55);
+  color: #ffffff;
+  background: rgba(32, 35, 48, 0.96);
+}
+
+.theme-light .cookie-wheel {
+  border-color: rgba(15, 23, 42, 0.12);
+  color: #c2161b;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    0 16px 44px rgba(15, 23, 42, 0.18);
+}
+
+.theme-light .cookie-wheel:hover {
+  border-color: rgba(239, 36, 40, 0.45);
+  background: #ffffff;
+}
+
 /* 404 ---------------------------------------------------------------------- */
 
 /* The dock reserves the landscape footprint (19.2/9) of a .member-phone-frame

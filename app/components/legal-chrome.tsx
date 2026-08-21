@@ -3,6 +3,7 @@ import { ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { legalEntity } from "../legal-content";
+import { LegalToc } from "./legal-toc";
 
 /**
  * Rozloženie pre právne dokumenty. Rovnako ako `page-chrome` je to server
@@ -63,23 +64,25 @@ export function LegalHero({
         <p className="section-kicker hero-reveal hero-reveal-2 mt-8 block">
           Právne informácie
         </p>
-        <h1 className="hero-reveal hero-reveal-2 mt-4 max-w-4xl text-4xl font-black leading-[1.05] tracking-tight text-white sm:text-5xl">
+        <h1 className="hero-reveal hero-reveal-2 mt-4 max-w-4xl text-3xl font-black leading-[1.08] tracking-tight text-white sm:text-5xl sm:leading-[1.05]">
           {title}
         </h1>
-        <p className="hero-reveal hero-reveal-3 mt-6 max-w-2xl text-base leading-8 text-slate-400">
+        <p className="hero-reveal hero-reveal-3 mt-5 max-w-2xl text-sm leading-7 text-slate-400 sm:mt-6 sm:text-base sm:leading-8">
           {lead}
         </p>
 
-        <dl className="hero-reveal hero-reveal-4 mt-10 grid gap-3 sm:grid-cols-3">
+        {/* Na mobile beží každý údaj ako riadok štítok–hodnota, aby hlavička
+            dokumentu nezabrala pol obrazovky ešte pred prvým článkom. */}
+        <dl className="hero-reveal hero-reveal-4 mt-8 grid gap-2 sm:mt-10 sm:grid-cols-3 sm:gap-3">
           {meta.map((item) => (
             <div
               key={item.label}
-              className="rounded-2xl border border-white/10 bg-surface px-5 py-4"
+              className="flex items-baseline justify-between gap-3 rounded-2xl border border-white/10 bg-surface px-4 py-3 sm:block sm:px-5 sm:py-4"
             >
-              <dt className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              <dt className="shrink-0 text-[11px] font-bold uppercase tracking-wider text-slate-500">
                 {item.label}
               </dt>
-              <dd className="mt-1.5 text-sm font-bold tracking-tight text-white">
+              <dd className="min-w-0 text-right text-sm font-bold tracking-tight text-white sm:mt-1.5 sm:text-left">
                 {item.value}
               </dd>
             </div>
@@ -93,6 +96,8 @@ export function LegalHero({
 /**
  * Dokument s obsahom vľavo a článkami vpravo. Obsah je obyčajný zoznam kotiev,
  * takže funguje bez JavaScriptu; `scroll-mt-28` drží nadpis pod fixnou navigáciou.
+ * Zvýraznenie práve čítaného článku rieši `LegalToc` — jediná klientská časť
+ * inak statickej stránky.
  */
 export function LegalDocument({
   articles,
@@ -104,34 +109,14 @@ export function LegalDocument({
   return (
     <section className="px-4 pb-16 sm:px-6 lg:pb-24">
       <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[minmax(0,16rem)_minmax(0,1fr)] lg:gap-12">
-        <nav
-          aria-label="Obsah dokumentu"
-          className="lg:sticky lg:top-24 lg:max-h-[calc(100vh-8rem)] lg:self-start lg:overflow-y-auto lg:pr-2"
-        >
-          <h2 className="text-xs font-black uppercase tracking-[0.16em] text-slate-300">
-            Obsah
-          </h2>
-          <ol className="mt-5 grid gap-2.5">
-            {articles.map((article, index) => (
-              <li key={article.id}>
-                <a
-                  href={`#${article.id}`}
-                  className="flex gap-3 text-sm font-semibold leading-6 text-slate-500 transition hover:text-white"
-                >
-                  <span className="font-display tabular-nums text-slate-500">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <span className="min-w-0">{article.title}</span>
-                </a>
-              </li>
-            ))}
-          </ol>
-        </nav>
+        <LegalToc
+          items={articles.map(({ id, title }) => ({ id, title }))}
+        />
 
-        <div className="min-w-0 rounded-3xl border border-white/10 bg-surface p-6 shadow-card sm:p-9 lg:p-10">
-          {intro ? <div className="mb-12">{intro}</div> : null}
+        <div className="min-w-0 rounded-3xl border border-white/10 bg-surface p-5 shadow-card sm:p-9 lg:p-10">
+          {intro ? <div className="mb-10 sm:mb-12">{intro}</div> : null}
 
-          <div className="grid gap-12">
+          <div className="grid gap-10 sm:gap-12">
             {articles.map((article, index) => (
               <LegalArticleBlock
                 key={article.id}
@@ -161,18 +146,22 @@ function LegalArticleBlock({
       <p className="text-xs font-black uppercase tracking-[0.16em] text-accent-soft">
         Čl. {number}
       </p>
-      <h2 className="mt-3 text-xl font-black leading-tight tracking-tight text-white sm:text-2xl">
+      <h2 className="mt-3 text-lg font-black leading-tight tracking-tight text-white sm:text-2xl">
         {article.title}
       </h2>
 
+      {/* Číslo bodu je na telefóne vlastný riadok nad textom: ako bočný stĺpec
+          by ukroplo 56 z ~250 px, ktoré na odsek vôbec zostávajú. */}
       <ol className="mt-6 grid gap-5">
         {article.clauses.map((clause, index) => (
-          <li key={index} className="flex gap-3 sm:gap-4">
-            <span className="w-11 shrink-0 font-display text-sm font-semibold tabular-nums leading-7 text-slate-500">
+          <li key={index} className="grid gap-1 sm:flex sm:gap-4">
+            <span className="font-display text-xs font-semibold tabular-nums text-slate-500 sm:w-11 sm:shrink-0 sm:text-sm sm:leading-7">
               {number}.{index + 1}
             </span>
             <div className="min-w-0">
-              <p className="text-sm leading-7 text-slate-400">{clause.text}</p>
+              <p className="break-words text-sm leading-7 text-slate-400">
+                {clause.text}
+              </p>
               {clause.items ? (
                 <ul className="mt-3 grid gap-2">
                   {clause.items.map((item, itemIndex) => (
@@ -181,7 +170,7 @@ function LegalArticleBlock({
                         aria-hidden="true"
                         className="mt-3 h-1 w-1 shrink-0 rounded-full bg-accent"
                       />
-                      <span className="text-sm leading-7 text-slate-400">
+                      <span className="min-w-0 break-words text-sm leading-7 text-slate-400">
                         {item}
                       </span>
                     </li>
@@ -208,7 +197,7 @@ export function LegalNote({
   children: ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-accent/30 bg-accent-faint p-5 sm:p-6">
+    <div className="rounded-2xl border border-accent/30 bg-accent-faint p-4 sm:p-6">
       <h3 className="text-sm font-black tracking-tight text-white">{title}</h3>
       <div className="mt-2.5 grid gap-3 text-sm leading-7 text-slate-400">
         {children}
@@ -218,8 +207,15 @@ export function LegalNote({
 }
 
 /**
- * Tabuľka na účely spracúvania a na zoznam cookies. Na mobile sa posúva vo
- * vlastnom kontajneri, aby stránka nikdy nerolovala do strán.
+ * Tabuľka na účely spracúvania a na zoznam cookies.
+ *
+ * Štyri stĺpce právneho textu sa do šírky telefónu nezmestia a bočné rolovanie
+ * na nich znamená, že polovicu obsahu nikto neuvidí. Pod `lg` sa preto každý
+ * riadok vykreslí ako karta — prvá bunka je jej nadpis, zvyšok dvojice
+ * štítok–hodnota. Tabuľka sa vracia až tam, kde má stĺpec skutočne priestor.
+ *
+ * Obe podoby čítajú tie isté dáta a v každom bode je práve jedna `display:none`,
+ * takže sa čítačke obrazovky nikdy neponúknu dvakrát.
  */
 export function LegalTable({
   columns,
@@ -231,45 +227,80 @@ export function LegalTable({
   caption?: string;
 }) {
   return (
-    <div className="overflow-x-auto rounded-2xl border border-white/10">
-      <table className="w-full min-w-[44rem] border-collapse text-left">
+    <div>
+      <ul className="grid gap-3 md:grid-cols-2 lg:hidden">
         {caption ? (
-          <caption className="border-b border-white/10 bg-base px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+          <li className="text-xs font-bold uppercase tracking-wider text-slate-500 md:col-span-2">
             {caption}
-          </caption>
+          </li>
         ) : null}
-        <thead>
-          <tr className="bg-base">
-            {columns.map((column) => (
-              <th
-                key={column}
-                scope="col"
-                className="border-b border-white/10 px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-300"
-              >
-                {column}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, rowIndex) => (
-            <tr key={rowIndex} className="border-t border-white/10 first:border-t-0">
-              {row.map((cell, cellIndex) => (
-                <td
-                  key={cellIndex}
-                  className={`px-4 py-4 align-top text-sm leading-6 ${
-                    cellIndex === 0
-                      ? "whitespace-nowrap font-bold text-white"
-                      : "font-semibold text-slate-400"
-                  }`}
+        {rows.map((row, rowIndex) => (
+          <li
+            key={rowIndex}
+            className="rounded-2xl border border-white/10 bg-base p-4"
+          >
+            <p className="break-words text-sm font-bold leading-6 text-white">
+              {row[0]}
+            </p>
+            <dl className="mt-3 grid gap-3 border-t border-white/10 pt-3">
+              {columns.slice(1).map((column, columnIndex) => (
+                <div key={column}>
+                  <dt className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                    {column}
+                  </dt>
+                  <dd className="mt-1 break-words text-sm font-semibold leading-6 text-slate-400">
+                    {row[columnIndex + 1]}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </li>
+        ))}
+      </ul>
+
+      <div className="hidden overflow-x-auto rounded-2xl border border-white/10 lg:block">
+        <table className="w-full min-w-[44rem] border-collapse text-left">
+          {caption ? (
+            <caption className="border-b border-white/10 bg-base px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+              {caption}
+            </caption>
+          ) : null}
+          <thead>
+            <tr className="bg-base">
+              {columns.map((column) => (
+                <th
+                  key={column}
+                  scope="col"
+                  className="border-b border-white/10 px-4 py-3 text-xs font-black uppercase tracking-wider text-slate-300"
                 >
-                  {cell}
-                </td>
+                  {column}
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {rows.map((row, rowIndex) => (
+              <tr
+                key={rowIndex}
+                className="border-t border-white/10 first:border-t-0"
+              >
+                {row.map((cell, cellIndex) => (
+                  <td
+                    key={cellIndex}
+                    className={`px-4 py-4 align-top text-sm leading-6 ${
+                      cellIndex === 0
+                        ? "whitespace-nowrap font-bold text-white"
+                        : "font-semibold text-slate-400"
+                    }`}
+                  >
+                    {cell}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
@@ -336,16 +367,16 @@ export function EntityFacts() {
       ];
 
   return (
-    <dl className="grid gap-3 sm:grid-cols-2">
+    <dl className="grid gap-2 sm:grid-cols-2 sm:gap-3">
       {visibleRows.map((row) => (
         <div
           key={row.label}
-          className="rounded-2xl border border-white/10 bg-base px-5 py-4"
+          className="rounded-2xl border border-white/10 bg-base px-4 py-3 sm:px-5 sm:py-4"
         >
           <dt className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
             {row.label}
           </dt>
-          <dd className="mt-1.5 text-sm font-bold tracking-tight text-white">
+          <dd className="mt-1.5 break-words text-sm font-bold tracking-tight text-white">
             {row.value ? (
               row.href ? (
                 <a

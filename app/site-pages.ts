@@ -193,7 +193,7 @@ export const cookiesSeo: PageSeo = {
   title: "Cookies",
   ogTitle: "Zásady používania cookies | Tap-it",
   description:
-    "Web tap-it.sk ukladá dve funkčné cookies — zapamätanie svetlého alebo tmavého režimu a odkliknutie informačnej lišty. Žiadna analytika, žiadne reklamné ani profilovacie cookies.",
+    "Web tap-it.sk ukladá najviac dve cookies — tvoje rozhodnutie o cookies a, až po súhlase, voľbu svetlého alebo tmavého režimu. Žiadna analytika, žiadne reklamné ani profilovacie cookies.",
   breadcrumb: "Cookies",
   updated: legalEffectiveIso,
 };
