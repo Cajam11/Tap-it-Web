@@ -48,6 +48,9 @@ const organizationNode = {
   name: siteName,
   url: `${siteUrl}/`,
   email: "info@tap-it.sk",
+  // Raster, square and on a stable path: what Google wants for a knowledge
+  // panel. The app-router `icon.png` is hashed, so it cannot be linked here.
+  logo: `${siteUrl}/brand/tap-it-logo-512.png`,
   founder: [
     {
       "@type": "Person",

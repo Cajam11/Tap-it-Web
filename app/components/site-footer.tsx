@@ -14,6 +14,7 @@ import {
 import { useMemo, type ReactNode } from "react";
 
 import { legalPageLinks } from "../legal-content";
+import { BrandMark } from "./brand-mark";
 import { footerNavItems, footerPageItems, useSectionLinks } from "./site-links";
 
 const founders = [
@@ -43,9 +44,7 @@ export function SiteFooter() {
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-[1.25fr_0.85fr_0.8fr_0.9fr_0.9fr_0.65fr]">
           <div>
             <div className="flex items-center gap-3">
-              <span className="grid h-11 w-11 place-items-center rounded-xl bg-accent text-sm font-black text-white shadow-brand">
-                T
-              </span>
+              <BrandMark className="h-11 w-11 rounded-xl" />
               <span className="text-xl font-black tracking-tight text-white">
                 Tap<span className="text-accent">-it</span>
               </span>

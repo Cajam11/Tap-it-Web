@@ -22,6 +22,13 @@ const config: Config = {
         success: "#10B981",
         warning: "#F59E0B"
       },
+      backgroundImage: {
+        // The ground of the Tap-it mark. Lives here rather than in an SVG
+        // <defs> gradient so several marks can share a page without repeating
+        // an element id, and so the corner radius stays a normal utility.
+        "brand-mark":
+          "linear-gradient(135deg, #1B2447 0%, #0B1020 52%, #09090D 100%)"
+      },
       boxShadow: {
         card: "0 16px 50px rgba(3, 4, 10, 0.4)",
         float: "0 24px 80px rgba(3, 4, 10, 0.55)",

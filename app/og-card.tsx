@@ -4,6 +4,30 @@ export const ogSize = { width: 1200, height: 630 };
 export const ogContentType = "image/png";
 
 /**
+ * The Tap-it mark, inlined as a data URI because Satori cannot fetch a file
+ * from `public/` while it renders. Keep it byte-identical to
+ * `public/brand/tap-it-logo.svg`.
+ */
+const brandMarkSvg = `<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="tapit-ground" x1="0" y1="0" x2="300" y2="300" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1B2447"/>
+      <stop offset="0.52" stop-color="#0B1020"/>
+      <stop offset="1" stop-color="#09090D"/>
+    </linearGradient>
+  </defs>
+  <rect width="300" height="300" rx="66" fill="url(#tapit-ground)"/>
+  <path d="M54 100 L54 66 Q54 54 66 54 L100 54" fill="none" stroke="#EF2428" stroke-width="16" stroke-linecap="round"/>
+  <path d="M246 200 L246 234 Q246 246 234 246 L200 246" fill="none" stroke="#3E63DD" stroke-width="16" stroke-linecap="round"/>
+  <rect x="84" y="92" width="132" height="36" rx="9" fill="#ECEAE2"/>
+  <rect x="132" y="92" width="36" height="116" rx="9" fill="#ECEAE2"/>
+</svg>`;
+
+const brandMarkDataUri = `data:image/svg+xml;base64,${Buffer.from(
+  brandMarkSvg,
+).toString("base64")}`;
+
+/**
  * Shared artwork for every og:image on the site.
  *
  * Rendered by Satori, which only understands flexbox — no grid, and every
@@ -52,22 +76,8 @@ export function OgCard({
       />
 
       <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: 68,
-            height: 68,
-            borderRadius: 20,
-            backgroundColor: "#EF2428",
-            color: "#FFFFFF",
-            fontSize: 38,
-            fontWeight: 800,
-          }}
-        >
-          T
-        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element -- Satori only draws raw <img>. */}
+        <img src={brandMarkDataUri} width={68} height={68} alt="" />
         <div
           style={{
             display: "flex",

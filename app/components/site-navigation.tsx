@@ -5,6 +5,7 @@ import { Menu, Moon, Sun, X } from "lucide-react";
 import { useState } from "react";
 
 import { useThemeMode } from "../use-theme";
+import { BrandMark } from "./brand-mark";
 import { navItems, useSectionLinks } from "./site-links";
 
 export function SiteNavigation() {
@@ -45,9 +46,7 @@ export function SiteNavigation() {
           onClick={(event) => handleNavClick(event, "#platforma")}
           className="flex min-w-0 items-center gap-3"
         >
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent text-sm font-black text-white shadow-brand">
-            T
-          </span>
+          <BrandMark className="h-10 w-10 rounded-xl" />
           <span
             className={`truncate text-sm font-bold tracking-tight transition-colors sm:text-base ${brandText}`}
           >

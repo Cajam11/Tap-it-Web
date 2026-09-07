@@ -1,0 +1,7 @@
+<svg width="220" height="220" viewBox="40 40 220 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tap-it">
+  <title>Tap-it — značka bez podkladu, pre tmavé pozadia</title>
+  <path d="M54 100 L54 66 Q54 54 66 54 L100 54" fill="none" stroke="#EF2428" stroke-width="16" stroke-linecap="round"/>
+  <path d="M246 200 L246 234 Q246 246 234 246 L200 246" fill="none" stroke="#3E63DD" stroke-width="16" stroke-linecap="round"/>
+  <rect x="84" y="92" width="132" height="36" rx="9" fill="#ECEAE2"/>
+  <rect x="132" y="92" width="36" height="116" rx="9" fill="#ECEAE2"/>
+</svg>
