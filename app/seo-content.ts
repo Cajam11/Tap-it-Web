@@ -8,6 +8,9 @@ export const siteUrl = (
 
 export const siteName = "Tap-it";
 
+/** Firemný LinkedIn — pätička aj `sameAs` v grafe ho čítajú odtiaľto. */
+export const linkedinUrl = "https://www.linkedin.com/company/tap-it-sk/";
+
 export const siteTitle =
   "Softvér pre fitká | Tap-it Fitness OS, QR vstupy a členstvá";
 
@@ -51,6 +54,8 @@ const organizationNode = {
   // Raster, square and on a stable path: what Google wants for a knowledge
   // panel. The app-router `icon.png` is hashed, so it cannot be linked here.
   logo: `${siteUrl}/brand/tap-it-logo-512.png`,
+  // Profily, ktoré Google spája s tou istou entitou.
+  sameAs: [linkedinUrl],
   founder: [
     {
       "@type": "Person",

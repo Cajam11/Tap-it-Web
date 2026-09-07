@@ -10,10 +10,12 @@ import {
   Phone,
   Twitter,
   User,
+  type LucideIcon,
 } from "lucide-react";
 import { useMemo, type ReactNode } from "react";
 
 import { legalPageLinks } from "../legal-content";
+import { linkedinUrl } from "../seo-content";
 import { BrandMark } from "./brand-mark";
 import { footerNavItems, footerPageItems, useSectionLinks } from "./site-links";
 
@@ -25,11 +27,13 @@ const founders = [
   },
 ];
 
-const socialLinks = [
+// `href` má zatiaľ len LinkedIn; ostatné profily ešte nemáme, takže ich
+// dlaždice vedú na kontaktný formulár, kým nevzniknú.
+const socialLinks: { label: string; icon: LucideIcon; href?: string }[] = [
   { label: "Facebook", icon: Facebook },
   { label: "Instagram", icon: Instagram },
   { label: "X", icon: Twitter },
-  { label: "LinkedIn", icon: Linkedin },
+  { label: "LinkedIn", icon: Linkedin, href: linkedinUrl },
 ];
 
 export function SiteFooter() {
@@ -55,17 +59,36 @@ export function SiteFooter() {
               krabicového myslenia.
             </p>
             <div className="mt-7 flex gap-3">
-              {socialLinks.map(({ label, icon: Icon }) => (
-                <Link
-                  key={label}
-                  href={hrefFor("#kontakt")}
-                  onClick={(event) => onAnchorClick(event, "#kontakt")}
-                  aria-label={label}
-                  className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-slate-400 transition hover:border-accent/45 hover:bg-accent/10 hover:text-white"
-                >
+              {socialLinks.map(({ label, icon: Icon, href }) => {
+                const tile = (
                   <Icon aria-hidden="true" className="h-4 w-4" />
-                </Link>
-              ))}
+                );
+                const className =
+                  "grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-slate-400 transition hover:border-accent/45 hover:bg-accent/10 hover:text-white";
+
+                return href ? (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${label} – Tap-it`}
+                    className={className}
+                  >
+                    {tile}
+                  </a>
+                ) : (
+                  <Link
+                    key={label}
+                    href={hrefFor("#kontakt")}
+                    onClick={(event) => onAnchorClick(event, "#kontakt")}
+                    aria-label={label}
+                    className={className}
+                  >
+                    {tile}
+                  </Link>
+                );
+              })}
             </div>
           </div>
 
