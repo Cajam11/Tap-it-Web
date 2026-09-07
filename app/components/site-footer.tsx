@@ -15,7 +15,12 @@ import {
 import { useMemo, type ReactNode } from "react";
 
 import { legalPageLinks } from "../legal-content";
-import { linkedinUrl, xUrl } from "../seo-content";
+import {
+  facebookUrl,
+  instagramUrl,
+  linkedinUrl,
+  xUrl,
+} from "../seo-content";
 import { BrandMark } from "./brand-mark";
 import { footerNavItems, footerPageItems, useSectionLinks } from "./site-links";
 
@@ -27,11 +32,9 @@ const founders = [
   },
 ];
 
-// `href` majú zatiaľ len X a LinkedIn; ostatné profily ešte nemáme, takže ich
-// dlaždice vedú na kontaktný formulár, kým nevzniknú.
-const socialLinks: { label: string; icon: LucideIcon; href?: string }[] = [
-  { label: "Facebook", icon: Facebook },
-  { label: "Instagram", icon: Instagram },
+const socialLinks: { label: string; icon: LucideIcon; href: string }[] = [
+  { label: "Facebook", icon: Facebook, href: facebookUrl },
+  { label: "Instagram", icon: Instagram, href: instagramUrl },
   { label: "X", icon: Twitter, href: xUrl },
   { label: "LinkedIn", icon: Linkedin, href: linkedinUrl },
 ];
@@ -59,36 +62,18 @@ export function SiteFooter() {
               krabicového myslenia.
             </p>
             <div className="mt-7 flex gap-3">
-              {socialLinks.map(({ label, icon: Icon, href }) => {
-                const tile = (
+              {socialLinks.map(({ label, icon: Icon, href }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${label} – Tap-it`}
+                  className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-slate-400 transition hover:border-accent/45 hover:bg-accent/10 hover:text-white"
+                >
                   <Icon aria-hidden="true" className="h-4 w-4" />
-                );
-                const className =
-                  "grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-slate-400 transition hover:border-accent/45 hover:bg-accent/10 hover:text-white";
-
-                return href ? (
-                  <a
-                    key={label}
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`${label} – Tap-it`}
-                    className={className}
-                  >
-                    {tile}
-                  </a>
-                ) : (
-                  <Link
-                    key={label}
-                    href={hrefFor("#kontakt")}
-                    onClick={(event) => onAnchorClick(event, "#kontakt")}
-                    aria-label={label}
-                    className={className}
-                  >
-                    {tile}
-                  </Link>
-                );
-              })}
+                </a>
+              ))}
             </div>
           </div>
 
