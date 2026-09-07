@@ -15,7 +15,7 @@ import {
 import { useMemo, type ReactNode } from "react";
 
 import { legalPageLinks } from "../legal-content";
-import { linkedinUrl } from "../seo-content";
+import { linkedinUrl, xUrl } from "../seo-content";
 import { BrandMark } from "./brand-mark";
 import { footerNavItems, footerPageItems, useSectionLinks } from "./site-links";
 
@@ -27,12 +27,12 @@ const founders = [
   },
 ];
 
-// `href` má zatiaľ len LinkedIn; ostatné profily ešte nemáme, takže ich
+// `href` majú zatiaľ len X a LinkedIn; ostatné profily ešte nemáme, takže ich
 // dlaždice vedú na kontaktný formulár, kým nevzniknú.
 const socialLinks: { label: string; icon: LucideIcon; href?: string }[] = [
   { label: "Facebook", icon: Facebook },
   { label: "Instagram", icon: Instagram },
-  { label: "X", icon: Twitter },
+  { label: "X", icon: Twitter, href: xUrl },
   { label: "LinkedIn", icon: Linkedin, href: linkedinUrl },
 ];
 
